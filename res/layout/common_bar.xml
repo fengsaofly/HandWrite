@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+
+    <scu.android.base.HandWriteCanvas
+        android:id="@+id/handwriteCanvas"
+        android:layout_width="fill_parent"
+        android:layout_height="180dp"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/defaultBar"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal" >
+
+        <ImageButton
+            android:id="@+id/record"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/app_name"
+            android:src="@drawable/record" />
+
+        <ImageButton
+            android:id="@+id/camera"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/app_name"
+            android:src="@drawable/new_note_camera" />
+
+        <ImageButton
+            android:id="@+id/handwrite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/app_name"
+            android:src="@drawable/new_note_handwrite" />
+
+        <ImageButton
+            android:id="@+id/doodle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/app_name"
+            android:src="@drawable/new_note_doodle" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/handwriteBar"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal"
+        android:visibility="gone" >
+
+        <ImageButton
+            android:id="@+id/keyboard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/app_name"
+            android:src="@drawable/key" />
+
+        <ImageButton
+            android:id="@+id/handwriteBlank"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/app_name"
+            android:src="@drawable/handwrite_blank" />
+
+        <ImageButton
+            android:id="@+id/handwriteReturn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/app_name"
+            android:src="@drawable/handwrite_return" />
+
+        <ImageButton
+            android:id="@+id/handwritePaint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/app_name"
+            android:src="@drawable/handwrite_paint" />
+
+        <ImageButton
+            android:id="@+id/handwriteDelete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/app_name"
+            android:src="@drawable/handwrite_delete" />
+    </LinearLayout>
+
+</LinearLayout>

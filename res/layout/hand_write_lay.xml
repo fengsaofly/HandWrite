@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <WebView
+        android:id="@+id/note"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <FrameLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true" >
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" >
+
+            <SurfaceView
+                android:visibility="gone"
+                android:id="@+id/hand_write_panepanel"
+                android:layout_width="fill_parent"
+                android:layout_height="200dp"
+                android:layout_gravity="top" />
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/hand_write_panepanel"
+                android:layout_gravity="bottom"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:clickable="true"
+                    android:onClick="OnClick"
+                    android:id="@+id/hand_write_img"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.25"
+                    android:gravity="center"
+                    android:text="图片"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:clickable="true"
+                    android:onClick="OnClick"
+                    android:id="@+id/hand_write_text"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.25"
+                    android:gravity="center"
+                    android:text="文字"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:clickable="true"
+                    android:onClick="OnClick"
+                    android:id="@+id/hand_write_audio"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.25"
+                    android:gravity="center"
+                    android:text="音频"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:clickable="true"
+                    android:onClick="OnClick"
+                    android:id="@+id/hand_write_video"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.25"
+                    android:gravity="center"
+                    android:text="视频"
+                    android:textSize="20sp" />
+            </LinearLayout>
+        </RelativeLayout>
+    </FrameLayout>
+
+</RelativeLayout>

@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+   android:background="#eeeeee"
+    android:paddingBottom="5dp"
+    android:orientation="horizontal" >
+
+    <LinearLayout
+        android:id="@id/popup_recode_lay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.25"
+        android:onClick="myOnclick"
+        android:orientation="vertical"
+        android:paddingBottom="2.0dip" >
+
+        <ImageView
+            android:id="@+id/friend_img"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:src="@drawable/popup_scrawl_style" />
+
+        <TextView
+            android:id="@+id/categoryText"
+            style="@style/question_popup_textview_text_style"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center"
+            android:text="涂鸦" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@id/popup_camera_lay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.25"
+        android:onClick="myOnclick"
+        android:orientation="vertical"
+        android:paddingBottom="2.0dip" >
+
+        <ImageView
+            android:id="@+id/home_img"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:src="@drawable/popup_camera_style" />
+
+        <TextView
+            android:id="@+id/indexText"
+            style="@style/question_popup_textview_text_style"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center"
+            android:text="拍照" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@id/popup_imgpicker_lay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.25"
+        android:onClick="myOnclick"
+        android:orientation="vertical"
+        android:paddingBottom="2.0dip" >
+
+        <ImageView
+            android:id="@+id/find_img"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:src="@drawable/popup_imgpicker_style" />
+
+        <TextView
+            android:id="@+id/searchText"
+            style="@style/question_popup_textview_text_style"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center"
+            android:text="照片" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@id/popup_handwrite_lay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/find"
+        android:layout_weight="0.25"
+        android:onClick="myOnclick"
+        android:orientation="vertical"
+        android:paddingBottom="2.0dip" >
+
+        <ImageView
+            android:id="@+id/account_img"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:src="@drawable/popup_handwrite_style" />
+
+        <TextView
+            android:id="@+id/shopcarText"
+            style="@style/question_popup_textview_text_style"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center"
+            android:text="手写" />
+    </LinearLayout>
+
+</LinearLayout>

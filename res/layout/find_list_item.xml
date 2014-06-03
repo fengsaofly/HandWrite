@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" 
+    android:layout_margin="5dp">
+    
+	<ImageView
+	    android:id="@+id/find_icon"
+	    android:layout_width="50dp"
+	    android:layout_height="50dp"
+	    android:scaleType="fitCenter"
+	    android:layout_marginRight="5dp"
+	    android:layout_marginLeft="5dp"
+	     />
+	<TextView 
+	    android:id="@+id/find_user"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:text="肖逸飞"
+	    android:textStyle="bold"
+	   android:textColor="#4ab7c4"
+	    android:layout_toRightOf="@id/find_icon"/>
+	<TextView 
+	    android:layout_below="@id/find_user" 
+	    android:id="@+id/find_content"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:text="勿忘初心，方得始衷，如果可以 ，我愿意从头再来。。。。"
+	    
+	    android:layout_toRightOf="@id/find_icon"/>
+
+	<ImageView
+	    android:visibility="visible"
+	    android:id="@+id/find_upload_img"
+	    android:layout_width="100dp"
+	    android:layout_height="130dp"
+	    android:src="@drawable/friend_upload_img_eg" 
+	    android:layout_below="@id/find_content"
+	    android:layout_toRightOf="@id/find_icon"
+	    android:layout_margin="5dp"
+	    android:scaleType="fitXY"/>
+	<TextView 
+	    android:id="@+id/find_publish_time"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:text="2014-4-4 18:02"
+	    android:layout_below="@id/find_upload_img"
+	    android:layout_alignParentRight="true"
+	    android:layout_margin="5dp"/>
+	
+</RelativeLayout>

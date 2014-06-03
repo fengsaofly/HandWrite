@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item name="list_item_name" type="id"/>
+    <item name="list_item_description" type="id"/>
+    <item name="list_item_icon" type="id"/>
+    <item name="accountTop" type="id"/>
+    <item name="top_left_back_btn" type="id"/>
+    <item name="gallery" type="id"/>
+    <item name="publish_state_title" type="id"/>
+    <item name="publish_state_text_content" type="id"/>
+    <item name="popup_recode_lay" type="id"/>
+    <item name="popup_camera_lay" type="id"/>
+    <item name="popup_imgpicker_lay" type="id"/>
+    <item name="popup_handwrite_lay" type="id"/>
+    <item name="select_grade_btn" type="id"/>
+    <item name="select_subject_btn" type="id"/>
+    <item name="distance_textview" type="id"/>
+    <item name="alert" type="id"/>
+    <item name="gridview" type="id"/>
+    <item name="record_pressbtn_lay" type="id"/>
+    <item name="rcChat_popup" type="id"/>
+    <item name="question_add_showrecord_imgview" type="id"/>
+    <item name="volume" type="id"/>
+    <item name="record_pressbtn" type="id"/>
+    
+
+    
+    <item name="middle_lay" type="id"/>
+    <item name="top_lay" type="id"/>
+    <item name="grid_view" type="id"/>
+    <item name="chat_record_btn" type="id"/>
+    <item name="chat_input_field" type="id"/>
+    <item name="chat_add_btn" type="id"/>
+</resources>

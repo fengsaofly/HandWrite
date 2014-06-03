@@ -1,0 +1,17 @@
+<resources>
+
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    
+    
+    <dimen name="com_tenpay_form_side_padding">10.0dip</dimen>
+    <dimen name="com_tenpay_form_edit_height">45.0dip</dimen>
+    <dimen name="com_tenpay_form_submit_btn_height">40.0dip</dimen>
+    <dimen name="com_tenpay_form_submit_btn_margin">10.0dip</dimen>
+    <dimen name="user_title_size">16.0sp</dimen>
+    <dimen name="user_input_size">16.0sp</dimen>
+    <dimen name="top_tab_button_size">14.0sp</dimen>
+    <dimen name="padingleft">2.0dip</dimen>
+
+</resources>
