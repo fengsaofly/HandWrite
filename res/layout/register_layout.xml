@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/TextColorWhite" >
+    <FrameLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/nav_backing_shadow" >
+
+        <TextView
+            android:id="@+id/buttonBack"
+            style="@style/left_back_TextView"
+            android:text="返回" 
+            android:onClick="myOnclick"
+            android:clickable="true"
+            android:layout_gravity="left"
+            android:layout_marginLeft="5dp"
+            android:layout_marginBottom="12dp"
+            android:layout_height="30dp"
+           android:layout_width="50dp"
+         android:layout_centerVertical="true"
+             />
+		<TextView
+            
+          	android:textColor="#000000"
+            android:text="注册" 
+            android:textSize="20sp"
+            android:layout_gravity="center"
+            android:layout_marginLeft="5dp"
+           android:layout_marginBottom="3dp"
+            android:layout_height="30dp"
+           android:layout_width="50dp"
+         android:layout_centerVertical="true"
+         android:gravity="center"
+         android:textStyle="bold"
+             />
+         
+
+    </FrameLayout>
+    <LinearLayout 
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/iconLayout"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        >
+    <ImageView 
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_weight="0.5"
+        android:src="@drawable/logo"
+        android:id="@+id/iconImage"
+        android:layout_gravity="center_vertical"
+        />
+    
+    <Button 
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.5"
+        android:text="选择头像"
+        android:onClick="myOnclick"
+        android:id="@+id/selectIconButton"
+        android:textSize="20.0sp"
+         android:textColor="#ffffffff"
+          android:gravity="center"
+          android:background="@anim/login_button_bg"     
+        android:layout_marginTop="10dp"
+         android:layout_marginLeft="10.0dip"
+          android:layout_marginRight="10.0dip"
+         
+        />
+    
+    </LinearLayout>
+	<RelativeLayout android:id="@+id/userRegisterLay" android:background="@anim/shape_rounded_rectangle" android:paddingBottom="10.0dip" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:layout_marginTop="20.0dip" android:layout_marginRight="10.0dip">
+            <TextView android:textSize="@dimen/user_title_size" android:textColor="#ff000000" android:id="@+id/email" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:layout_marginTop="10.0dip" android:text="邮        箱:" />
+            <AutoCompleteTextView android:textSize="@dimen/user_input_size" android:textColor="#ff000000" android:textColorHint="#ffcccccc" android:id="@+id/emailValue" android:background="#ffffffff" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:layout_marginTop="10.0dip" android:layout_marginRight="2.0dip" android:text="" android:hint="邮箱地址" android:singleLine="true" android:maxLength="50" android:layout_toRightOf="@id/email" android:inputType="textEmailAddress" android:dropDownWidth="222.0dip" android:imeOptions="actionNext" android:dropDownHorizontalOffset="-5.0dip" android:dropDownVerticalOffset="2.0dip" style="@style/juMeiAutoCompleteTextView" />
+            <ImageView android:id="@+id/line1" android:background="@drawable/line" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="10.0dip" android:layout_below="@id/emailValue" />
+            <TextView android:textSize="@dimen/user_title_size" android:textColor="#ff000000" android:id="@id/userName" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:layout_marginTop="10.0dip" android:text="用  户  名:" android:layout_below="@id/line1" />
+            <EditText android:textSize="@dimen/user_input_size" android:textColor="#ff000000" android:textColorHint="#ffcccccc" android:id="@+id/userNameValue" android:background="#ffffffff" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:layout_marginTop="10.0dip" android:layout_marginRight="2.0dip" android:text="" android:hint="4-12位" android:singleLine="true" android:maxLength="12" android:layout_toRightOf="@id/userName" android:layout_below="@id/line1" android:inputType="textVisiblePassword" android:imeOptions="actionNext" />
+            <ImageView android:id="@+id/line2" android:background="@drawable/line" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="10.0dip" android:layout_below="@id/userNameValue" />
+            <TextView android:textSize="@dimen/user_title_size" android:textColor="#ff000000" android:id="@+id/userPass1" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:layout_marginTop="10.0dip" android:text="密        码:" android:layout_below="@id/line2" />
+            <EditText android:textSize="@dimen/user_input_size" android:textColor="#ff000000" android:textColorHint="#ffcccccc" android:id="@+id/userPassValue1" android:background="#ffffffff" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:layout_marginTop="10.0dip" android:layout_marginRight="2.0dip" android:text="" android:hint="4-12位" android:password="true" android:singleLine="true" android:maxLength="12" android:layout_toRightOf="@id/userPass1" android:layout_below="@id/line2" android:imeOptions="actionNext" />
+            <TextView android:id="@+id/edit_delete_email" android:background="@anim/edit_delete_bg" android:visibility="invisible" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginRight="15.0dip" android:layout_alignRight="@id/emailValue" android:layout_alignBottom="@id/emailValue" />
+            <TextView android:id="@+id/edit_delete_username" android:background="@anim/edit_delete_bg" android:visibility="invisible" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignLeft="@id/edit_delete_email" android:layout_alignBottom="@id/userNameValue" />
+            <TextView android:id="@+id/edit_delete_pass" android:background="@anim/edit_delete_bg" android:visibility="invisible" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignLeft="@id/edit_delete_username" android:layout_alignBottom="@id/userPassValue1" />
+        </RelativeLayout>
+        
+	<TextView android:textSize="20.0sp"  android:onClick="myOnclick" android:clickable="true" android:textColor="#ffffffff" android:gravity="center" android:id="@+id/registerButton" android:background="@anim/login_button_bg" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="10dp" android:layout_marginLeft="10.0dip" android:layout_marginRight="10.0dip" android:text="立即注册" android:layout_below="@id/belowLoginlay"/>
+</LinearLayout>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+  
+ <!--    <item
+        android:id="@+id/home_add_btn"
+        android:orderInCategory="0"
+        android:showAsAction="ifRoom|withText"
+        android:icon="@drawable/add_btn_normal"/>
+
+    <item
+        android:id="@+id/home_search_btn"
+        android:orderInCategory="1"
+        android:showAsAction="ifRoom|withText"
+        android:icon="@drawable/add_btn_normal"/>
+
+    <item
+        android:id="@+id/home_more_btn"
+        android:orderInCategory="2"
+        android:showAsAction="ifRoom|withText"
+        android:icon="@drawable/add_btn_normal"/>
+     -->
+    
+ 
+      <item  
+        android:id="@+id/home_search_btn"  
+        android:actionLayout="@layout/list_item"  
+        android:actionViewClass="android.widget.SearchView"  
+        android:icon="@drawable/actionbar_search"  
+        android:showAsAction="ifRoom|collapseActionView"  
+        android:title="@string/app_name"/>  
+    <item  
+        android:id="@+id/home_add_btn"  
+        android:showAsAction="ifRoom"  
+        android:icon="@drawable/actionbar_add"
+        android:title="添加">
+    </item>  
+    <item  
+        android:id="@+id/home_settings_btn"  
+        android:showAsAction="ifRoom|withText"  
+        android:icon="@drawable/actionbar_settings"
+        android:title="设置">
+    </item>  
+   
+
+
+</menu>

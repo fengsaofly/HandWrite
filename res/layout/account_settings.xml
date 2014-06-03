@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:background="#ffffffff" android:layout_width="fill_parent" android:layout_height="fill_parent"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+   <FrameLayout android:layout_gravity="center_horizontal" android:id="@id/accountTop"  android:background="@drawable/nav_backing_shadow" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_alignParentTop="true">
+        <TextView android:clickable="true" android:onClick="myOnclick" android:id="@id/top_left_back_btn" android:gravity="center" android:paddingBottom="5dp" android:paddingRight="7dp" android:layout_marginBottom="12dp" style="@style/left_back_TextView" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="返回" android:visibility="visible" />
+        <TextView android:textSize="20.0sp" android:textStyle="bold" android:textColor="#ff333333" android:layout_marginBottom="1dp" android:layout_gravity="center" android:id="@id/title" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="我的设置" />
+       
+    </FrameLayout>
+    <ScrollView android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_below="@id/accountTop">
+        <RelativeLayout android:paddingBottom="50.0dip" android:layout_width="fill_parent" android:layout_height="wrap_content">
+            
+            <RelativeLayout android:id="@+id/accountLay" android:background="@anim/shape_rounded_rectangle" android:paddingBottom="10.0dip" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:layout_marginTop="11.0dip" android:layout_marginRight="10.0dip">
+                <ImageView android:id="@+id/photo" android:background="@drawable/actionbar_icon" android:layout_width="64.0dip" android:layout_height="64.0dip" android:layout_marginLeft="25.0dip" android:layout_centerVertical="true" />
+                <TextView android:textSize="12.0sp" android:textStyle="bold" android:textColor="#ff333333" android:id="@+id/userName" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="29.0dip" android:layout_marginTop="10.0dip" android:text="" android:layout_toRightOf="@id/photo" />
+                <TextView android:textSize="16.0sp" android:textStyle="bold" android:textColor="#ff333333" android:id="@+id/uid" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="29.0dip" android:layout_marginTop="5.0dip" android:text="(UID:)" android:layout_toRightOf="@id/photo" android:layout_below="@id/userName" />
+                <TextView android:textSize="12.0sp" android:textStyle="bold" android:textColor="#ff707070" android:id="@+id/member" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="29.0dip" android:layout_marginTop="5.0dip" android:text="这货暂时还没有个性签名：" android:layout_toRightOf="@id/photo" android:layout_below="@id/uid" />
+                
+            </RelativeLayout>
+            
+            <RelativeLayout 
+                
+                android:layout_below="@id/accountLay" android:id="@+id/myAcccountLoginAndRegistLayout" android:background="@anim/shape_rounded_rectangle" android:visibility="visible" android:layout_width="fill_parent" android:layout_height="60.0dip" android:layout_marginLeft="5.0dip" android:layout_marginRight="5.0dip" android:layout_marginTop="5.0dip">
+                <TextView android:id="@+id/login_user_head" android:background="@drawable/home_bottom_onehead" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="5.0dip" android:layout_centerVertical="true" />
+                <TextView android:textSize="17.0dip" android:textColor="#ff000000" android:id="@+id/text_login_false" android:padding="10.0dip" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="5.0dip" android:text="还没有登录" android:layout_toRightOf="@id/login_user_head" android:layout_centerVertical="true" />
+                <Button android:onClick="myOnclick" android:textColor="#ffffffff" android:id="@+id/regist_btn" android:background="@anim/public_goto_bg" android:layout_width="50dip" android:layout_height="30dip" android:layout_marginRight="5.0dip" android:text="注册" android:layout_alignParentRight="true" android:layout_centerVertical="true" />
+                <Button android:onClick="myOnclick" android:textColor="#ffffffff" android:id="@+id/login_btn" android:background="@anim/public_goto_bg" android:layout_width="50dip" android:layout_height="30dip" android:layout_marginRight="5.0dip" android:text="登录" android:layout_toLeftOf="@id/regist_btn" android:layout_centerVertical="true" />
+            </RelativeLayout>
+            
+            <RelativeLayout
+                
+                android:onClick="myOnclick"
+                    android:clickable="true" 
+                android:id="@+id/accountSetting" android:background="@anim/shape_rounded_rectangle" android:paddingBottom="1.0dip" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:layout_marginTop="9.0dip" android:layout_marginRight="10.0dip" android:layout_below="@+id/myAcccountLoginAndRegistLayout">
+                <RelativeLayout android:id="@+id/laySet"  android:layout_width="fill_parent" android:layout_height="35.0dip" android:layout_marginLeft="1.0dip" android:layout_marginRight="1.0dip" >
+                    <TextView android:textSize="13.0sp" android:textStyle="bold" android:textColor="#ff333333" android:id="@+id/set" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="18.0dip" android:text="设置" android:layout_centerVertical="true" />
+                    <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginRight="18.0dip" android:src="@drawable/triangle" android:layout_alignParentRight="true" android:layout_centerVertical="true" />
+                </RelativeLayout>
+        	
+                	<ImageView android:id="@+id/line5" android:layout_below="@id/laySet"  android:background="@drawable/line" android:layout_width="fill_parent" android:layout_height="wrap_content" />
+               	
+              	<RelativeLayout
+              	    android:layout_width="fill_parent"
+                    android:onClick="myOnclick"
+                    android:clickable="true"
+              	    android:id="@+id/layLogout"
+              	    android:layout_below="@id/line5"
+              	    android:layout_height="35.0dip" android:layout_marginLeft="1.0dip" android:layout_marginRight="1.0dip"
+              	    >
+                   
+              	     <TextView 
+              	         android:visibility="visible" android:clickable="true" android:textSize="13.0sp" android:textStyle="bold" android:textColor="#ff333333" android:id="@+id/exit" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="18.0dip" android:text="退出登录" android:layout_centerVertical="true" />
+                    <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginRight="18.0dip" android:src="@drawable/triangle" android:layout_alignParentRight="true" android:layout_centerVertical="true" />
+              	    
+              	</RelativeLayout>
+            </RelativeLayout>
+            
+        </RelativeLayout>
+    </ScrollView>
+</RelativeLayout>

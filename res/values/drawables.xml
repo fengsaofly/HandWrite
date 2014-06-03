@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item type="drawable" name="myjumei_normal">#00ffffff</item>
+    <item type="drawable" name="myjumei_normal_focus">#fff8648c</item>
+    <item type="drawable" name="myjumei_selected">#fffdd0de</item>
+    <item type="drawable" name="transparent">#ffffffff</item>
+    <item type="drawable" name="listselected">#fffbd0de</item>
+    <item type="drawable" name="tag">#ffffffff</item>
+</resources>

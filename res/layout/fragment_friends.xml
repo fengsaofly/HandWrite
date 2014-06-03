@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+<!--  
+    <FrameLayout
+        android:id="@+id/friend_list_lay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:visibility="visible" >
+
+         </FrameLayout>
+-->
+        
+  
+   <!-- <ListView android:id="@+id/multiListView" 
+       android:visibility="visible"
+        android:fadingEdge="none"
+         android:descendantFocusability="blocksDescendants"
+          android:layout_width="fill_parent" 
+          android:layout_height="0dp" 
+          android:layout_weight="0.4"
+          android:cacheColorHint="#00000000" 
+          android:divider="#ffb4b4b4" 
+          android:dividerHeight="1.0px"  />
+ -->
+    
+   
+   <ListView android:id="@+id/friendListView" 
+       android:visibility="visible"
+        android:fadingEdge="none"
+         android:descendantFocusability="blocksDescendants"
+          android:layout_width="fill_parent" 
+          android:layout_height="0dp" 
+          android:layout_weight="0.6"
+          android:cacheColorHint="#00000000" 
+          android:divider="#ffb4b4b4" 
+          android:dividerHeight="1.0px"  />
+</LinearLayout>

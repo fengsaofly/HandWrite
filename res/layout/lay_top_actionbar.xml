@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    
+	<RelativeLayout
+        android:id="@+id/home_actionbar_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="45dp"
+        android:background="@drawable/title_bar"
+        android:gravity="center_vertical" >
+
+        <TextView
+            android:id="@+id/home_logo"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_centerVertical="true"
+            android:background="@drawable/logo"
+            android:onClick="chat_back"
+            
+            android:textColor="#fff"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/home_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/home_logo"
+            android:gravity="left|center_vertical"
+            android:layout_centerVertical="true"
+            android:text="破题高手"
+            android:textColor="@color/bg_color"
+            android:textSize="18sp" />
+
+          <ImageButton
+            android:id="@+id/home_settings_btn"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="5dp"
+            android:background="@drawable/actionbar_more_icon"
+             />
+            <ImageButton
+            android:layout_toLeftOf="@id/home_settings_btn"    
+            android:id="@+id/home_add_btn"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+          
+            android:layout_centerVertical="true"
+     
+            android:background="@drawable/search"
+             />
+              <ImageButton
+            android:id="@+id/home_more_btn"
+            android:layout_toLeftOf="@id/home_add_btn"    
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+          	
+            android:layout_centerVertical="true"
+            
+            android:background="@drawable/actionbar_add_icon"
+             />
+    </RelativeLayout> 
+</LinearLayout>

@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity" 
+    android:background="@color/TextColorWhite">
+
+    <FrameLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/nav_backing_shadow" >
+
+        <TextView   android:clickable="true" android:onClick="myOnclick" android:id="@id/top_left_back_btn"  android:gravity="center" android:paddingBottom="5dp" android:paddingRight="7dp" style="@style/left_back_TextView" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="返回" android:visibility="visible" />
+		<TextView
+            
+          	android:textColor="#000000"
+            android:text="登录" 
+            android:textSize="20sp"
+            android:layout_gravity="center"
+            android:layout_marginLeft="5dp"
+           android:layout_marginBottom="3dp"
+            android:layout_height="30dp"
+           android:layout_width="50dp"
+         android:layout_centerVertical="true"
+         android:gravity="center"
+         android:textStyle="bold"
+             />
+         <TextView
+             android:id="@+id/register_btn"
+             android:layout_width="40dp"
+             android:layout_height="25dp"
+             android:layout_marginRight="5.0dip"
+            android:gravity="center"
+             android:background="@anim/public_goto_bg"
+         android:layout_marginBottom="12dp"
+         android:layout_marginTop="5dp"
+             android:onClick="myOnclick"
+             
+             android:text="注册"
+             android:clickable="true"
+             android:textColor="#ffffffff" 
+             android:layout_gravity="right"/>
+
+    </FrameLayout>
+
+  
+
+    <RelativeLayout
+        android:id="@+id/userLoginLay"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10.0dip"
+        android:layout_marginRight="10.0dip"
+        android:layout_marginTop="20.0dip"
+        android:background="@anim/shape_rounded_rectangle"
+        android:paddingBottom="10.0dip" >
+
+        <TextView
+            android:id="@id/userName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10.0dip"
+            android:layout_marginTop="10.0dip"
+            android:text="账号："
+            android:textColor="#ff000000"
+            android:textSize="@dimen/user_title_size" />
+
+        <AutoCompleteTextView
+            android:id="@+id/loginUserNameValue"
+            style="@style/juMeiAutoCompleteTextView"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10.0dip"
+            android:layout_marginRight="2.0dip"
+            android:layout_marginTop="10.0dip"
+            android:layout_toRightOf="@id/userName"
+            android:background="#ffffffff"
+            android:dropDownHorizontalOffset="-5.0dip"
+            android:dropDownVerticalOffset="2.0dip"
+            android:dropDownWidth="232.0dip"
+            android:hint="邮箱地址或用户名"
+            android:imeOptions="actionNext"
+            android:inputType="textEmailAddress"
+            android:maxLength="50"
+            android:singleLine="true"
+            android:textColor="#ff000000"
+            android:textColorHint="#ffcccccc"
+            android:textSize="@dimen/user_input_size" />
+
+        <ImageView
+            android:id="@+id/line"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/loginUserNameValue"
+            android:layout_marginTop="10.0dip"
+            android:background="@drawable/line" />
+
+        <TextView
+            android:id="@+id/userPass"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/line"
+            android:layout_marginLeft="10.0dip"
+            android:layout_marginTop="10.0dip"
+            android:text="密码："
+            android:textColor="#ff000000"
+            android:textSize="@dimen/user_title_size" />
+
+        <EditText
+            android:id="@+id/userPassValue"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/line"
+            android:layout_marginLeft="10.0dip"
+            android:layout_marginRight="2.0dip"
+            android:layout_marginTop="10.0dip"
+            android:layout_toRightOf="@id/userPass"
+            android:background="#ffffffff"
+            android:hint="请输入密码"
+            android:imeOptions="actionNone"
+            android:maxLength="50"
+            android:password="true"
+            android:singleLine="true"
+            android:textColor="#ff000000"
+            android:textColorHint="#ffcccccc"
+            android:textSize="@dimen/user_input_size" />
+
+        <TextView
+            android:id="@+id/login_edit_delete_username"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/loginUserNameValue"
+            android:layout_alignRight="@id/loginUserNameValue"
+            android:layout_marginRight="10.0dip"
+            android:background="@anim/edit_delete_bg"
+            android:visibility="invisible" />
+
+        <TextView
+            android:id="@+id/login_edit_delete_pass"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/userPassValue"
+            android:layout_alignRight="@id/userPassValue"
+            android:layout_marginRight="10.0dip"
+            android:background="@anim/edit_delete_bg"
+            android:visibility="invisible" />
+    </RelativeLayout>
+    
+    <RelativeLayout android:id="@+id/login_view" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_below="@id/userLoginLay">
+                         <RelativeLayout android:id="@+id/belowLoginlay" android:layout_width="wrap_content" android:layout_height="wrap_content">
+                            <CheckBox   android:textSize="16.0sp" android:textColor="#ff000000" android:id="@+id/login_show_password" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:button="@drawable/jumeicheckboxbutton" android:text="显示密码" android:layout_centerVertical="true" />
+                            <TextView android:textSize="16.0sp" android:textColor="#ff999999" android:id="@+id/tv_findpassword" android:background="@drawable/forget_pwd_selector" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentTop="true" android:layout_alignParentRight="true" />
+                        </RelativeLayout>
+                        <TextView android:onClick="myOnclick" android:clickable="true" android:textSize="20.0sp" android:textColor="#ffffffff" android:gravity="center" android:id="@+id/loginButton" android:background="@anim/login_button_bg" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:layout_marginRight="10.0dip" android:text="立即登录" android:layout_below="@id/belowLoginlay"/>
+                       
+    </RelativeLayout>
+
+</LinearLayout>

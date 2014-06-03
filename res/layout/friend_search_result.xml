@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#EFEFF4" >
+    <RelativeLayout android:layout_width="fill_parent" android:layout_height="wrap_content" android:background="@color/TextColorWhite">
+       <!--  <ImageView android:src="@drawable/friend_icon_sample" android:layout_height="50dp" android:layout_width="50dp"/>
+        < -->
+        <include layout="@layout/friend_item"/>
+    </RelativeLayout>
+	
+    <LinearLayout android:orientation="vertical" android:layout_marginTop="20dp" android:layout_width="fill_parent" android:layout_height="wrap_content"  android:background="@color/TextColorWhite">
+        <RelativeLayout  android:gravity="center_vertical" android:padding="20dp" android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
+
+	        <TextView android:id="@id/tag_zone" android:gravity="left" style="@style/text_style_big_gray" android:layout_width="100dp" android:layout_height="wrap_content" android:text="地区"    android:layout_centerVertical="true" />
+	        <TextView android:text="四川 成都"  style="@style/DefaultTextStyle" android:layout_toRightOf="@id/tag_zone" android:layout_width="wrap_content"  android:layout_height="wrap_content" />
+	        
+	    </RelativeLayout>
+	    <ImageView android:background="@drawable/line" android:layout_width="fill_parent" android:layout_height="wrap_content"/>
+	    <RelativeLayout  android:gravity="center_vertical" android:padding="20dp" android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
+
+	        <TextView android:id="@id/tag_sign" style="@style/text_style_big_gray" android:gravity="left" android:layout_width="100dp" android:layout_height="wrap_content" android:text="个性签名"    android:layout_centerVertical="true"      />
+	        <TextView android:text="这是我的个性签名" style="@style/DefaultTextStyle" android:layout_toRightOf="@id/tag_sign" android:layout_width="wrap_content"  android:layout_height="wrap_content" />
+	        
+	    </RelativeLayout>
+    </LinearLayout>
+    
+    
+    <TextView android:id="@+id/search_result_add" android:layout_marginTop="10dp" android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="添加好友" style="@style/text_style_big_black" />
+	<TextView android:id="@+id/search_result_complain" android:layout_marginTop="10dp" android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="投诉" style="@style/text_style_big_black" />
+    
+</LinearLayout>

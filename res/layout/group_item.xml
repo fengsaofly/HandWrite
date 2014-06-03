@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:id="@+id/scan_item_layout"  android:background="#ffffff" android:layout_width="fill_parent" android:layout_height="wrap_content"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    
+    
+        <ImageView 
+            android:layout_marginLeft="30dp"
+            android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/group_icon"
+                android:id="@+id/group_icon"
+            
+            />
+
+            <TextView
+                android:layout_toRightOf="@id/group_icon"
+                android:id="@+id/group_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10.0dip"
+                android:layout_marginRight="10.0dip"
+                android:layout_marginTop="10.0dip"
+               android:textSize="30sp"
+                android:singleLine="true"
+                android:text="Group"
+                android:textColor="#ff333333"
+                
+                
+                android:textStyle="bold" />
+            
+            
+          
+            
+          
+       
+
+</RelativeLayout>
