@@ -92,3 +92,4 @@
         
 	<TextView android:textSize="20.0sp"  android:onClick="myOnclick" android:clickable="true" android:textColor="#ffffffff" android:gravity="center" android:id="@+id/registerButton" android:background="@anim/login_button_bg" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="10dp" android:layout_marginLeft="10.0dip" android:layout_marginRight="10.0dip" android:text="立即注册" android:layout_below="@id/belowLoginlay"/>
 </LinearLayout>
+

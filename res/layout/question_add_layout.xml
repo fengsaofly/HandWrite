@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/parent"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" 
-    android:background="#F0F0F6">
-    
-	<RelativeLayout
+    android:background="#F0F0F6"
+    android:orientation="vertical" >
+
+    <RelativeLayout
         android:id="@+id/rl_layout"
         android:layout_width="fill_parent"
         android:layout_height="45dp"
@@ -18,96 +19,180 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:background="@drawable/title_btn_back"
-            
-            android:text="取消"
             android:onClick="myOnclick"
+            android:text="取消"
             android:textColor="#fff"
             android:textSize="14sp" />
-
-
 
         <TextView
             android:id="@+id/find_send"
             android:layout_width="67dp"
-       		android:textColor="#FFFFFF"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="5dp"
             android:background="@drawable/title_btn_right"
-            android:text="发送"
-            android:onClick="myOnclick"
             android:clickable="true"
             android:gravity="center"
-           
-            />
-        
+            android:onClick="myOnclick"
+            android:text="发送"
+            android:textColor="#FFFFFF" />
     </RelativeLayout>
-       
-        	<EditText
-        	    android:layout_below="@id/rl_layout"
-        	    style="@style/question_add_textview_text_style"
-		        android:gravity="center_vertical"
-		        android:id="@+id/cq_add_title"
-		        android:layout_width="fill_parent"
-		        android:layout_height="35dp"
-		     	android:layout_margin="5dp"
-		        android:hint="标题..."
-		        android:padding="4dp"
-		        android:background="@anim/shape_rounded_rectangle"
-		       
-		        android:drawableStart="@drawable/question_add_edit_start_icon"/>
-        
-    <LinearLayout android:id="@+id/question_add_gradeAndSub_lay" android:layout_marginLeft="6dp" android:layout_below="@id/cq_add_title" android:layout_width="fill_parent" android:layout_height="wrap_content" android:orientation="horizontal">
-		<TextView style="@style/btn_item_text_style" android:id="@id/select_grade_btn" android:gravity="center" android:text="年级" android:background="@drawable/grade_bg"  android:layout_width="wrap_content" android:layout_height="wrap_content"/>
-		<TextView style="@style/btn_item_text_style"  android:id="@id/select_subject_btn" android:layout_marginLeft="3dp" android:gravity="center" android:text="科目" android:background="@drawable/subject_bg"  android:layout_width="wrap_content" android:layout_height="wrap_content"/>
-	</LinearLayout>
-	<FrameLayout android:id="@+id/q_dscp_lay" android:layout_below="@id/question_add_gradeAndSub_lay" android:layout_margin="5dp"  android:layout_width="fill_parent" android:layout_height="150dp" android:background="@anim/shape_rounded_rectangle">
-	        <EditText
-        android:gravity="left|top"
-        android:id="@+id/publish_state_text_content"
+
+    <EditText
+        android:id="@+id/cq_add_title"
+        style="@style/question_add_textview_text_style"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:background="@null"
-        android:padding="4dp"
-        android:hint="问题描述..."
+        android:layout_height="35dp"
+        android:layout_below="@id/rl_layout"
+        android:layout_margin="5dp"
+        android:background="@anim/shape_rounded_rectangle"
         android:drawableStart="@drawable/question_add_edit_start_icon"
-         style="@style/question_add_textview_text_style"
-        android:textAlignment="textStart" />
-	        
-	     <ImageView
-        android:clickable="true"
-        android:onClick="myOnclick"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/publish_state_add_imgView"
-        android:src="@drawable/question_add_add_btn" 
-        
-        android:layout_gravity="right|bottom"
-        android:layout_margin="10dp"/>
-	    
-	</FrameLayout>
+        android:gravity="center_vertical"
+        android:hint="标题..."
+        android:padding="4dp" />
 
-
-    <Gallery
-        android:layout_below="@id/q_dscp_lay"
+    <LinearLayout
+        android:id="@+id/question_add_gradeAndSub_lay"
         android:layout_width="fill_parent"
-        android:layout_margin="10dp"
-        android:layout_height="70dp" 
-        android:id="@id/gallery">
-	</Gallery>
-	<LinearLayout android:id="@+id/yourVocie_lay"  android:visibility="invisible" android:layout_marginLeft="5dp" android:gravity="center_vertical" android:layout_below="@id/gallery" android:layout_width="fill_parent" android:layout_height="wrap_content">
-	    <TextView style="@style/chat_text_name_style" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="你的录音：" />
-	    <RelativeLayout android:id="@+id/play_lay" android:clickable="true" android:gravity="center_vertical" android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="@drawable/my_chatbox_bg">
+        android:layout_height="wrap_content"
+        android:layout_below="@id/cq_add_title"
+        android:layout_marginLeft="6dp"
+        android:orientation="horizontal" >
 
-	        <ImageView  android:layout_marginLeft="10dp" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/question_add_record_icon_default" android:id="@id/question_add_showrecord_imgview"/>
-	        <TextView android:id="@id/volume" android:layout_centerInParent="true" android:layout_marginLeft="10dp"  android:layout_toRightOf="@id/question_add_showrecord_imgview" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="10''" style="@style/show_record_time"/>
-	    </RelativeLayout>
-	  
-	</LinearLayout>
-	
-    <include android:visibility="gone" android:id="@id/rcChat_popup" layout="@layout/voice_rcd_hint_window"/>
-   <RelativeLayout android:visibility="invisible" android:id="@id/record_pressbtn_lay" android:gravity="center" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_alignParentBottom="true" android:background="@drawable/chat_input_lay_bg">
-    <Button android:layout_margin="10dp" android:id="@id/record_pressbtn" android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="按住说话" style="@style/DefaultTextStyle" android:background="@drawable/chat_textview_bg" />
-   </RelativeLayout>
+        <TextView
+            android:id="@id/select_grade_btn"
+            style="@style/btn_item_text_style"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/grade_bg"
+            android:clickable="true"
+            android:gravity="center"
+            android:onClick="myOnclick"
+            android:text="年级" />
+
+        <TextView
+            android:id="@id/select_subject_btn"
+            style="@style/btn_item_text_style"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="3dp"
+            android:background="@drawable/subject_bg"
+            android:clickable="true"
+            android:gravity="center"
+            android:onClick="myOnclick"
+            android:text="科目" />
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/q_dscp_lay"
+        android:layout_width="fill_parent"
+        android:layout_height="150dp"
+        android:layout_below="@id/question_add_gradeAndSub_lay"
+        android:layout_margin="5dp"
+        android:background="@anim/shape_rounded_rectangle" >
+
+        <EditText
+            android:id="@+id/publish_state_text_content"
+            style="@style/question_add_textview_text_style"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:background="@null"
+            android:drawableStart="@drawable/question_add_edit_start_icon"
+            android:gravity="left|top"
+            android:hint="问题描述..."
+            android:padding="4dp"
+            android:textAlignment="textStart" />
+
+        <ImageView
+            android:id="@+id/publish_state_add_imgView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|bottom"
+            android:layout_margin="10dp"
+            android:clickable="true"
+            android:onClick="myOnclick"
+            android:src="@drawable/question_add_add_btn" />
+    </FrameLayout>
+
+    <GridView
+        android:id="@+id/thumbnails"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/q_dscp_lay"
+        android:layout_margin="5dp"
+        android:columnWidth="50dp"
+        android:horizontalSpacing="2dp"
+        android:numColumns="4"
+        android:padding="5dp"
+        android:stretchMode="columnWidth"
+        android:verticalSpacing="2dp" >
+    </GridView>
+
+    <LinearLayout
+        android:id="@+id/yourVocie_lay"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/thumbnails"
+        android:layout_marginLeft="5dp"
+        android:gravity="center_vertical"
+        android:visibility="invisible" >
+
+        <TextView
+            style="@style/chat_text_name_style"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="你的录音：" />
+
+        <RelativeLayout
+            android:id="@+id/play_lay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/my_chatbox_bg"
+            android:clickable="true"
+            android:gravity="center_vertical" >
+
+            <ImageView
+                android:id="@id/question_add_showrecord_imgview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:src="@drawable/question_add_record_icon_default" />
+
+            <TextView
+                android:id="@id/volume"
+                style="@style/show_record_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_marginLeft="10dp"
+                android:layout_toRightOf="@id/question_add_showrecord_imgview"
+                android:text="10&apos;&apos;" />
+        </RelativeLayout>
+    </LinearLayout>
+
+    <include
+        android:id="@id/rcChat_popup"
+        layout="@layout/voice_rcd_hint_window"
+        android:visibility="gone" />
+
+    <RelativeLayout
+        android:id="@id/record_pressbtn_lay"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/chat_input_lay_bg"
+        android:gravity="center"
+        android:visibility="invisible" >
+
+        <Button
+            android:id="@id/record_pressbtn"
+            style="@style/DefaultTextStyle"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:background="@drawable/chat_textview_bg"
+            android:text="按住说话" />
+    </RelativeLayout>
+
 </RelativeLayout>

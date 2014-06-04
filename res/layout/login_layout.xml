@@ -3,9 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/TextColorWhite"
     android:orientation="vertical"
-    tools:context=".MainActivity" 
-    android:background="@color/TextColorWhite">
+    tools:context=".MainActivity" >
 
     <FrameLayout
         android:layout_width="fill_parent"
@@ -14,40 +14,47 @@
         android:layout_gravity="center_horizontal"
         android:background="@drawable/nav_backing_shadow" >
 
-        <TextView   android:clickable="true" android:onClick="myOnclick" android:id="@id/top_left_back_btn"  android:gravity="center" android:paddingBottom="5dp" android:paddingRight="7dp" style="@style/left_back_TextView" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="返回" android:visibility="visible" />
-		<TextView
-            
-          	android:textColor="#000000"
-            android:text="登录" 
-            android:textSize="20sp"
-            android:layout_gravity="center"
-            android:layout_marginLeft="5dp"
-           android:layout_marginBottom="3dp"
-            android:layout_height="30dp"
-           android:layout_width="50dp"
-         android:layout_centerVertical="true"
-         android:gravity="center"
-         android:textStyle="bold"
-             />
-         <TextView
-             android:id="@+id/register_btn"
-             android:layout_width="40dp"
-             android:layout_height="25dp"
-             android:layout_marginRight="5.0dip"
+        <TextView
+            android:id="@id/top_left_back_btn"
+            style="@style/left_back_TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
             android:gravity="center"
-             android:background="@anim/public_goto_bg"
-         android:layout_marginBottom="12dp"
-         android:layout_marginTop="5dp"
-             android:onClick="myOnclick"
-             
-             android:text="注册"
-             android:clickable="true"
-             android:textColor="#ffffffff" 
-             android:layout_gravity="right"/>
+            android:onClick="myOnclick"
+            android:paddingBottom="5dp"
+            android:paddingRight="7dp"
+            android:text="返回"
+            android:visibility="visible" />
 
+        <TextView
+            android:layout_width="50dp"
+            android:layout_height="30dp"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center"
+            android:layout_marginBottom="3dp"
+            android:layout_marginLeft="5dp"
+            android:gravity="center"
+            android:text="登录"
+            android:textColor="#000000"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/register_btn"
+            android:layout_width="40dp"
+            android:layout_height="25dp"
+            android:layout_gravity="right"
+            android:layout_marginBottom="12dp"
+            android:layout_marginRight="5.0dip"
+            android:layout_marginTop="5dp"
+            android:background="@anim/public_goto_bg"
+            android:clickable="true"
+            android:gravity="center"
+            android:onClick="myOnclick"
+            android:text="注册"
+            android:textColor="#ffffffff" />
     </FrameLayout>
-
-  
 
     <RelativeLayout
         android:id="@+id/userLoginLay"
@@ -149,14 +156,54 @@
             android:background="@anim/edit_delete_bg"
             android:visibility="invisible" />
     </RelativeLayout>
-    
-    <RelativeLayout android:id="@+id/login_view" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_below="@id/userLoginLay">
-                         <RelativeLayout android:id="@+id/belowLoginlay" android:layout_width="wrap_content" android:layout_height="wrap_content">
-                            <CheckBox   android:textSize="16.0sp" android:textColor="#ff000000" android:id="@+id/login_show_password" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:button="@drawable/jumeicheckboxbutton" android:text="显示密码" android:layout_centerVertical="true" />
-                            <TextView android:textSize="16.0sp" android:textColor="#ff999999" android:id="@+id/tv_findpassword" android:background="@drawable/forget_pwd_selector" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentTop="true" android:layout_alignParentRight="true" />
-                        </RelativeLayout>
-                        <TextView android:onClick="myOnclick" android:clickable="true" android:textSize="20.0sp" android:textColor="#ffffffff" android:gravity="center" android:id="@+id/loginButton" android:background="@anim/login_button_bg" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:layout_marginRight="10.0dip" android:text="立即登录" android:layout_below="@id/belowLoginlay"/>
-                       
+
+    <RelativeLayout
+        android:id="@+id/login_view"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/userLoginLay" >
+
+        <RelativeLayout
+            android:id="@+id/belowLoginlay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <CheckBox
+                android:id="@+id/login_show_password"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10.0dip"
+                android:button="@drawable/jumeicheckboxbutton"
+                android:text="显示密码"
+                android:textColor="#ff000000"
+                android:textSize="16.0sp" />
+
+            <TextView
+                android:id="@+id/tv_findpassword"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:background="@drawable/forget_pwd_selector"
+                android:textColor="#ff999999"
+                android:textSize="16.0sp" />
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/loginButton"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/belowLoginlay"
+            android:layout_marginLeft="10.0dip"
+            android:layout_marginRight="10.0dip"
+            android:background="@anim/login_button_bg"
+            android:clickable="true"
+            android:gravity="center"
+            android:onClick="myOnclick"
+            android:text="立即登录"
+            android:textColor="#ffffffff"
+            android:textSize="20.0sp" />
     </RelativeLayout>
 
 </LinearLayout>

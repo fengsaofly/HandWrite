@@ -1,3 +1,4 @@
+
 package scu.android.note;
 
 
@@ -15,3 +16,4 @@ public class HomeViewPage extends ViewPager{
 		super(context, attrs);
 	}
 }
+

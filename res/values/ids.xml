@@ -1,51 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
-    <item type="id" name="list_item_name"/>
-    <item type="id" name="list_item_description"/>
-    <item type="id" name="list_item_icon"/>
-     <item type="id" name="accountTop"/>
-    <item type="id" name="top_left_back_btn"/>
-    <item type="id" name="gallery"/>
-    <item type="id" name="publish_state_title"/>
-    <item type="id" name="publish_state_text_content"/>
-    <item type="id" name="popup_recode_lay"/>
-    <item type="id" name="popup_camera_lay"/>
-    <item type="id" name="popup_imgpicker_lay"/>
-    <item type="id" name="popup_handwrite_lay"/>
-    <item type="id" name="select_grade_btn"/>
-    <item type="id" name="select_subject_btn"/>
-    <item type="id" name="distance_textview"/>
-    <item type="id" name="alert"/>
-    <item type="id" name="gridview"/>
-    <item type="id" name="record_pressbtn_lay"/>
-    <item type="id" name="rcChat_popup"/>
-    <item type="id" name="question_add_showrecord_imgview"/>
-    <item type="id" name="volume"/>
-    <item type="id" name="record_pressbtn"/>
-    <item type="id" name="search_box_layout"/>
-    <item type="id" name="search_input"/>
-    <item type="id" name="search_bt"/>
-    <item type="id" name="edit_delete"/>
-    <item type="id" name="tag_zone"/>
-    <item type="id" name="tag_sign"/>
-    <item type="id" name="grid_view"/>
-    <item type="id" name="popup_menu_option_add_friend"/>
-    <item type="id" name="popup_menu_option_add_group"/>
-    <item type="id" name="tag_sign_val"/>
-    <item type="id" name="tag_zone_val"/>
-    <item type="id" name="top_lay"/>
-    <item type="id" name="middle_lay"/>
-    <item type="id" name="bottom_lay"/>
-    <item type="id" name="chat_record_btn"/>
-    <item type="id" name="chat_input_field"/>
-    <item type="id" name="welcome_people"/>
-    <item type="id" name="friend_name"/>
-     <item type="id" name="group_name"/>
-     
+
+    <item name="search_box_layout" type="id"/>
+    <item name="search_input" type="id"/>
+    <item name="search_bt" type="id"/>
+    <item name="edit_delete" type="id"/>
+    <item name="tag_zone" type="id"/>
+    <item name="tag_sign" type="id"/>
+    <item name="popup_menu_option_add_friend" type="id"/>
+    <item name="popup_menu_option_add_group" type="id"/>
+    <item name="popup_menu_option_issue_question" type="id"/>
+    <item name="tag_sign_val" type="id"/>
+    <item name="tag_zone_val" type="id"/>
+    <item name="bottom_lay" type="id"/>
+    <item name="welcome_people" type="id"/>
+    <item name="friend_name" type="id"/>
     <item name="group_members" type="id"/>
     <item name="group_members_val" type="id"/>
     <item name="group_owner" type="id"/>
     <item name="group_name_val" type="id"/>
     <item name="group_name" type="id"/>
-    <item type="id" name="group_owner_val"/>
+    <item name="group_owner_val" type="id"/>
+    <item name="list_item_name" type="id"/>
+    <item name="list_item_description" type="id"/>
+    <item name="list_item_icon" type="id"/>
+    <item name="accountTop" type="id"/>
+    <item name="top_left_back_btn" type="id"/>
+    <item name="gallery" type="id"/>
+    <item name="publish_state_title" type="id"/>
+    <item name="publish_state_text_content" type="id"/>
+    <item name="popup_recode_lay" type="id"/>
+    <item name="popup_camera_lay" type="id"/>
+    <item name="popup_imgpicker_lay" type="id"/>
+    <item name="popup_handwrite_lay" type="id"/>
+    <item name="select_grade_btn" type="id"/>
+    <item name="select_subject_btn" type="id"/>
+    <item name="distance_textview" type="id"/>
+    <item name="alert" type="id"/>
+    <item name="gridview" type="id"/>
+    <item name="record_pressbtn_lay" type="id"/>
+    <item name="rcChat_popup" type="id"/>
+    <item name="question_add_showrecord_imgview" type="id"/>
+    <item name="volume" type="id"/>
+    <item name="record_pressbtn" type="id"/>
+    <item name="middle_lay" type="id"/>
+    <item name="top_lay" type="id"/>
+    <item name="grid_view" type="id"/>
+    <item name="chat_record_btn" type="id"/>
+    <item name="chat_input_field" type="id"/>
+    <item name="chat_add_btn" type="id"/>
+
 </resources>

@@ -8,53 +8,56 @@
         android:minSdkVersion="11"
         android:targetSdkVersion="17" />
 
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
+
     <application
-      
-        android:allowBackup="true"
         android:name="scu.android.application.MyApplication"
+        android:allowBackup="true"
         android:icon="@drawable/logo"
         android:label="@string/app_name"
-        android:theme="@style/CustomActionBarTheme"
-        
-         >
-      
-        <activity android:name="scu.android.note.DrawingImgActivity"
-             >
-          <!--   <intent-filter>
+        android:theme="@style/CustomActionBarTheme" >
+        <activity android:name="scu.android.note.DrawingImgActivity" >
+
+            <!--
+            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter> -->
-            
+            </intent-filter>
+            -->
+
         </activity>
-       
-         <activity android:name= "scu.android.note.ActionBarActivity"
-             android:screenOrientation="portrait">
-  			 <intent-filter>
+        <activity
+            android:name="scu.android.note.ActionBarActivity"
+            android:screenOrientation="portrait" >
+            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter> 
-         </activity>
-         
-          <activity android:name="scu.android.ui.SearchGroupResultActivity"/>
-         <activity android:name="scu.android.ui.MultiRoomListActivity"/>
-        <activity android:name="scu.android.ui.SearchResultActivity"/>
-          <activity android:name="scu.android.ui.SearchFriendActivity"/>
-           <activity android:name="scu.android.ui.ActivityMultiRoom"/>
-          <activity android:name="scu.android.ui.TestAudioActivity"/>
-         <activity android:name="scu.android.ui.ChatMainActivity"/>
-          <activity android:name="scu.android.ui.LoginActivity"></activity>
-         <activity android:name="scu.android.ui.RegisterActivity"></activity>
-         <activity android:name="scu.android.ui.AccountSettingActivity"></activity>
+            </intent-filter>
+        </activity>
+        <activity android:name="scu.android.ui.SearchGroupResultActivity" />
+        <activity android:name="scu.android.ui.MultiRoomListActivity" />
+        <activity android:name="scu.android.ui.SearchResultActivity" />
+        <activity android:name="scu.android.ui.SearchFriendActivity" />
+        <activity android:name="scu.android.ui.ActivityMultiRoom" />
+        <activity android:name="scu.android.ui.ChatMainActivity" />
+        <activity android:name="scu.android.ui.LoginActivity" />
+        <activity android:name="scu.android.ui.RegisterActivity" />
+        <activity android:name="scu.android.ui.AccountSettingActivity" />
+        <activity android:name="scu.android.activity.ReplyQuestionActivity" />
+        <activity android:name="scu.android.activity.IssueQuestionActivity" />
+        <activity android:name="scu.android.ui.HandWriteCanvasActivity" />
+        <activity android:name="scu.android.activity.DoodleBoardActivity" />
+        <activity android:name="scu.android.activity.ScanPhotosActivity" />
+        <activity android:name="scu.android.activity.NativePhotosActivity" />
+        <activity android:name="scu.android.demo.Demo" />
+        <activity android:name="scu.android.activity.ReplysActiviy" />
     </application>
-    
-  <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> 
-  <uses-permission android:name="android.permission.INTERNET" /> 
-  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> 
-  <uses-permission android:name="android.permission.RECORD_AUDIO" /> 
-  <uses-permission android:name="android.permission.WRITE_SETTINGS" /> 
-  <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" /> 
-    
 
 </manifest>

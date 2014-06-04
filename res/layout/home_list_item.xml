@@ -1,31 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" 
+    android:layout_height="match_parent"
     android:layout_marginTop="10dp"
-    android:orientation="horizontal"
-    >
-    <ImageView android:layout_weight="0.2"  android:layout_width="0dp" android:layout_height="50dp" android:id="@id/list_item_icon" android:src="@drawable/logo"/>
-	
-    <LinearLayout android:layout_width="0dp" android:layout_weight="0.8" android:layout_height="wrap_content" android:orientation="vertical">
-    <LinearLayout  android:layout_width="fill_parent" android:layout_height="20dp" android:orientation="horizontal">
-    <TextView
-        android:id="@id/list_item_name"
-        style="@style/list_item_name_text_style"
-        android:layout_width="0dp"
-        android:layout_height="30dp"
-       android:layout_weight="0.5"
-     
-        android:text="好友消息" />
-    <TextView
-	    android:layout_width="0dp"
-	    android:layout_height="30dp" 
-	    android:layout_weight="0.5"
-	    android:text="2014-3-2 15:30:27"
-	    style="@style/list_item_time"/>
-	</LinearLayout>
-	<TextView  style="@style/InputLongNameTextBeforeEdit320x480" android:lines="1" android:layout_alignLeft="@id/list_item_name" android:gravity="center_vertical" android:layout_width="wrap_content" android:layout_height="30dp" android:maxWidth="150dp" android:id="@id/list_item_description" android:text="sdasdsadasdassdasdasdasdas" />
-	</LinearLayout>
+    android:orientation="horizontal" >
 
+    <ImageView
+        android:id="@id/list_item_icon"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_weight="0.2"
+        android:src="@drawable/logo" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.8"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="20dp"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:id="@id/list_item_name"
+                style="@style/list_item_name_text_style"
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:layout_weight="0.5"
+                android:text="好友消息" />
+
+            <TextView
+                style="@style/list_item_time"
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:layout_weight="0.5"
+                android:text="2014-3-2 15:30:27" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@id/list_item_description"
+            style="@style/InputLongNameTextBeforeEdit320x480"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_alignLeft="@id/list_item_name"
+            android:gravity="center_vertical"
+            android:lines="1"
+            android:maxWidth="150dp"
+            android:text="sdasdsadasdassdasdasdasdas" />
+    </LinearLayout>
 
 </LinearLayout>

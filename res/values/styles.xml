@@ -2,13 +2,13 @@
 
     <!--
         Base application theme, dependent on API level. This theme is replaced
-        by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
+        by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
     -->
     <style name="AppBaseTheme" parent="android:Theme.Light">
         <!--
             Theme customizations available in newer API levels can go in
             res/values-vXX/styles.xml, while customizations related to
-            backward-compatibility can go here.
+            backward-compatibility can go here.
         -->
     </style>
 
@@ -16,52 +16,54 @@
     <style name="AppTheme" parent="AppBaseTheme">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
-	
+
     <style name="DefaultTextStyle">
         <item name="android:textSize">20.0dip</item>
         <item name="android:textColor">@color/TextColorBlack</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-   		<item name="android:gravity">center</item>
+        <item name="android:gravity">center</item>
         <item name="android:singleLine">true</item>
+    </style>
 
-    </style>
-     <style name="HoloTheme" parent="android:Theme.Holo.Light">
-         <item name="android:textColor">@color/TextColorWhite</item>
-         <item name="android:textSize">20.0dip</item>
+    <style name="HoloTheme" parent="android:Theme.Holo.Light">
+        <item name="android:textColor">@color/TextColorWhite</item>
+        <item name="android:textSize">20.0dip</item>
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
-        <style name="HoloThemeDark" parent="android:Theme.Holo">
+
+    <style name="HoloThemeDark" parent="android:Theme.Holo">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
-	  <style name="list_item_name_text_style">
+
+    <style name="list_item_name_text_style">
         <item name="android:textSize">16.0sp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">#ff3c3c3c</item>
     </style>
+
     <style name="find_list_item_title_text_style">
         <item name="android:textSize">18.0sp</item>
-       
         <item name="android:textColor">#ff3c3c3c</item>
     </style>
-       <style name="InputLongNameTextBeforeEdit320x480">
+
+    <style name="InputLongNameTextBeforeEdit320x480">
         <item name="android:textSize">14.0dip</item>
         <item name="android:textColor">@color/TextColorGray</item>
         <item name="android:gravity">right</item>
         <item name="android:layout_width">120.0dip</item>
         <item name="android:layout_height">wrap_content</item>
-      
     </style>
-        <style name="list_item_time">
+
+    <style name="list_item_time">
         <item name="android:textSize">14.0dip</item>
         <item name="android:textColor">#e7e2e2</item>
         <item name="android:gravity">right</item>
         <item name="android:paddingRight">5dp</item>
         <item name="android:layout_height">wrap_content</item>
-     
     </style>
-    
-           <style name="left_back_TextView">
+
+    <style name="left_back_TextView">
         <item name="android:textSize">12.0sp</item>
         <item name="android:textColor">#ffffffff</item>
         <item name="android:layout_gravity">left</item>
@@ -73,148 +75,149 @@
         <item name="android:layout_marginLeft">5.0dip</item>
         <item name="android:layout_marginTop">5.0dip</item>
     </style>
-    
-      
+
     <style name="juMeiAutoCompleteTextView" parent="@android:style/Widget.AutoCompleteTextView">
         <item name="android:dropDownHeight">154.0dip</item>
     </style>
-    
-  
-    
-     <style name="chat_text_date_style">
-	    <item name="android:padding">2dp</item>    
-		<item name="android:textColor">#ffffff</item>   
-		<item name="android:textSize">12sp</item>      
-		<item name="android:background">#bfbfbf</item> 
-	</style>
-	
-     <style name="chat_content_date_style">
-	    <item name="android:minHeight">50dp</item>
-	    <item name="android:gravity">left|center</item>    
-		<item name="android:textColor">#000000</item>   
-		<item name="android:textSize">15sp</item>      
-		<item name="android:lineSpacingExtra">2dp</item>   
-		<item name="android:clickable">true</item>   
-		<item name="android:focusable">true</item>   
-		<item name="android:background">#bfbfbf</item> 
-	</style>
-	
-     	<style name="chat_text_name_style">  
-		<item name="android:textColor">#818181</item>   
-		<item name="android:textSize">15sp</item>      
-		<item name="android:gravity">center</item> 
-	</style>
-	
-     	<style name="question_add_textview_text_style">
-     	    
-     	    <item name="android:textColor">#999999</item>   
-			<item name="android:textSize">15sp</item>      
-			<item name="android:gravity">center</item> 
-     	</style>
-     
-    	<style name="question_popup_textview_text_style">
-     	    
-     	    <item name="android:textColor">#474747</item>   
-			<item name="android:textSize">15sp</item>      
-			<item name="android:gravity">center</item> 
-     	</style>
-     	<style name="listview_sign_text_style">
-     	    
-     	    <item name="android:textColor">#d0d0d8</item>   
-			<item name="android:textSize">14sp</item>      
-			<item name="android:gravity">center</item> 
-     	</style>
-     	<style name="btn_item_text_style">
-     	    
-     	    <item name="android:textColor">@color/TextColorWhite</item>   
-			<item name="android:textSize">13sp</item>      
-			<item name="android:gravity">center</item> 
-     	</style>
-     	
-     	<style name="alert_text_white">
-     	    
-     	    <item name="android:textColor">@color/TextColorWhite</item>   
-			<item name="android:textSize">14sp</item>      
-			<item name="android:gravity">center</item> 
-     	</style>
-        <style name="show_record_time">
-     	    
-     	    <item name="android:textColor">@color/TextColorWhite</item>   
-			<item name="android:textSize">10sp</item>      
-			<item name="android:gravity">center</item> 
-     	</style>
-     	<style name="text_style_big_gray">
-	        <item name="android:textSize">20sp</item>
-	        <item name="android:textColor">#FF999999</item>
-	        <item name="android:layout_width">wrap_content</item>
-	        <item name="android:layout_height">wrap_content</item>
-	   		<item name="android:gravity">center</item>
-	        <item name="android:singleLine">true</item>
 
+    <style name="chat_text_date_style">
+        <item name="android:padding">2dp</item>
+        <item name="android:textColor">#ffffff</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:background">#bfbfbf</item>
     </style>
-     	<style name="text_style_big_black">
-	        <item name="android:textSize">20sp</item>
-	        <item name="android:textColor">@color/TextColorBlack</item>
-	        <item name="android:layout_width">wrap_content</item>
-	        <item name="android:layout_height">wrap_content</item>
-	   		<item name="android:gravity">center</item>
-	        <item name="android:singleLine">true</item>
-			<item name="android:padding">2dp</item>
+
+    <style name="chat_content_date_style">
+        <item name="android:minHeight">50dp</item>
+        <item name="android:gravity">left|center</item>
+        <item name="android:textColor">#000000</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:lineSpacingExtra">2dp</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:background">#bfbfbf</item>
     </style>
-     	<style name="text_style_small">
-	        <item name="android:textSize">14sp</item>
-	        <item name="android:textColor">@color/TextColorBlack</item>
-	        <item name="android:layout_width">wrap_content</item>
-	        <item name="android:layout_height">wrap_content</item>
-	   		<item name="android:gravity">left</item>
+
+    <style name="chat_text_name_style">
+        <item name="android:textColor">#818181</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:gravity">center</item>
     </style>
-    	<style name="text_style_small_gray">
-	        <item name="android:textSize">14sp</item>
-	        <item name="android:textColor">@color/TextColorGray</item>
-	        <item name="android:layout_width">wrap_content</item>
-	        <item name="android:layout_height">wrap_content</item>
-	   		<item name="android:gravity">left</item>
+
+    <style name="question_add_textview_text_style">
+        <item name="android:textColor">#999999</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:gravity">center</item>
     </style>
-    <style name="text_style_large">
-	        <item name="android:textSize">22sp</item>
-	        <item name="android:textColor">@color/TextColorBlack</item>
-	        <item name="android:layout_width">wrap_content</item>
-	        <item name="android:layout_height">wrap_content</item>
-	   		<item name="android:gravity">left</item>
+
+    <style name="question_popup_textview_text_style">
+        <item name="android:textColor">#474747</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:gravity">center</item>
     </style>
+
+    <style name="listview_sign_text_style">
+        <item name="android:textColor">#d0d0d8</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="btn_item_text_style">
+        <item name="android:textColor">@color/TextColorWhite</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="alert_text_white">
+        <item name="android:textColor">@color/TextColorWhite</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="show_record_time">
+        <item name="android:textColor">@color/TextColorWhite</item>
+        <item name="android:textSize">10sp</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="text_style_big_gray">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">#FF999999</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:singleLine">true</item>
+    </style>
+
+    <style name="text_style_big_black">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/TextColorBlack</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:padding">2dp</item>
+    </style>
+
+    <style name="text_style_small">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/TextColorBlack</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">left</item>
+    </style>
+
+    <style name="text_style_small_gray">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/TextColorGray</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">left</item>
+    </style>
+
+
     <style name="text_style_large_gray">
-	        <item name="android:textSize">22sp</item>
-	        <item name="android:textColor">@color/TextColorGray</item>
-	        <item name="android:layout_width">wrap_content</item>
-	        <item name="android:layout_height">wrap_content</item>
-	   		<item name="android:gravity">left</item>
-    </style>
-    <style name="text_style_medium">
-	        <item name="android:textSize">18sp</item>
-	        <item name="android:textColor">@color/TextColorBlack</item>
-	        <item name="android:layout_width">wrap_content</item>
-	        <item name="android:layout_height">wrap_content</item>
-	   		<item name="android:gravity">left</item>
+        <item name="android:textSize">22sp</item>
+        <item name="android:textColor">@color/TextColorGray</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">left</item>
     </style>
     <style name="text_style_medium_gray">
-	        <item name="android:textSize">18sp</item>
-	        <item name="android:textColor">@color/TextColorGray</item>
-	        <item name="android:layout_width">wrap_content</item>
-	        <item name="android:layout_height">wrap_content</item>
-	   		<item name="android:gravity">left</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/TextColorGray</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">left</item>
     </style>
-      <style name="text_style_micro">
-	        <item name="android:textSize">12sp</item>
-	        <item name="android:textColor">@color/TextColorBlack</item>
-	        <item name="android:layout_width">wrap_content</item>
-	        <item name="android:layout_height">wrap_content</item>
-	   		<item name="android:gravity">left</item>
+
+    <style name="text_style_micro_gray">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/TextColorGray</item>
     </style>
-     <style name="text_style_micro_gray">
-	        <item name="android:textSize">12sp</item>
-	        <item name="android:textColor">@color/TextColorGray</item>
-	        <item name="android:layout_width">wrap_content</item>
-	        <item name="android:layout_height">wrap_content</item>
-	   		<item name="android:gravity">left</item>
+
+    <style name="text_style_large">
+        <item name="android:textSize">22sp</item>
+        <item name="android:textColor">@color/TextColorBlack</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">left</item>
     </style>
+
+    <style name="text_style_medium">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/TextColorBlack</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">left</item>
+    </style>
+
+    <style name="text_style_micro">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/TextColorBlack</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">left</item>
+    </style>
+
 </resources>

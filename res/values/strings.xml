@@ -2,7 +2,54 @@
 <resources>
 
     <string name="app_name">破题高手</string>
-    <string name="action_settings">Settings</string>
-    <string name="hello_world">Hello world!</string>
-	<string name="hello_world">Hello world!</string>
+    <string name="action_settings">设置</string>
+    <string name="classify">分类</string>
+    <string name="allPhotos">所有图片</string>
+    <string name="photos">图库</string>
+    <string name="camera">照相机</string>
+    <string name="complete">完成</string>
+    <string name="delete">刪除</string>
+    <string name="reply">回复</string>
+    <string name="all">全部</string>
+    <string name="issue_question">发布问题</string>
+
+    <string-array name="classifies">
+        <item>年级</item>
+        <item>科目</item>
+        <item>附近</item>
+        <item>状态</item>
+    </string-array>
+    <string-array name="grades">
+        <item>不指定</item>
+        <item>小学</item>
+        <item>初一</item>
+        <item>初二</item>
+        <item>初三</item>
+        <item>高一</item>
+        <item>高二</item>
+        <item>高三</item>
+    </string-array>
+    <string-array name="subjects">
+        <item>不指定</item>
+        <item>语文</item>
+        <item>数学</item>
+        <item>英语</item>
+        <item>物理</item>
+        <item>化学</item>
+        <item>生物</item>
+        <item>政治</item>
+        <item>历史</item>
+        <item>地理</item>
+    </string-array>
+    <string-array name="status">
+        <item>不指定</item>
+        <item>解决</item>
+        <item>未解决</item>
+    </string-array>
+    <string-array name="nearby">
+        <item>不指定</item>
+        <item>1km内</item>
+        <item>10km内</item>
+    </string-array>
+
 </resources>

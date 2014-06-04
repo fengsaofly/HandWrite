@@ -1,7 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout android:id="@+id/scan_item_layout"  android:background="@anim/list_bg_selector" android:layout_width="fill_parent" android:layout_height="wrap_content"
-  xmlns:android="http://schemas.android.com/apk/res/android">
-    <RelativeLayout android:id="@+id/friendlink_lay1"  android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginLeft="5.0dip" android:layout_marginRight="5.0dip">
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scan_item_layout"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@anim/list_bg_selector" >
+
+    <RelativeLayout
+        android:id="@+id/friendlink_lay1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5.0dip"
+        android:layout_marginRight="5.0dip" >
 
         <RelativeLayout
             android:id="@+id/friendlink_lay"
@@ -17,21 +27,19 @@
                 android:layout_centerVertical="true"
                 android:layout_gravity="center" >
 
-                <scu.android.ui.CircularImage
+                <ImageView
                     android:id="@+id/friend_icon"
-                    android:layout_width="50dp"
-                    android:layout_height="50.0dip"
+                    android:layout_width="70.0dip"
+                    android:layout_height="70.0dip"
                     android:layout_gravity="center"
-                    android:src="@drawable/friend_icon_sample"
                     android:scaleType="fitXY" />
 
                 <ImageView
-                    android:visibility="gone"
                     android:id="@+id/app_icon_back"
-                    android:layout_width="70dp"
-                    android:layout_height="70dp"
+                    android:layout_width="70.0dip"
+                    android:layout_height="70.0dip"
                     android:layout_gravity="center"
-                    android:background="@anim/shape_circle"
+                    android:background="@drawable/img_home_small_side"
                     android:scaleType="centerInside" />
             </FrameLayout>
 
@@ -47,14 +55,9 @@
                 android:text="用户名"
                 android:textColor="#ff333333"
                 android:textSize="16.0sp"
-                
                 android:textStyle="bold" />
-            
-            
-          
-            
-          
         </RelativeLayout>
-
     </RelativeLayout>
+
 </RelativeLayout>
+

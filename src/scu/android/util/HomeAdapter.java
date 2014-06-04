@@ -23,28 +23,23 @@ import android.widget.TextView;
 
 import com.demo.note.R;
 
-
 public class HomeAdapter extends BaseAdapter {
 
 	Context context = null;
 	Activity activity = null;
 	List<Map<String, Object>> list = null;
-	
-//	ViewHolder holder;
-	
 
+	// ViewHolder holder;
 
 	public HomeAdapter(Context context, Activity act,
 			List<Map<String, Object>> list) {
 		super();
-		
+
 		this.context = context;
 		this.activity = act;
 		this.list = list;
-	
-	}
 
-	
+	}
 
 	@Override
 	public long getItemId(int arg0) {
@@ -57,69 +52,61 @@ public class HomeAdapter extends BaseAdapter {
 		return 0;
 	}
 
-	
-	
-
 	@Override
 	public View getView(final int position, View convertView, ViewGroup parent) {
 
-
-		
 		ViewHolder viewHolder = null;
 		if (convertView == null) {
 			viewHolder = new ViewHolder();
-		
 
-			
 			convertView = LayoutInflater.from(context).inflate(
 					R.layout.item_for_frag_recent, null);
 			// holder = new ViewHolder();
 			viewHolder.name = (TextView) convertView
 					.findViewById(R.id.home_name);
-			
+
 			viewHolder.content = (TextView) convertView
 					.findViewById(R.id.home_content);
-			
-			
-			viewHolder.icon = (ImageView)convertView.findViewById(R.id.home_icon);
-			
-			
+
+			viewHolder.icon = (ImageView) convertView
+					.findViewById(R.id.home_icon);
 
 			convertView.setTag(viewHolder);
 		} else {
 			viewHolder = (ViewHolder) convertView.getTag();
 		}
-        
+
 		viewHolder.name.setText(list.get(position).get("name").toString());
-		
-		viewHolder.content.setText(list.get(position).get("content").toString());
+
+		viewHolder.content
+				.setText(list.get(position).get("content").toString());
 		int type = Integer.parseInt(list.get(position).get("type").toString());
-		switch(type){
+		switch (type) {
 		case 0:
-			viewHolder.icon.setBackgroundDrawable(activity.getResources().getDrawable(R.drawable.actionbar_icon));
+			viewHolder.icon.setBackgroundDrawable(activity.getResources()
+					.getDrawable(R.drawable.actionbar_icon));
 			break;
 		case 1:
-			viewHolder.icon.setBackgroundDrawable(activity.getResources().getDrawable(R.drawable.message_note));
+			viewHolder.icon.setBackgroundDrawable(activity.getResources()
+					.getDrawable(R.drawable.message_note));
 			break;
 		case 2:
-			viewHolder.icon.setBackgroundDrawable(activity.getResources().getDrawable(R.drawable.message_poti));
+			viewHolder.icon.setBackgroundDrawable(activity.getResources()
+					.getDrawable(R.drawable.message_poti));
 			break;
 		case 3:
-			viewHolder.icon.setBackgroundDrawable(activity.getResources().getDrawable(R.drawable.message_dongtai));
+			viewHolder.icon.setBackgroundDrawable(activity.getResources()
+					.getDrawable(R.drawable.message_dongtai));
 			break;
 		}
-		
-		
-		
-		return convertView;
-	}	
 
-	
+		return convertView;
+	}
 
 	@Override
 	public int getCount() {
 		// TODO Auto-generated method stub
-	
+
 		return list.size();
 
 	}
@@ -130,20 +117,12 @@ public class HomeAdapter extends BaseAdapter {
 		return list.get(position);
 	}
 
-	
-	
 	public class ViewHolder {
 
-		
-		  
-		  TextView name;
-		  TextView content;
-		  ImageView icon;
-		 
-		  
-		  
-		  
-	
-}
+		TextView name;
+		TextView content;
+		ImageView icon;
+
+	}
 
 }

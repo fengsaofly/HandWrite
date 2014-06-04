@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-    
-	<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
-    <!-- <RelativeLayout
+
+    <!--
+    <RelativeLayout
         android:id="@+id/home_actionbar_layout"
         android:layout_width="fill_parent"
         android:layout_height="45dp"
@@ -63,14 +63,13 @@
             
             android:background="@drawable/actionbar_add_icon"
              />
-    </RelativeLayout> -->
+    </RelativeLayout>
+    -->
     <!-- android:layout_below="@id/home_actionbar_layout" -->
-    <scu.android.note.HomeViewPage
-            android:id="@+id/pager"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
- 
-    
-        />
-</RelativeLayout>
 
+    <scu.android.note.HomeViewPage
+        android:id="@+id/pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</RelativeLayout>

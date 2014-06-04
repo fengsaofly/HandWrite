@@ -11,7 +11,6 @@ import org.jivesoftware.smack.filter.PacketIDFilter;
 import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Registration;
-
 import scu.android.util.XmppTool;
 import android.app.Activity;
 import android.app.ProgressDialog;

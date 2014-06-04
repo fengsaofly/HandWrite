@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F7F7F7" >
+
+    <LinearLayout
+        android:id="@+id/question_lay"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <RelativeLayout
+            android:id="@id/top_lay"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/TextColorWhite"
+            android:orientation="horizontal"
+            android:padding="5dp" >
+
+            <ImageButton
+                android:id="@+id/avatar"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:contentDescription="@string/app_name"
+                android:scaleType="center" />
+
+            <TextView
+                android:id="@+id/nickname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:layout_toRightOf="@+id/avatar"
+                android:gravity="center"
+                android:textColor="@color/TextColorBlack"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/publish_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_gravity="center_vertical" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@id/middle_lay"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp" >
+
+            <TextView
+                android:id="@+id/title"
+                style="@style/text_style_big_black"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/reply_number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:clickable="true"
+                android:drawableTop="@drawable/question_reply_nums_icon"
+                android:onClick="myOnclick"
+                android:textSize="12sp" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/question_add_gradeAndSub_lay"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/TextColorWhite"
+            android:orientation="horizontal"
+            android:paddingLeft="6dp" >
+
+            <TextView
+                android:id="@+id/grade"
+                style="@style/btn_item_text_style"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/grade_bg"
+                android:gravity="center" />
+
+            <TextView
+                android:id="@+id/subject"
+                style="@style/btn_item_text_style"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="3dp"
+                android:background="@drawable/subject_bg"
+                android:gravity="center" />
+        </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/question_content"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp" >
+
+            <TextView
+                android:id="@+id/content"
+                style="@style/text_style_medium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </RelativeLayout>
+
+        <GridView
+            android:id="@+id/photos_view"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:horizontalSpacing="2dp"
+            android:numColumns="3"
+            android:stretchMode="columnWidth"
+            android:verticalSpacing="2dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+
+        <!-- 回复问题的图片和语言显示 -->
+
+        <RelativeLayout
+            android:id="@+id/question_reply_extras"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="#b0000000"
+            android:orientation="vertical"
+            android:visibility="invisible" >
+
+            <!-- include layout="@layout/voice_rcd_hint_window" / -->
+
+            <GridView
+                android:id="@+id/reply_photos_view"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_margin="5dp"
+                android:columnWidth="50dp"
+                android:horizontalSpacing="2dp"
+                android:numColumns="4"
+                android:padding="5dp"
+                android:stretchMode="columnWidth"
+                android:verticalSpacing="2dp" />
+        </RelativeLayout>
+
+        <include layout="@layout/chat_input_field" />
+    </LinearLayout>
+
+</FrameLayout>
