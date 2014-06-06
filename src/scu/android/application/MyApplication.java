@@ -43,11 +43,11 @@ import com.nostra13.universalimageloader.core.download.URLConnectionImageDownloa
 import com.nostra13.universalimageloader.utils.StorageUtils;
 
 public class MyApplication extends Application {
-	 public static String hostIp = "218.244.144.212";
-	 public String hostName = "handwriteserver";
+	public static String hostIp = "218.244.144.212";
+	public String hostName = "handwriteserver";
 
-//	public static String hostIp = "192.168.1.105";
-//	public String hostName = "dolphin0520-pc";
+	// public static String hostIp = "192.168.1.105";
+	// public String hostName = "dolphin0520-pc";
 
 	public String userName = "jalsary";
 	public String passWord = "123456";
@@ -432,15 +432,15 @@ public class MyApplication extends Application {
 		// only those you really want to customize)
 		ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(
 				getApplicationContext())
-				.memoryCacheExtraOptions(400, 400)
+				//.memoryCacheExtraOptions(200, 200)
 				// max width, max height.discCacheExtraOptions(400, 400,
 				// CompressFormat.JPEG, 75) // Can slow ImageLoader, use it
 				// carefully (Better don't use it)
-				.threadPoolSize(5)
+				.threadPoolSize(10)
 				.threadPriority(Thread.NORM_PRIORITY - 1)
 				.denyCacheImageMultipleSizesInMemory()
 				.offOutOfMemoryHandling()
-				.memoryCache(new UsingFreqLimitedMemoryCache(2 * 1024 * 1024))
+				.memoryCache(new UsingFreqLimitedMemoryCache(4 * 1024 * 1024))
 				// You can pass your own memory cache implementation
 				.discCache(new UnlimitedDiscCache(cacheDir))
 				// You can pass your own disc cache implementation
