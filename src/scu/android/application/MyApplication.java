@@ -4,7 +4,10 @@ import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -19,15 +22,21 @@ import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.provider.ProviderManager;
+import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.Form;
 import org.jivesoftware.smackx.ReportedData;
 import org.jivesoftware.smackx.ReportedData.Row;
+import org.jivesoftware.smackx.filetransfer.FileTransfer;
+import org.jivesoftware.smackx.filetransfer.FileTransferManager;
+import org.jivesoftware.smackx.filetransfer.OutgoingFileTransfer;
 import org.jivesoftware.smackx.packet.VCard;
 import org.jivesoftware.smackx.search.UserSearchManager;
 
 import scu.android.util.XmppTool;
 import android.app.Application;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
@@ -43,11 +52,11 @@ import com.nostra13.universalimageloader.core.download.URLConnectionImageDownloa
 import com.nostra13.universalimageloader.utils.StorageUtils;
 
 public class MyApplication extends Application {
-	public static String hostIp = "218.244.144.212";
-	public String hostName = "handwriteserver";
+//	public static String hostIp = "218.244.144.212";
+//	public String hostName = "handwriteserver";
 
-	// public static String hostIp = "192.168.1.105";
-	// public String hostName = "dolphin0520-pc";
+	 public static String hostIp = "192.168.1.116";
+	 public String hostName = "dolphin0520-pc";
 
 	public String userName = "jalsary";
 	public String passWord = "123456";
@@ -318,8 +327,31 @@ public class MyApplication extends Application {
 
 		return Environment.getExternalStorageDirectory().getPath();
 	}
+	
+	
+	  public static void changeImage(XMPPConnection connection, File f)  
+	            throws XMPPException, IOException {  
+	  
+	        VCard vcard = new VCard();  
+	        vcard.load(connection);  
+	  
+	        
+	        byte[] bytes;  
+	  
+	        bytes = getFileBytes(f);  
+	        String encodedImage = StringUtils.encodeBase64(bytes);  
+	        vcard.setAvatar(bytes);  
+	        vcard.setEncodedImage(encodedImage);  
+	        vcard.setField("PHOTO", "<TYPE>image/jpg</TYPE><BINVAL>" + encodedImage
+	                + "</BINVAL>", true);  
+	  
+//	        ByteArrayInputStream bais = new ByteArrayInputStream(vcard.getAvatar());  
+//	        FormatTools.getInstance().InputStream2Bitmap(bais);  
+	  
+	        vcard.save(connection);  
+	    }  
 
-	public static ByteArrayInputStream getUserImage(XMPPConnection connection,
+	public static Bitmap getUserImage(XMPPConnection connection,
 			String user) {
 		ByteArrayInputStream bais = null;
 		try {
@@ -339,7 +371,9 @@ public class MyApplication extends Application {
 		}
 		if (bais == null)
 			return null;
-		return bais;
+		Bitmap bitmap = BitmapFactory.decodeStream(bais);
+		
+		return bitmap;
 	}
 
 	public static VCard getUserVcard(XMPPConnection connection, String user) {
@@ -419,6 +453,57 @@ public class MyApplication extends Application {
 
 		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
 		// loadArray(list);
+
+	}
+
+	public static void sendFile(String userName, String passWord, String user,
+			File file) {
+		try {
+			XMPPConnection connection = XmppTool.getConnection();
+			System.out.println("发送文件开始" + file.getName());
+			FileTransferManager transfer = new FileTransferManager(connection);
+			String destination = user + "/spark";
+			final OutgoingFileTransfer out = transfer
+					.createOutgoingFileTransfer(destination);
+			System.out.println(connection.getPort());
+			if (file.exists()) {
+				System.out.println("文件存在");
+			}
+			long timeOut = 100000;
+			long sleepMin = 3000;
+			long spTime = 0;
+			int rs = 0;
+			try {
+				byte[] fileData = getFileBytes(file);
+				OutputStream os = out.sendFile(file.getName(), fileData.length,
+						"you won't like it");
+				os.write(fileData);
+				os.flush();
+				rs = out.getStatus().compareTo(FileTransfer.Status.complete);
+				while (rs != 0) {
+					System.out
+							.println("getStatus" + out.getStatus().toString());
+					rs = out.getStatus()
+							.compareTo(FileTransfer.Status.complete);
+					System.out.println(rs);
+					spTime = spTime + sleepMin;
+					if (spTime > timeOut) {
+						System.out.println("fail" + "文件发送失败");
+						return;
+					}
+					Thread.sleep(sleepMin);
+				}
+				System.out.println("end send file");
+			} catch (XMPPException e) {
+				e.printStackTrace();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	// 初始化图片加载器
@@ -454,5 +539,80 @@ public class MyApplication extends Application {
 		// Application start.
 		imageLoader.init(config);
 	}
+	
+	
+	 private static byte[] getFileBytes(File file) throws IOException {
+   		BufferedInputStream bis = null;
+   	try {
+       bis = new BufferedInputStream(new FileInputStream(file));
+       int bytes = (int) file.length();
+       byte[] buffer = new byte[bytes];
+       int readBytes = bis.read(buffer);
+       if (readBytes != buffer.length) {
+           throw new IOException("Entire file not read");
+       }
+       return buffer;
+   } finally {
+       if (bis != null) {
+           bis.close();
+       }
+   }
+   }
+   
+	
+	
+	 public static VCard getUserVCard(XMPPConnection connection) throws XMPPException {
+		  VCard vcard = new VCard();
+		  vcard.load(connection);
+		  System.out.println(vcard.getField("sex"));
+		  System.out.println(vcard.getField("DESC"));
+		  System.out.println(vcard.getEmailHome());
+		  System.out.println(vcard.getOrganization());
+		  System.out.println(vcard.getNickName());
+		  System.out.println(vcard.getPhoneWork("PHONE"));
+		  System.out.println(vcard.getProperty("DESC"));
+		  System.out.println(vcard.getAvatar());
+		  return vcard;
+		 }
+		 
+		 
+		 public static VCard getUserVCard(XMPPConnection connection, String userJid)
+		   throws XMPPException {
+		  VCard vcard = new VCard();
+		  vcard.load(connection,userJid);
+		  System.out.println(vcard.getOrganization());
+		  System.out.println(vcard.getField("sex"));
+		  System.out.println(vcard.getNickName());
+		  System.out.println(vcard.getAvatar());
+		  System.out.println(vcard.getField("DESC"));
+		  return vcard;
+		 }
+		 public static void setUserVCard(XMPPConnection connection,int type,String value)
+		   throws XMPPException {
+		  VCard vCard = new VCard();
+		  vCard.load(connection);
+		  switch(type){
+		  case 1:
+			  vCard.setOrganization(value);
+			  break;
+		  case 2:
+			  vCard.setNickName(value);
+			  break;
+		  case 3:
+			  vCard.setField("sex", value);
+			  break;
+		  case 4:
+			  vCard.setEmailHome(value);
+			  break;
+		  case 5:
+			  vCard.setEmailWork(value);
+			  break;
+		  }
+		 
+		  vCard.save(connection);
+		  System.out.println("添加成功");
+		 }
+		 
+	
 
 }
