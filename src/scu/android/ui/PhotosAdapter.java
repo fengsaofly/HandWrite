@@ -6,6 +6,7 @@ import scu.android.activity.ScanPhotosActivity;
 import scu.android.util.AppUtils;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -16,7 +17,6 @@ import android.widget.ImageView;
 import com.demo.note.R;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 
 /*
  * 
@@ -32,11 +32,12 @@ public class PhotosAdapter extends BaseAdapter {
 		this.activity = activity;
 		this.bitmaps = bitmaps;
 		this.loader = ImageLoader.getInstance();
-		this.options = new DisplayImageOptions.Builder()
-				.showStubImage(R.drawable.default_photo)
-				.showImageForEmptyUri(R.drawable.default_photo).cacheInMemory()
-				.cacheOnDisc().imageScaleType(ImageScaleType.IN_SAMPLE_INT)
-				.build();
+		options = new DisplayImageOptions.Builder()
+				.showImageOnLoading(R.drawable.default_photo)
+				.showImageForEmptyUri(R.drawable.default_photo)
+				.showImageOnFail(R.drawable.default_photo).cacheInMemory(true)
+				.cacheOnDisk(true).considerExifParams(true)
+				.bitmapConfig(Bitmap.Config.RGB_565).build();
 		this.width = AppUtils.getDefaultPhotoWidth(activity);
 	}
 
@@ -78,7 +79,7 @@ public class PhotosAdapter extends BaseAdapter {
 	}
 
 	public void clear() {
-		loader.clearDiscCache();
+		loader.clearDiskCache();
 		loader.clearMemoryCache();
 	}
 

@@ -26,8 +26,8 @@ import com.demo.note.R;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
-import com.nostra13.universalimageloader.core.assist.ImageLoadingListener;
-import com.nostra13.universalimageloader.core.assist.ImageScaleType;
+import com.nostra13.universalimageloader.core.listener.ImageLoadingProgressListener;
+import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
 /*
  * 图片浏览
@@ -38,10 +38,8 @@ public class ScanPhotosActivity extends Activity {
 	private ScanPageAdater adapter;
 	private ArrayList<String> photos;
 	private Intent intent;
-
 	private TextView pageIndex;
-
-	protected ImageLoader loader;
+	private ImageLoader imageLoader;
 	private DisplayImageOptions options;
 
 	@Override
@@ -54,12 +52,13 @@ public class ScanPhotosActivity extends Activity {
 	// 初始化
 	public void init() {
 		intent = getIntent();
-		loader = ImageLoader.getInstance();
 		options = new DisplayImageOptions.Builder()
-				.showStubImage(R.drawable.default_photo)
-				.showImageForEmptyUri(R.drawable.default_photo).cacheInMemory()
-				.cacheOnDisc().imageScaleType(ImageScaleType.IN_SAMPLE_INT)
-				.build();
+				.showImageOnLoading(R.drawable.default_photo)
+				.showImageForEmptyUri(R.drawable.default_photo)
+				.showImageOnFail(R.drawable.default_photo).cacheInMemory(true)
+				.cacheOnDisk(true).considerExifParams(true)
+				.bitmapConfig(Bitmap.Config.RGB_565).build();
+		imageLoader = ImageLoader.getInstance();
 
 		photos = intent.getStringArrayListExtra("photos");
 		int index = intent.getIntExtra("index", 1);
@@ -112,26 +111,31 @@ public class ScanPhotosActivity extends Activity {
 			final ProgressBar loading = (ProgressBar) photoLayout
 					.findViewById(R.id.loading);
 
-			loader.displayImage("file:///" + photos.get(position), photo,
-					options, new ImageLoadingListener() {
+			imageLoader.displayImage("file:///" + photos.get(position), photo,
+					options, new SimpleImageLoadingListener() {
 						@Override
-						public void onLoadingStarted() {
+						public void onLoadingStarted(String imageUri, View view) {
+							loading.setProgress(0);
 							loading.setVisibility(View.VISIBLE);
 						}
 
 						@Override
-						public void onLoadingFailed(FailReason failReason) {
-							loading.setVisibility(View.GONE);
-							photo.setImageResource(R.drawable.question);
-						}
-
-						@Override
-						public void onLoadingComplete(Bitmap loadedImage) {
+						public void onLoadingFailed(String imageUri, View view,
+								FailReason failReason) {
 							loading.setVisibility(View.GONE);
 						}
 
 						@Override
-						public void onLoadingCancelled() {
+						public void onLoadingComplete(String imageUri,
+								View view, Bitmap loadedImage) {
+							loading.setVisibility(View.GONE);
+						}
+					}, new ImageLoadingProgressListener() {
+						@Override
+						public void onProgressUpdate(String imageUri,
+								View view, int current, int total) {
+							loading.setProgress(Math.round(100.0f * current
+									/ total));
 						}
 					});
 
@@ -226,15 +230,14 @@ public class ScanPhotosActivity extends Activity {
 
 	@Override
 	protected void onStop() {
-		loader.stop();
+		imageLoader.stop();
 		super.onStop();
 	}
 
 	@Override
 	protected void onDestroy() {
-		// 清空cache
-		loader.clearMemoryCache();
-		loader.clearDiscCache();
+		imageLoader.clearMemoryCache();
+		imageLoader.clearDiskCache();
 		super.onDestroy();
 	}
 

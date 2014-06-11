@@ -3,7 +3,6 @@ package scu.android.application;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -27,20 +26,19 @@ import org.jivesoftware.smackx.search.UserSearchManager;
 
 import scu.android.util.XmppTool;
 import android.app.Application;
+import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.os.StrictMode;
 import android.widget.Toast;
 
-import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiscCache;
-import com.nostra13.universalimageloader.cache.disc.naming.HashCodeFileNameGenerator;
-import com.nostra13.universalimageloader.cache.memory.impl.UsingFreqLimitedMemoryCache;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
-import com.nostra13.universalimageloader.core.download.URLConnectionImageDownloader;
-import com.nostra13.universalimageloader.utils.StorageUtils;
+import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 
 public class MyApplication extends Application {
 	public static String hostIp = "218.244.144.212";
@@ -67,8 +65,9 @@ public class MyApplication extends Application {
 		// TODO Auto-generated method stub
 		super.onCreate();
 		// initial();
-		initImageLoader();
-		System.out.println("oncreate   ");
+
+		initImageLoader(getApplicationContext());
+		// System.out.println("oncreate   ");
 		sp = getSharedPreferences("poti", MODE_PRIVATE);
 
 	}
@@ -421,38 +420,15 @@ public class MyApplication extends Application {
 		// loadArray(list);
 	}
 
-	// 初始化图片加载器
-	public void initImageLoader() {
-		File cacheDir = StorageUtils.getOwnCacheDirectory(
-				getApplicationContext(),
-				"ConquerQuestion/CurrentUser/image/Cache");
-		// Get singletone instance of ImageLoader
-		ImageLoader imageLoader = ImageLoader.getInstance();
-		// Create configuration for ImageLoader (all options are optional, use
-		// only those you really want to customize)
+	public static void initImageLoader(Context context) {
 		ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(
-				getApplicationContext())
-				//.memoryCacheExtraOptions(200, 200)
-				// max width, max height.discCacheExtraOptions(400, 400,
-				// CompressFormat.JPEG, 75) // Can slow ImageLoader, use it
-				// carefully (Better don't use it)
-				.threadPoolSize(10)
-				.threadPriority(Thread.NORM_PRIORITY - 1)
+				context).threadPriority(Thread.NORM_PRIORITY - 2)
 				.denyCacheImageMultipleSizesInMemory()
-				.offOutOfMemoryHandling()
-				.memoryCache(new UsingFreqLimitedMemoryCache(4 * 1024 * 1024))
-				// You can pass your own memory cache implementation
-				.discCache(new UnlimitedDiscCache(cacheDir))
-				// You can pass your own disc cache implementation
-				.discCacheFileNameGenerator(new HashCodeFileNameGenerator())
-				.imageDownloader(
-						new URLConnectionImageDownloader(5 * 1000, 20 * 1000))
-				// connectTimeout (5 s), readTimeout (20 s)
-				.defaultDisplayImageOptions(DisplayImageOptions.createSimple())
-				.enableLogging().build();
-		// Initialize ImageLoader with created configuration. Do it once on
-		// Application start.
-		imageLoader.init(config);
+				.diskCacheFileNameGenerator(new Md5FileNameGenerator())
+				.tasksProcessingOrder(QueueProcessingType.LIFO)
+				.writeDebugLogs() // Remove for release app
+				.build();
+		ImageLoader.getInstance().init(config);
 	}
 
 }
