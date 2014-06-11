@@ -149,7 +149,7 @@
                 android:stretchMode="columnWidth"
                 android:verticalSpacing="2dp" />
         </RelativeLayout>
-
+        
         <include layout="@layout/chat_input_field" />
     </LinearLayout>
 
