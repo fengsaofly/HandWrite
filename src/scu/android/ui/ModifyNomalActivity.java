@@ -48,6 +48,9 @@ public class ModifyNomalActivity extends Activity{
 		}
 		
 		else if(type.equals("gender")){
+
+		else if(type.equals("sex")){
+
 			s1 = "性别";
 			s2 = "请填写你的性别（男/女）";
 			tag = 3;
@@ -78,6 +81,14 @@ public class ModifyNomalActivity extends Activity{
 			break;
 		case R.id.modify_save:
 			((MyApplication)getApplication()).setUserVCard(XmppTool.getConnection(),tag,modifyNomal_value.getText().toString());
+
+			try {
+				((MyApplication)getApplication()).setUserVCard(XmppTool.getConnection(),tag,modifyNomal_value.getText().toString());
+			} catch (XMPPException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
 			finish();
 			break;
 		}

@@ -3,12 +3,11 @@ package scu.android.fragment;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
 import scu.android.activity.ReplyQuestionActivity;
-import scu.android.activity.ScanPhotosActivity;
 import scu.android.db.QuestionDao;
 import scu.android.entity.Question;
 import scu.android.ui.MGridView;
+import scu.android.ui.PhotosAdapter;
 import scu.android.util.AppUtils;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -28,7 +27,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
@@ -44,15 +42,11 @@ import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.demo.note.R;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnLastItemVisibleListener;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 
 //破题页面
 public class QuestionsFragment extends Fragment {
@@ -64,10 +58,6 @@ public class QuestionsFragment extends Fragment {
 	private View view;
 	private Button classify;
 	private PopupWindow classifyWindow;
-	// ///////////////////////////////////////////////
-	private ImageLoader loader;
-	private DisplayImageOptions options;
-	private int photoWidth;
 
 	public static android.support.v4.app.Fragment newInstance() {
 		QuestionsFragment questionFragment = new QuestionsFragment();
@@ -107,17 +97,6 @@ public class QuestionsFragment extends Fragment {
 		questions = new ArrayList<Question>();
 		new InitQuestionsTask().execute();
 		progress = (ProgressBar) view.findViewById(R.id.progress);
-
-		// ///////////////////////////
-		photoWidth = (AppUtils.getWindowMetrics(getActivity()).widthPixels - 4) / 3;
-		loader = ImageLoader.getInstance();
-		options = new DisplayImageOptions.Builder()
-				.showStubImage(R.drawable.question)
-				.showImageForEmptyUri(R.drawable.question).cacheInMemory()
-				.cacheOnDisc().imageScaleType(ImageScaleType.IN_SAMPLE_INT)
-				.build();
-
-		// //////////////////////////
 
 		questionsAdapter = new QuestionsAdapter(getActivity()
 				.getApplicationContext(), questions);
@@ -226,10 +205,12 @@ public class QuestionsFragment extends Fragment {
 
 		Context context;
 		List<Question> questions;
+		int width;
 
 		public QuestionsAdapter(Context context, List<Question> questions) {
 			this.context = context;
 			this.questions = questions;
+			this.width = AppUtils.getDefaultPhotoWidth(getActivity()) / 3;
 		}
 
 		@Override
@@ -256,9 +237,7 @@ public class QuestionsFragment extends Fragment {
 			final Question question = (Question) getItem(position);
 			ImageView avatar = (ImageView) convertView
 					.findViewById(R.id.avatar);
-			LayoutParams params = avatar.getLayoutParams();
-			params.width = params.height = photoWidth / 3;
-			avatar.setLayoutParams(params);
+			AppUtils.setViewSize(avatar, width, width);
 			avatar.setBackgroundResource(R.drawable.avatar);
 			((TextView) convertView.findViewById(R.id.nickname))
 					.setText("测试用户名");
@@ -273,7 +252,7 @@ public class QuestionsFragment extends Fragment {
 					.findViewById(R.id.photosView);
 			ArrayList<String> images = question.getImages();
 			if (images.size() != 0) {
-				photosView.setAdapter(new PhotosAdapter(context, images));
+				photosView.setAdapter(new PhotosAdapter(getActivity(), images));
 				title.setText(question.getTitle());
 			} else {
 				title.setVisibility(View.GONE);
@@ -310,59 +289,8 @@ public class QuestionsFragment extends Fragment {
 	}
 
 	/*
-	 * 问题图片
+	 * 分类列表
 	 */
-	private class PhotosAdapter extends BaseAdapter {
-		private Context context;
-		private ArrayList<String> bitmaps;
-
-		public PhotosAdapter(Context context, ArrayList<String> bitmaps) {
-			this.context = context;
-			this.bitmaps = bitmaps;
-		}
-
-		public int getCount() {
-			return bitmaps.size();
-		}
-
-		public Object getItem(int position) {
-			return position;
-		}
-
-		public long getItemId(int position) {
-			return position;
-		}
-
-		public View getView(int position, View convertView, ViewGroup parent) {
-			if (convertView == null) {
-				convertView = LayoutInflater.from(context).inflate(
-						R.layout.thumbnail_item, null);
-			}
-			String photo = bitmaps.get(position);
-			ImageView thumbnail = ((ImageView) convertView
-					.findViewById(R.id.thumbnail));
-			android.view.ViewGroup.LayoutParams params = thumbnail
-					.getLayoutParams();
-			params.width = params.height = photoWidth;
-			thumbnail.setLayoutParams(params);// 设置图片大小
-			loader.displayImage("file:///" + photo, thumbnail, options);
-			final int index = position;
-			thumbnail.setOnClickListener(new OnClickListener() {
-
-				@Override
-				public void onClick(View v) {
-					Intent intent = new Intent(getActivity(),
-							ScanPhotosActivity.class);
-					intent.putStringArrayListExtra("photos", bitmaps);
-					intent.putExtra("index", index + 1);
-					startActivity(intent);
-				}
-			});
-			return convertView;
-		}
-
-	}
-
 	private class ExpandableListAdapter extends BaseExpandableListAdapter {
 
 		private LayoutInflater inflater;
@@ -517,8 +445,8 @@ public class QuestionsFragment extends Fragment {
 		ExpandableListView classifyView = (ExpandableListView) contentView
 				.findViewById(R.id.classify_listview);
 		final String[][] childs = new String[4][];
-		final String[] classifies = getActivity().getResources().getStringArray(
-				R.array.classifies);
+		final String[] classifies = getActivity().getResources()
+				.getStringArray(R.array.classifies);
 		childs[0] = getActivity().getResources().getStringArray(R.array.grades);
 		childs[1] = getActivity().getResources().getStringArray(
 				R.array.subjects);
@@ -542,11 +470,15 @@ public class QuestionsFragment extends Fragment {
 			}
 		});
 		classifyView.setOnChildClickListener(new OnChildClickListener() {
-			
+
 			@Override
-			public boolean onChildClick(ExpandableListView parent, View view, int groupPosition,
-					int childPosition, long id) {
-				Toast.makeText(getActivity(),classifies[groupPosition]+":"+childs[groupPosition][childPosition],Toast.LENGTH_SHORT).show();
+			public boolean onChildClick(ExpandableListView parent, View view,
+					int groupPosition, int childPosition, long id) {
+				Toast.makeText(
+						getActivity(),
+						classifies[groupPosition] + ":"
+								+ childs[groupPosition][childPosition],
+						Toast.LENGTH_SHORT).show();
 				return false;
 			}
 		});

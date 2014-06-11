@@ -5,20 +5,18 @@ import java.util.ArrayList;
 import scu.android.db.ReplyDao;
 import scu.android.entity.Reply;
 import scu.android.ui.MGridView;
+import scu.android.ui.PhotosAdapter;
 import scu.android.util.AppUtils;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.BaseAdapter;
@@ -29,19 +27,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.demo.note.R;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 
 public class ReplysActiviy extends Activity {
 
 	private ListView replysView;
 	private ReplysAdapter replysAdapter;
 	private ArrayList<Reply> replys;
-
-	private ImageLoader loader;
-	private DisplayImageOptions options;
-	private int photoWidth;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -52,14 +43,6 @@ public class ReplysActiviy extends Activity {
 
 	@SuppressWarnings("unchecked")
 	public void init() {
-		photoWidth = (AppUtils.getWindowMetrics(this).widthPixels - 4) / 3;
-		loader = ImageLoader.getInstance();
-		options = new DisplayImageOptions.Builder()
-				.showStubImage(R.drawable.question)
-				.showImageForEmptyUri(R.drawable.question).cacheInMemory()
-				.cacheOnDisc().imageScaleType(ImageScaleType.IN_SAMPLE_INT)
-				.build();
-
 		replys = (ArrayList<Reply>) getIntent().getSerializableExtra("replys");
 
 		replysView = (ListView) findViewById(R.id.replys);
@@ -69,12 +52,14 @@ public class ReplysActiviy extends Activity {
 	}
 
 	private class ReplysAdapter extends BaseAdapter {
-		Context context;
+		Activity activity;
 		ArrayList<Reply> replys;
+		int width;
 
-		public ReplysAdapter(Context context, ArrayList<Reply> replys) {
-			this.context = context;
+		public ReplysAdapter(Activity activity, ArrayList<Reply> replys) {
+			this.activity = activity;
 			this.replys = replys;
+			this.width = AppUtils.getDefaultPhotoWidth(activity) / 3;
 		}
 
 		@Override
@@ -95,15 +80,14 @@ public class ReplysActiviy extends Activity {
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			if (convertView == null) {
-				convertView = LayoutInflater.from(context).inflate(
+				convertView = LayoutInflater.from(
+						activity.getApplicationContext()).inflate(
 						R.layout.reply_item, null);
 			}
 			final Reply reply = replys.get(position);
 			ImageView avatar = (ImageView) convertView
 					.findViewById(R.id.avatar);
-			LayoutParams params = avatar.getLayoutParams();
-			params.width = params.height = photoWidth / 3;
-			avatar.setLayoutParams(params);
+			AppUtils.setViewSize(avatar, width, width);
 			avatar.setBackgroundResource(R.drawable.avatar);
 			((TextView) convertView.findViewById(R.id.nickname))
 					.setText("测试用户名");
@@ -113,8 +97,8 @@ public class ReplysActiviy extends Activity {
 					.getContent());
 			MGridView photosView = (MGridView) convertView
 					.findViewById(R.id.photos_view);
-			photosView
-					.setAdapter(new PhotosAdapter(context, reply.getImages()));
+			photosView.setAdapter(new PhotosAdapter(ReplysActiviy.this, reply
+					.getImages()));
 			ImageButton audio = (ImageButton) convertView
 					.findViewById(R.id.audio);
 			final String sAudio = reply.getAudio();
@@ -142,64 +126,6 @@ public class ReplysActiviy extends Activity {
 		}
 	};
 
-	/*
-	 * 图片
-	 */
-	private class PhotosAdapter extends BaseAdapter {
-		private Context context;
-		private ArrayList<String> bitmaps;
-
-		public PhotosAdapter(Context context, ArrayList<String> bitmaps) {
-			this.context = context;
-			this.bitmaps = bitmaps;
-		}
-
-		public int getCount() {
-			return bitmaps.size();
-		}
-
-		public Object getItem(int position) {
-			return position;
-		}
-
-		public long getItemId(int position) {
-			return position;
-		}
-
-		public View getView(int position, View convertView, ViewGroup parent) {
-			if (convertView == null) {
-				convertView = LayoutInflater.from(context).inflate(
-						R.layout.thumbnail_item, null);
-			}
-			String photo = bitmaps.get(position);
-			ImageView thumbnail = ((ImageView) convertView
-					.findViewById(R.id.thumbnail));
-			android.view.ViewGroup.LayoutParams params = thumbnail
-					.getLayoutParams();
-			// if (bitmaps.size() == 1) {
-			// params.width = getWindowMetrics().widthPixels - 10;
-			// params.height = 2 * photoWidth;
-			// } else {
-			params.width = params.height = photoWidth;
-			// }
-			thumbnail.setLayoutParams(params);// 设置图片大小
-			loader.displayImage("file:///" + photo, thumbnail, options);
-			final int index = position;
-			thumbnail.setOnClickListener(new OnClickListener() {
-
-				@Override
-				public void onClick(View v) {
-					Intent intent = new Intent(ReplysActiviy.this,
-							ScanPhotosActivity.class);
-					intent.putStringArrayListExtra("photos", bitmaps);
-					intent.putExtra("index", index + 1);
-					startActivity(intent);
-				}
-			});
-			return convertView;
-		}
-	}
-
 	// 删除问题
 	public void deleteReply(final long repId, final int location) {
 		Dialog alert = new AlertDialog.Builder(this).setTitle("破题")
@@ -213,7 +139,7 @@ public class ReplysActiviy extends Activity {
 						} else {
 							replys.remove(location);
 							replysAdapter.notifyDataSetChanged();
-							if(replys.size()==0)
+							if (replys.size() == 0)
 								ReplysActiviy.this.finish();
 						}
 					}

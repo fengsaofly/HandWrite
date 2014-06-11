@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+
 import scu.android.entity.Reply;
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
@@ -75,6 +76,20 @@ public class ReplyDao {
 		Log.i("date", replyTime.toString());
 		long userId = cursor.getLong(cursor.getColumnIndex("userId"));
 		return new Reply(repId, content, audio, images, replyTime, 0l, userId);
+	}
+	
+	public static Reply getReplyById(Context context, long repId) {
+		Reply reply = null;
+		SQLiteDatabase aDatabase = DBHelper.getInstance(context)
+				.getReadableDatabase();
+		Cursor cursor = aDatabase.query(DBHelper.TABLE_REPLY, null, "repId=?",
+				new String[] { String.valueOf(repId) }, null, null, null);
+		while (cursor.moveToNext()) {
+			reply = getReply(context, cursor);
+		}
+		cursor.close();
+		aDatabase.close();
+		return reply;
 	}
 
 	public static boolean deleteReply(Context context, long repId) {

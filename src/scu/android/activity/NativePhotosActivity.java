@@ -55,9 +55,9 @@ public class NativePhotosActivity extends Activity {
 	private ArrayList<String> selectedPhotos;
 	private Intent intent;
 
+	private int width;
 	private ImageLoader loader;
 	private DisplayImageOptions options;
-	private int photoWidth;
 	private int availNumber;
 	// /////////////////////////////////////////////////////////
 	private PopupWindow parentsWindow;
@@ -97,6 +97,7 @@ public class NativePhotosActivity extends Activity {
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 
 		availNumber = intent.getIntExtra("availNumber", 4);
+		width = AppUtils.getDefaultPhotoWidth(this);
 
 		photos = getPhotos();
 		if (photos.size() > 0) {
@@ -122,24 +123,25 @@ public class NativePhotosActivity extends Activity {
 				items.add(item);
 			}
 
-			items.add(0,new Parent(bitmaps.get(0).path, "所有图片", bitmaps.size()));// 所有图片
+			items.add(0,
+					new Parent(bitmaps.get(0).path, "所有图片", bitmaps.size()));// 所有图片
 
 			photosView = (GridView) findViewById(R.id.photosView);
 			adapter = new PhotosAdapter(this, bitmaps);
 			photosView.setAdapter(adapter);
-			photoWidth = (AppUtils.getWindowMetrics(this).widthPixels - 4) / 3;
+
 			loader = ImageLoader.getInstance();
 			options = new DisplayImageOptions.Builder()
-					.showStubImage(R.drawable.question)
-					.showImageForEmptyUri(R.drawable.question).cacheInMemory()
-					.cacheOnDisc().imageScaleType(ImageScaleType.IN_SAMPLE_INT)
-					.build();
+					.showStubImage(R.drawable.default_photo)
+					.showImageForEmptyUri(R.drawable.default_photo)
+					.cacheInMemory().cacheOnDisc()
+					.imageScaleType(ImageScaleType.IN_SAMPLE_INT).build();
 
 			selectParent = (TextView) findViewById(R.id.selectParent);
 			selectNumber = (TextView) findViewById(R.id.selectNumber);
 			selectNumber.setText("已选" + selectedPhotos.size() + "张");
 		} else {
-			Toast.makeText(this, "没有发现任何图片...", Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, "没有发现任何图片哦...", Toast.LENGTH_SHORT).show();
 		}
 	}
 
@@ -173,11 +175,11 @@ public class NativePhotosActivity extends Activity {
 	}
 
 	private class PhotosAdapter extends BaseAdapter {
-		private Context context;
+		private Activity activity;
 		private ArrayList<Photo> bitmaps;
 
-		public PhotosAdapter(Context context, ArrayList<Photo> bitmaps) {
-			this.context = context;
+		public PhotosAdapter(Activity activity, ArrayList<Photo> bitmaps) {
+			this.activity = activity;
 			this.bitmaps = bitmaps;
 		}
 
@@ -195,20 +197,18 @@ public class NativePhotosActivity extends Activity {
 
 		public View getView(int position, View convertView, ViewGroup parent) {
 			if (convertView == null) {
-				convertView = LayoutInflater.from(context).inflate(
+				convertView = LayoutInflater.from(
+						activity.getApplicationContext()).inflate(
 						R.layout.native_photo_item, null);
 			}
 			final Photo photo = bitmaps.get(position);
 			ImageView thumbnail = ((ImageView) convertView
 					.findViewById(R.id.thumbnail));
-			android.view.ViewGroup.LayoutParams params = thumbnail
-					.getLayoutParams();
-			params.width = params.height = photoWidth;
-			thumbnail.setLayoutParams(params);// 设置图片大小
+			AppUtils.setViewSize(thumbnail, width, width);// 设置图片大小
 			loader.displayImage("file:///" + photo.path, thumbnail, options);
 			final ImageView back = ((ImageView) convertView
 					.findViewById(R.id.back));
-			back.setLayoutParams(params);// 设置和后面的图片一样大小
+			AppUtils.setViewSize(back, width, width);// 设置和后面的图片一样大小
 			back.setVisibility(photo.selected ? View.VISIBLE : View.INVISIBLE);
 			final CheckBox select = (CheckBox) convertView
 					.findViewById(R.id.select);
@@ -325,7 +325,7 @@ public class NativePhotosActivity extends Activity {
 			ImageView photo = (ImageView) convertView.findViewById(R.id.photo);
 			android.view.ViewGroup.LayoutParams params = photo
 					.getLayoutParams();
-			params.width = params.height = photoWidth / 2;
+			params.width = params.height = width / 2;
 			photo.setLayoutParams(params);
 			loader.displayImage("file:///" + item.photo, photo, options);
 			((TextView) convertView.findViewById(R.id.parent))
@@ -392,9 +392,7 @@ public class NativePhotosActivity extends Activity {
 		parentsWindow = new PopupWindow(contentView, LayoutParams.MATCH_PARENT,
 				LayoutParams.MATCH_PARENT, true);
 		ListView parent = (ListView) contentView.findViewById(R.id.parents);
-		android.view.ViewGroup.LayoutParams params = parent.getLayoutParams();
-		params.height = photoWidth * 4;
-		parent.setLayoutParams(params);
+		AppUtils.setViewSize(parent, LayoutParams.MATCH_PARENT, width * 4);
 		parent.setAdapter(new ParentsAdapter(this, items));
 		parent.setOnItemClickListener(new SelectListener());
 		parentsWindow.setBackgroundDrawable(new ColorDrawable());

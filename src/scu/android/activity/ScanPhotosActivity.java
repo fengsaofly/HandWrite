@@ -56,8 +56,8 @@ public class ScanPhotosActivity extends Activity {
 		intent = getIntent();
 		loader = ImageLoader.getInstance();
 		options = new DisplayImageOptions.Builder()
-				.showStubImage(R.drawable.question)
-				.showImageForEmptyUri(R.drawable.question).cacheInMemory()
+				.showStubImage(R.drawable.default_photo)
+				.showImageForEmptyUri(R.drawable.default_photo).cacheInMemory()
 				.cacheOnDisc().imageScaleType(ImageScaleType.IN_SAMPLE_INT)
 				.build();
 
@@ -196,7 +196,7 @@ public class ScanPhotosActivity extends Activity {
 						photos.remove(index);
 						adapter.notifyDataSetChanged();
 						Intent del = new Intent();
-						del.setAction("scu.android.ui.ScanPhotosActivity");
+						del.setAction(scu.android.util.AppUtils.SCAN_PHOTOS_ACTION);
 						del.putExtra("photoIndex", index);
 						sendBroadcast(del);
 						if (photos.size() <= 0)

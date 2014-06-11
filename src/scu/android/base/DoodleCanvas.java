@@ -1,7 +1,6 @@
 package scu.android.base;
 
 import java.util.ArrayList;
-
 import scu.android.util.AppUtils;
 import scu.android.util.BitmapUtils;
 import android.content.Context;
@@ -16,38 +15,59 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.View;
+import android.view.View.OnTouchListener;
 
-public class DoodleCanvas extends SuperCanvas {
-
+public class DoodleCanvas extends SurfaceView implements
+		SurfaceHolder.Callback, OnTouchListener {
+	private SurfaceHolder holder;// 控制
+	private Runnable drawThread;// 绘制线程
+	private Canvas canvas, bitCanvas;// 绘制画布
+	private boolean canDraw, isDrawing;// 绘制状态
+	private Paint paint;
+	private float startX, stopX, startY, stopY;// touch点
+	private int minX, maxX, minY, maxY;// 截图大小
+	private Bitmap bitmap;// 绘制图片
 	private ArrayList<DrawPath> paths;// 路径
-	private Paint tmpPaint;
+	private int paintColor;
+	private int paintSize;
 
 	public DoodleCanvas(Context context) {
 		super(context);
+		init();
 	}
 
 	public DoodleCanvas(Context context, AttributeSet attrs) {
 		super(context, attrs);
+		init();
 	}
 
 	public DoodleCanvas(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
+		init();
 	}
 
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
-		initTmpPaint();
 		paths = new ArrayList<DrawPath>();
-		paths.add(new DrawPath(new Path(), tmpPaint));
+		paintColor = Color.BLACK;
+		paintSize = getWidth() / 50;
+		paint = getPaint(paintColor, paintSize);
+		paths.add(new DrawPath(new Path(), paint));
 		maxX = maxY = 0;
 		minX = getWidth();
 		minY = getHeight();
 		bitmap = Bitmap.createBitmap(minX, minY, Config.ARGB_8888);
 		bitCanvas = new Canvas(bitmap);
 		drawThread = new DrawThread();
-		new Thread(drawThread).start();
 		this.canDraw = this.isDrawing = true;
+		new Thread(drawThread).start();
+	}
+
+	@Override
+	public void surfaceChanged(SurfaceHolder holder, int format, int width,
+			int height) {
 	}
 
 	@Override
@@ -55,15 +75,23 @@ public class DoodleCanvas extends SuperCanvas {
 		this.canDraw = false;
 	}
 
-	public void initTmpPaint() {
-		tmpPaint = new Paint();
-		tmpPaint.setAntiAlias(true);
-		tmpPaint.setColor(Color.RED);
-		tmpPaint.setStyle(Paint.Style.STROKE);
-		tmpPaint.setStrokeJoin(Paint.Join.ROUND);
-		tmpPaint.setStrokeCap(Paint.Cap.ROUND);
-		tmpPaint.setStrokeWidth(getWidth() / 50);// 设置画笔宽度
-		tmpPaint.setDither(true);
+	public void init() {
+		holder = getHolder();
+		holder.addCallback(this);
+		setOnTouchListener(this);
+		canDraw = true;
+	}
+
+	public Paint getPaint(int paintColor, int paintSize) {
+		paint = new Paint();
+		paint.setAntiAlias(true);
+		paint.setColor(paintColor);
+		paint.setStyle(Paint.Style.STROKE);
+		paint.setStrokeJoin(Paint.Join.ROUND);
+		paint.setStrokeCap(Paint.Cap.ROUND);
+		paint.setStrokeWidth(paintSize);// 设置画笔宽度
+		paint.setDither(true);
+		return paint;
 	}
 
 	@Override
@@ -80,7 +108,8 @@ public class DoodleCanvas extends SuperCanvas {
 			tmpDoodlePath.path.quadTo(stopX, stopY, startX, startY);
 			break;
 		case MotionEvent.ACTION_UP:
-			tmpDoodlePath = new DrawPath(new Path(), tmpPaint);
+			tmpDoodlePath = new DrawPath(new Path(), getPaint(paintColor,
+					paintSize));
 			synchronized (paths) {
 				paths.add(tmpDoodlePath);
 			}
@@ -90,14 +119,6 @@ public class DoodleCanvas extends SuperCanvas {
 		stopX = startX;
 		stopY = startY;
 		return true;
-	}
-
-	public void drawPath(Canvas canvas) {
-		synchronized (paths) {
-			canvas.drawColor(Color.WHITE);
-			for (DrawPath doodlePath : paths)
-				canvas.drawPath(doodlePath.path, doodlePath.paint);
-		}
 	}
 
 	// 撤销
@@ -113,9 +134,72 @@ public class DoodleCanvas extends SuperCanvas {
 
 	}
 
+	class DrawPath {
+		public DrawPath(Path path, Paint paint) {
+			this.paint = paint;
+			this.path = path;
+		}
+
+		Path path;
+		Paint paint;
+
+	}
+
+	public void drawPath(Canvas canvas) {
+		synchronized (paths) {
+			canvas.drawColor(Color.WHITE);
+			for (DrawPath doodlePath : paths)
+				canvas.drawPath(doodlePath.path, doodlePath.paint);
+		}
+	}
+
+	// 绘图
+	public void drawBitmap() {
+		try {
+			canvas = holder.lockCanvas();
+			if (canvas != null) {
+				drawPath(bitCanvas);
+				canvas.drawBitmap(bitmap, 0, 0, paint);
+			}
+		} catch (Exception e) {
+		} finally {
+			if (canvas != null) {
+				holder.unlockCanvasAndPost(canvas);
+
+			}
+		}
+	}
+
+	// 绘制线程
+	class DrawThread implements Runnable {
+		@Override
+		public void run() {
+			while (canDraw) {
+				if (isDrawing) {
+					drawBitmap();
+				}
+			}
+		}
+	}
+
 	// 保存涂鸦
 	public String getDoodlePath() {
 		return BitmapUtils.saveBitmap(getContext(), bitmap,
 				AppUtils.DOODLE_DIR, new Rect(), getWidth(), getHeight());
 	}
+
+	public void setPaintColor(String color) {
+		this.paintColor = Color.parseColor(color);
+		this.paths.get(paths.size() - 1).paint.setColor(paintColor);
+	}
+
+	public int getPaintSize() {
+		return paintSize;
+	}
+
+	public void setPaintSize(int paintSize) {
+		this.paintSize = paintSize;
+		this.paths.get(paths.size() - 1).paint.setStrokeWidth(paintSize);
+	}
+
 }

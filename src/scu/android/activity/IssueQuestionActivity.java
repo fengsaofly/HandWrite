@@ -26,7 +26,6 @@ import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaRecorder;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.view.Gravity;
@@ -352,7 +351,7 @@ public class IssueQuestionActivity extends Activity {
 			break;
 
 		case R.id.popup_camera_lay:
-			imgName = AppUtils.sysCamera(IssueQuestionActivity.this);
+			imgPath = AppUtils.sysCamera(IssueQuestionActivity.this);
 			break;
 		case R.id.popup_imgpicker_lay:
 			if (selectNativePhotosNumber < (MAX_NUMBER - 2)) {
@@ -421,7 +420,7 @@ public class IssueQuestionActivity extends Activity {
 	}
 
 	// ////////////////////////////////////////////////////////////////////////////////
-	private String imgName;
+	private String imgPath;
 	private ArrayList<String> paths;// 图片路径
 	private GridView thumbnails;
 	private ThumbnailsAdapter adapter;
@@ -490,14 +489,7 @@ public class IssueQuestionActivity extends Activity {
 		switch (requestCode) {
 		case AppUtils.SYS_CAMEAR:// 相机
 			if (resultCode == Activity.RESULT_OK) {
-				if (Environment.getExternalStorageState().equals(
-						Environment.MEDIA_MOUNTED)) {
-					File file = new File(
-							Environment.getExternalStorageDirectory() + "/"
-									+ AppUtils.CAMERA_PHOTO_DIR + "/" + imgName);
-					String imgPath = file.getAbsolutePath();
-					paths.add(imgPath);
-				}
+				paths.add(imgPath);
 			}
 			break;
 		case AppUtils.PHONE_PICTURES:// 图库

@@ -12,14 +12,16 @@ import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.DisplayMetrics;
+import android.view.View;
 import android.view.ViewGroup.LayoutParams;
-import android.widget.ImageView;
 
 public class AppUtils {
 
 	public static final String CAMERA_PHOTO_DIR = "ConquerQuestion/CurrentUser/NewQuestion/image/camera";
 	public static final String DOODLE_DIR = "ConquerQuestion/CurrentUser/NewQuestion/image/doodle";
 	public static final String HANDWRITE_DIR = "ConquerQuestion/CurrentUser/NewQuestion/image/handwrite";
+
+	public static final String SCAN_PHOTOS_ACTION = "scu.android.ui.ScanPhotosActivity";
 
 	public final static int SYS_CAMEAR = 1;
 	public final static int PHONE_PICTURES = 2;
@@ -29,9 +31,11 @@ public class AppUtils {
 	public final static int ISSUE_QUESTION = 11;
 	public final static int ISSUE_QUESTION_REPLY = 12;
 
+	public final static int MAX_PHOTOS_NUM = 6;
+
 	// 调用系统相机
 	public static String sysCamera(Activity activity) {
-		String imgName = null;
+		String imgPath = null;
 		if (Environment.getExternalStorageState().equals(
 				Environment.MEDIA_MOUNTED)) {
 			File dir = new File(Environment.getExternalStorageDirectory() + "/"
@@ -40,14 +44,15 @@ public class AppUtils {
 				dir.mkdirs();
 			Intent intent = new Intent(
 					android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-			imgName = System.currentTimeMillis() + ".png";
+			String imgName = System.currentTimeMillis() + ".png";
 			File f = new File(dir, imgName);
 			Uri u = Uri.fromFile(f);
 			intent.putExtra(MediaStore.Images.Media.ORIENTATION, 0);
 			intent.putExtra(MediaStore.EXTRA_OUTPUT, u);
 			activity.startActivityForResult(intent, SYS_CAMEAR);
+			imgPath = f.getAbsolutePath();
 		}
-		return imgName;
+		return imgPath;
 	}
 
 	// 调用手机图库
@@ -127,14 +132,16 @@ public class AppUtils {
 		return elapsed;
 	}
 
-	//
 	// 设置图片缩略图大小
-	public static void setThumbnailSize(ImageView thumbnail, int width,
-			int height) {
-		LayoutParams params = (LayoutParams) thumbnail.getLayoutParams();
+	public static void setViewSize(View view, int width, int height) {
+		LayoutParams params = (LayoutParams) view.getLayoutParams();
 		params.width = width;
 		params.height = height;
-		thumbnail.setLayoutParams(params);
+		view.setLayoutParams(params);
+	}
+
+	public static int getDefaultPhotoWidth(Activity activity) {
+		return (getWindowMetrics(activity).widthPixels - 4) / 3;
 	}
 
 }
