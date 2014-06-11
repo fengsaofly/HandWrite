@@ -5,6 +5,7 @@ import java.util.Date;
 
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smackx.packet.VCard;
 
 import scu.android.application.MyApplication;
 import scu.android.note.ActionBarActivity;
@@ -49,29 +50,29 @@ public class LoginActivity extends Activity{
 		  String retStrFormatNowDate = sdFormatter.format(nowTime);
 		  System.out.println("retStrFormatNowDate"+retStrFormatNowDate);
 		  final EditText et  = new EditText(this);
-		  new AlertDialog.Builder(this).setTitle("请输入服务器ip地址").setView(et).setPositiveButton("确定", new DialogInterface.OnClickListener() {
-			
-			@Override
-			public void onClick(DialogInterface arg0, int arg1) {
-				// TODO Auto-generated method stub
-				if(et.getText().toString().equals("")){
-					Toast.makeText(LoginActivity.this, "请输入服务器ip地址", 3).show();
-				}
-				else{
-					((MyApplication)getApplication()).hostIp = et.getText().toString();
-//					((MyApplication)getApplication()).hostName = et.getText().toString();
-				}
-				
-				System.out.println("ip  "+((MyApplication)getApplication()).hostIp +"------");
-			}
-		}).setNegativeButton("取消", new DialogInterface.OnClickListener() {
-			
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				// TODO Auto-generated method stub
-				
-			}
-		}).create().show();
+//		  new AlertDialog.Builder(this).setTitle("请输入服务器ip地址").setView(et).setPositiveButton("确定", new DialogInterface.OnClickListener() {
+//			
+//			@Override
+//			public void onClick(DialogInterface arg0, int arg1) {
+//				// TODO Auto-generated method stub
+//				if(et.getText().toString().equals("")){
+//					Toast.makeText(LoginActivity.this, "请输入服务器ip地址", 3).show();
+//				}
+//				else{
+//					((MyApplication)getApplication()).hostIp = et.getText().toString();
+////					((MyApplication)getApplication()).hostName = et.getText().toString();
+//				}
+//				
+//				System.out.println("ip  "+((MyApplication)getApplication()).hostIp +"------");
+//			}
+//		}).setNegativeButton("取消", new DialogInterface.OnClickListener() {
+//			
+//			@Override
+//			public void onClick(DialogInterface dialog, int which) {
+//				// TODO Auto-generated method stub
+//				
+//			}
+//		}).create().show();
 		initial();
 		
 	}
@@ -86,10 +87,29 @@ public class LoginActivity extends Activity{
 				
 				Intent intent = new Intent();
 				intent.setClass(LoginActivity.this, ActionBarActivity.class);
-//				intent.putExtra("USERID", USERID);
+				intent.putExtra("USERID", "");
 				startActivity(intent);
 				Toast.makeText(LoginActivity.this, "登陆成功", Toast.LENGTH_SHORT).show();
 				((MyApplication)getApplication()).loginFlag = true;
+				((MyApplication) getApplication()).roster = XmppTool
+						.getConnection().getRoster();
+
+				((MyApplication) getApplication()).entries = ((MyApplication) getApplication())
+						.getAllEntries();
+				
+				VCard vCard = new VCard();
+				try {
+					vCard.load(XmppTool.getConnection());
+				} catch (XMPPException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				if ("".equals(vCard.getNickName())
+						|| null == vCard.getNickName()) {
+					System.out.println("昵称是空的");
+					vCard.setNickName("快乐的汤姆猫");
+				}
+				((MyApplication) getApplication()).vCard = vCard;
 				finish();
 				break;
 			case 2:

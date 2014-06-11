@@ -3,6 +3,8 @@ package scu.android.fragment;
 
 
 
+import org.jivesoftware.smackx.packet.VCard;
+
 import scu.android.application.MyApplication;
 import scu.android.ui.AccountSettingActivity;
 import scu.android.ui.LoginActivity;
@@ -62,14 +64,18 @@ public class AccountFragment extends Fragment{
 		accountSetting = (RelativeLayout)view.findViewById(R.id.accountSetting);
 		laySet = (RelativeLayout)view.findViewById(R.id.laySet);
 		photo = (ImageView)view.findViewById(R.id.photo);
+		photo.setImageBitmap(((MyApplication)getActivity().getApplication()).getUserImage(XmppTool.getConnection(), ((MyApplication)getActivity().getApplication()).userName));
+		
 		regist_btn = (Button)view.findViewById(R.id.regist_btn);
 		login_btn = (Button)view.findViewById(R.id.login_btn);
 		uid = (TextView)view.findViewById(R.id.uid);
 		member = (TextView)view.findViewById(R.id.member);
 		
-		sp = getActivity().getSharedPreferences("bnj", getActivity().MODE_PRIVATE);
-		String sign = sp.getString("sign", "");
-		member.setText("个性签名: "+sign);
+//		sp = getActivity().getSharedPreferences("bnj", getActivity().MODE_PRIVATE);
+//		String sign = sp.getString("sign", "");
+		VCard vcard = ((MyApplication)getActivity().getApplication()).getUserVcard(XmppTool.getConnection(),((MyApplication)getActivity().getApplication()).userName);
+		 
+		member.setText("个性签名: "+vcard.getLastName());
 		
 		if(((MyApplication)getActivity().getApplication()).loginFlag==false){
 			accountSetting.setVisibility(View.GONE);

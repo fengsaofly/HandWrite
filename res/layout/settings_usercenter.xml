@@ -6,47 +6,47 @@
     
 	<LinearLayout android:orientation="vertical"  android:layout_width="fill_parent" android:layout_marginTop="20dp" android:layout_marginLeft="5dp" android:layout_marginRight="5dp" android:layout_marginBottom="20dp" android:layout_height="fill_parent" android:background="@anim/shape_rounded_rectangle_gray" >
 	    
-	    <RelativeLayout  android:gravity="center_vertical" android:padding="20dp" android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
+	    <RelativeLayout android:id="@+id/setting_modify_avatar" android:onClick="myOnclick" android:gravity="center_vertical" android:padding="20dp" android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
 
 	        <TextView style="@style/DefaultTextStyle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="头像"    android:layout_centerVertical="true"      />
 	        
-	        <TextView android:layout_alignParentRight="true" android:layout_marginRight="30dp" android:layout_width="90dp" android:background="@drawable/friend_icon_sample"  android:layout_height="90dp" android:gravity="right" android:layout_gravity="right"/>
+	        <ImageView android:id="@+id/setting_value_avatar" android:layout_alignParentRight="true" android:layout_marginRight="30dp" android:layout_width="90dp" android:src="@drawable/friend_icon_sample"  android:layout_height="90dp" android:gravity="right" android:layout_gravity="right"/>
 	        <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content"  android:src="@drawable/triangle" android:layout_alignParentRight="true" android:layout_centerVertical="true" />
 	    </RelativeLayout>
 	    <ImageView android:id="@id/line1" android:background="@drawable/line" android:layout_width="fill_parent" android:layout_height="wrap_content"/>
-	      <RelativeLayout  android:gravity="center_vertical" android:padding="20dp" android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
+	      <RelativeLayout android:id="@+id/setting_modify_nickname" android:onClick="myOnclick" android:gravity="center_vertical" android:padding="20dp" android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
 
 	        <TextView style="@style/DefaultTextStyle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="昵称"    android:layout_centerVertical="true"      />
-	        <TextView android:text="阿内尔卡"  style="@style/text_style_big_gray" android:layout_alignParentRight="true" android:layout_marginRight="30dp" android:layout_width="wrap_content"  android:layout_height="wrap_content" android:gravity="right" android:layout_gravity="right"/>
+	        <TextView android:text="未设置" android:id="@+id/setting_value_nickname" style="@style/text_style_big_gray" android:layout_alignParentRight="true" android:layout_marginRight="30dp" android:layout_width="wrap_content"  android:layout_height="wrap_content" android:gravity="right" android:layout_gravity="right"/>
 	        <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content"  android:src="@drawable/triangle" android:layout_alignParentRight="true" android:layout_centerVertical="true" />
 	    </RelativeLayout>
 	    <ImageView android:id="@id/line1" android:background="@drawable/line" android:layout_width="fill_parent" android:layout_height="wrap_content"/>
 	    
-	      <RelativeLayout  android:gravity="center_vertical" android:padding="20dp" android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
-
-	        <TextView style="@style/DefaultTextStyle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="用户名"    android:layout_centerVertical="true"      />
-	        <TextView android:text="阿内尔卡"  style="@style/text_style_big_gray" android:layout_alignParentRight="true" android:layout_marginRight="30dp" android:layout_width="wrap_content"  android:layout_height="wrap_content" android:gravity="right" android:layout_gravity="right"/>
-	        <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content"  android:src="@drawable/triangle" android:layout_alignParentRight="true" android:layout_centerVertical="true" />
-	    </RelativeLayout>
-	    <ImageView android:id="@id/line1" android:background="@drawable/line" android:layout_width="fill_parent" android:layout_height="wrap_content"/>
-	      <RelativeLayout  android:gravity="center_vertical" android:padding="20dp" android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
-
-	        <TextView style="@style/DefaultTextStyle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="性别"    android:layout_centerVertical="true"      />
-	        <TextView android:text="阿内尔卡"  style="@style/text_style_big_gray" android:layout_alignParentRight="true" android:layout_marginRight="30dp" android:layout_width="wrap_content"  android:layout_height="wrap_content" android:gravity="right" android:layout_gravity="right"/>
-	        <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content"  android:src="@drawable/triangle" android:layout_alignParentRight="true" android:layout_centerVertical="true" />
-	    </RelativeLayout>
-	    <ImageView android:id="@id/line1" android:background="@drawable/line" android:layout_width="fill_parent" android:layout_height="wrap_content"/>
-	      <RelativeLayout  android:gravity="center_vertical" android:padding="20dp" android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
+	      <RelativeLayout  android:id="@+id/setting_modify_zone" android:onClick="myOnclick" android:gravity="center_vertical" android:padding="20dp" android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
 
 	        <TextView style="@style/DefaultTextStyle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="地区"    android:layout_centerVertical="true"      />
-	        <TextView android:text="阿内尔卡"  style="@style/text_style_big_gray" android:layout_alignParentRight="true" android:layout_marginRight="30dp" android:layout_width="wrap_content"  android:layout_height="wrap_content" android:gravity="right" android:layout_gravity="right"/>
+	        <TextView android:text="未设置" android:id="@+id/setting_value_zone"  style="@style/text_style_big_gray" android:layout_alignParentRight="true" android:layout_marginRight="30dp" android:layout_width="wrap_content"  android:layout_height="wrap_content" android:gravity="right" android:layout_gravity="right"/>
 	        <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content"  android:src="@drawable/triangle" android:layout_alignParentRight="true" android:layout_centerVertical="true" />
 	    </RelativeLayout>
 	    <ImageView android:id="@id/line1" android:background="@drawable/line" android:layout_width="fill_parent" android:layout_height="wrap_content"/>
-	      <RelativeLayout  android:gravity="center_vertical" android:padding="20dp" android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
+	      <RelativeLayout  android:id="@+id/setting_modify_gender" android:onClick="myOnclick" android:gravity="center_vertical" android:padding="20dp" android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
+
+	        <TextView style="@style/DefaultTextStyle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="性别"    android:layout_centerVertical="true"      />
+	        <TextView android:text="未设置" android:id="@+id/setting_value_gender"  style="@style/text_style_big_gray" android:layout_alignParentRight="true" android:layout_marginRight="30dp" android:layout_width="wrap_content"  android:layout_height="wrap_content" android:gravity="right" android:layout_gravity="right"/>
+	        <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content"  android:src="@drawable/triangle" android:layout_alignParentRight="true" android:layout_centerVertical="true" />
+	    </RelativeLayout>
+	    <ImageView android:id="@id/line1" android:background="@drawable/line" android:layout_width="fill_parent" android:layout_height="wrap_content"/>
+	      <RelativeLayout android:id="@+id/setting_modify_grade" android:onClick="myOnclick" android:gravity="center_vertical" android:padding="20dp" android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
+
+	        <TextView style="@style/DefaultTextStyle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="年级"    android:layout_centerVertical="true"      />
+	        <TextView android:text="未设置"  android:id="@+id/setting_value_grade"  style="@style/text_style_big_gray" android:layout_alignParentRight="true" android:layout_marginRight="30dp" android:layout_width="wrap_content"  android:layout_height="wrap_content" android:gravity="right" android:layout_gravity="right"/>
+	        <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content"  android:src="@drawable/triangle" android:layout_alignParentRight="true" android:layout_centerVertical="true" />
+	    </RelativeLayout>
+	    <ImageView android:id="@id/line1" android:background="@drawable/line" android:layout_width="fill_parent" android:layout_height="wrap_content"/>
+	      <RelativeLayout android:id="@+id/setting_modify_sign" android:onClick="myOnclick" android:gravity="center_vertical" android:padding="20dp" android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
 
 	        <TextView style="@style/DefaultTextStyle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="个性签名"    android:layout_centerVertical="true"      />
-	        <TextView android:text="阿内尔卡"  style="@style/text_style_big_gray" android:layout_alignParentRight="true" android:layout_marginRight="30dp" android:layout_width="wrap_content"  android:layout_height="wrap_content" android:gravity="right" android:layout_gravity="right"/>
+	        <TextView android:text="未设置" android:id="@+id/setting_value_sign"  style="@style/text_style_big_gray" android:layout_alignParentRight="true" android:layout_marginRight="30dp" android:layout_width="wrap_content"  android:layout_height="wrap_content" android:gravity="right" android:layout_gravity="right"/>
 	        <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content"  android:src="@drawable/triangle" android:layout_alignParentRight="true" android:layout_centerVertical="true" />
 	    </RelativeLayout>
 	    <ImageView android:id="@id/line1" android:background="@drawable/line" android:layout_width="fill_parent" android:layout_height="wrap_content"/>

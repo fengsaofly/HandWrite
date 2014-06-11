@@ -72,7 +72,8 @@ public class ActionBarActivity extends FragmentActivity {
 		// pd = new ProgressDialog(this);
 		// pd.setTitle("温馨提示");
 		// pd.setMessage("正在登陆");
-		handler.sendEmptyMessage(5);
+//		handler.sendEmptyMessage(5);
+		initialListener();
 		searchGroupPd = new ProgressDialog(this);
 		searchGroupPd.setTitle("温馨提示");
 		searchGroupPd.setMessage("正在搜索");
@@ -559,11 +560,11 @@ public class ActionBarActivity extends FragmentActivity {
 	protected void onResume() {
 		super.onResume();
 
-		Intent intent = getIntent();
-		if (intent.getAction().equals(
-				"scu.android.activity.IssueQuestionActivity")) {
-			handler.removeMessages(5);
-			mViewPager.setCurrentItem(TAB_INDEX_TAB_2);
-		}
+//		Intent intent = getIntent();
+//		if (intent.getAction().equals(
+//				"scu.android.activity.IssueQuestionActivity")) {
+//			handler.removeMessages(5);
+//			mViewPager.setCurrentItem(TAB_INDEX_TAB_2);
+//		}
 	}
 }

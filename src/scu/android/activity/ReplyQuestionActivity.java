@@ -3,6 +3,8 @@ package scu.android.activity;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
+
+import scu.android.base.CommonEditText;
 import scu.android.db.ReplyDao;
 import scu.android.entity.Question;
 import scu.android.entity.Reply;
@@ -60,6 +62,8 @@ public class ReplyQuestionActivity extends Activity {
 	private final int MAX_NUMBER = 6;
 	private int selectNativePhotosNumber;// 选择图库图片数目
 
+	private CommonEditText commonEditText;
+	
 	private BroadcastReceiver receiver;
 
 	@Override
@@ -101,7 +105,7 @@ public class ReplyQuestionActivity extends Activity {
 				.setAdapter(new PhotosAdapter(this, question.getImages()));
 
 		questionPopup = (View) findViewById(R.id.question_popup_layout);
-		replyPopup = (View) findViewById(R.id.question_reply_extras);
+//		replyPopup = (View) findViewById(R.id.question_reply_extras);
 		// 初始化回复图片和语言显示
 		replyPhotosView = (GridView) findViewById(R.id.reply_photos_view);
 		replyPhotos = new ArrayList<String>();
@@ -285,32 +289,38 @@ public class ReplyQuestionActivity extends Activity {
 			if (replys.size() > 0)
 				reply();
 			break;
-		case R.id.chat_add_btn:
-			int visible = questionPopup.getVisibility();
-			if (visible == View.GONE) {
-				questionPopup.setVisibility(View.VISIBLE);
-			} else {
-				questionPopup.setVisibility(View.GONE);
-			}
-			break;
-		case R.id.popup_imgpicker_lay:
-			if (selectNativePhotosNumber < (MAX_NUMBER - 2)) {
-				int availNumber = MAX_NUMBER - 2 - selectNativePhotosNumber;
-				AppUtils.phonePictures(this, availNumber);
-			} else {
-				Toast.makeText(this, "最多只能选择" + (MAX_NUMBER - 2) + "张图片",
-						Toast.LENGTH_SHORT).show();
-			}
-			break;
-		case R.id.popup_handwrite_lay:
-			AppUtils.hwBoard(this);
-			break;
-		case R.id.popup_camera_lay:
-			imgName = AppUtils.sysCamera(this);
-			break;
-		case R.id.popup_recode_lay:
-			AppUtils.doodleBoard(this);
-			break;
+		// case R.id.chat_add_btn:
+		// int visible = questionPopup.getVisibility();
+		// if (visible == View.GONE) {
+		// questionPopup.setVisibility(View.VISIBLE);
+		// } else {
+		// questionPopup.setVisibility(View.GONE);
+		// }
+		// break;
+		// case R.id.popup_imgpicker_lay:
+		// if (selectNativePhotosNumber < (MAX_NUMBER - 2)) {
+		// int availNumber = MAX_NUMBER - 2 - selectNativePhotosNumber;
+		// AppUtils.phonePictures(this, availNumber);
+		// } else {
+		// Toast.makeText(this, "最多只能选择" + (MAX_NUMBER - 2) + "张图片",
+		// Toast.LENGTH_SHORT).show();
+		// }
+		// break;
+		// case R.id.popup_handwrite_lay:
+		// AppUtils.hwBoard(this);
+		// break;
+		// case R.id.popup_camera_lay:
+		// imgName = AppUtils.sysCamera(this);
+		// break;
+		// case R.id.popup_recode_lay:
+		// AppUtils.doodleBoard(this);
+		// break;
 		}
+	}
+
+	@Override
+	protected void onStop() {
+		super.onStop();
+		unregisterReceiver(receiver);
 	}
 }

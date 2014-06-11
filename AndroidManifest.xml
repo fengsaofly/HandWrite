@@ -35,11 +35,7 @@
         <activity
             android:name="scu.android.note.ActionBarActivity"
             android:screenOrientation="portrait" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+          
         </activity>
         <activity android:name="scu.android.ui.SearchGroupResultActivity" />
         <activity android:name="scu.android.ui.MultiRoomListActivity" />
@@ -47,7 +43,13 @@
         <activity android:name="scu.android.ui.SearchFriendActivity" />
         <activity android:name="scu.android.ui.ActivityMultiRoom" />
         <activity android:name="scu.android.ui.ChatMainActivity" />
-        <activity android:name="scu.android.ui.LoginActivity" />
+        <activity android:name="scu.android.ui.LoginActivity" >
+              <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            </activity>
         <activity android:name="scu.android.ui.RegisterActivity" />
         <activity android:name="scu.android.ui.AccountSettingActivity" />
         <activity android:name="scu.android.activity.ReplyQuestionActivity" />

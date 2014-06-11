@@ -28,6 +28,8 @@ import org.jivesoftware.smackx.search.UserSearchManager;
 import scu.android.util.XmppTool;
 import android.app.Application;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
@@ -43,11 +45,11 @@ import com.nostra13.universalimageloader.core.download.URLConnectionImageDownloa
 import com.nostra13.universalimageloader.utils.StorageUtils;
 
 public class MyApplication extends Application {
-	 public static String hostIp = "218.244.144.212";
-	 public String hostName = "handwriteserver";
+//	 public static String hostIp = "218.244.144.212";
+//	 public String hostName = "handwriteserver";
 
-//	public static String hostIp = "192.168.1.105";
-//	public String hostName = "dolphin0520-pc";
+	public static String hostIp = "192.168.1.116";
+	public String hostName = "dolphin0520-pc";
 
 	public String userName = "jalsary";
 	public String passWord = "123456";
@@ -319,7 +321,7 @@ public class MyApplication extends Application {
 		return Environment.getExternalStorageDirectory().getPath();
 	}
 
-	public static ByteArrayInputStream getUserImage(XMPPConnection connection,
+	public static Bitmap getUserImage(XMPPConnection connection,
 			String user) {
 		ByteArrayInputStream bais = null;
 		try {
@@ -339,7 +341,8 @@ public class MyApplication extends Application {
 		}
 		if (bais == null)
 			return null;
-		return bais;
+		Bitmap bm = BitmapFactory.decodeStream(bais);
+		return bm;
 	}
 
 	public static VCard getUserVcard(XMPPConnection connection, String user) {
@@ -453,6 +456,58 @@ public class MyApplication extends Application {
 		// Initialize ImageLoader with created configuration. Do it once on
 		// Application start.
 		imageLoader.init(config);
+	}
+	
+	
+	public static void setUserVCard(XMPPConnection con,int tag,String modifyNomal_value){
+		
+//		setting_value_nickname.setText(vcard.getNickName());
+//		setting_value_zone.setText(vcard.getAddressFieldHome("zone"));
+//		setting_value_gender.setText(vcard.getFirstName());
+//		setting_value_grade.setText(vcard.getMiddleName());
+//		setting_value_sign.setText(vcard.getLastName());
+		VCard vcard = new VCard();
+		try {
+
+			// 加入这句代码，解决No VCard for
+			ProviderManager.getInstance().addIQProvider("vCard", "vcard-temp",
+					new org.jivesoftware.smackx.provider.VCardProvider());
+
+			vcard.load(con);
+
+			
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		switch(tag){
+		case 1:  //grade
+			vcard.setMiddleName(modifyNomal_value);
+			break;
+		case 2:  //nickName
+			vcard.setNickName(modifyNomal_value);
+			break;
+		case 3:  //gender
+			vcard.setFirstName(modifyNomal_value);
+			break;
+		case 4:  //zone
+			vcard.setAddressFieldHome("zone", "");
+			break;
+		case 5:  //sign
+			vcard.setLastName(modifyNomal_value);
+			break;
+			
+			
+		}
+		
+		
+		try {
+			vcard.save(con);
+		} catch (XMPPException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 
 }

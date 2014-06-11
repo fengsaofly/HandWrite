@@ -118,39 +118,9 @@
             android:verticalSpacing="2dp" />
     </LinearLayout>
 
-    <LinearLayout
+    <scu.android.base.CommonEditText
+        android:id="@+id/common_edit_text"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical" >
-
-        <!-- 回复问题的图片和语言显示 -->
-
-        <RelativeLayout
-            android:id="@+id/question_reply_extras"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:background="#b0000000"
-            android:orientation="vertical"
-            android:visibility="invisible" >
-
-            <!-- include layout="@layout/voice_rcd_hint_window" / -->
-
-            <GridView
-                android:id="@+id/reply_photos_view"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_margin="5dp"
-                android:columnWidth="50dp"
-                android:horizontalSpacing="2dp"
-                android:numColumns="4"
-                android:padding="5dp"
-                android:stretchMode="columnWidth"
-                android:verticalSpacing="2dp" />
-        </RelativeLayout>
-
-        <include layout="@layout/chat_input_field" />
-    </LinearLayout>
+        android:layout_height="wrap_content" />
 
 </FrameLayout>
