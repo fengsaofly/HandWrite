@@ -22,7 +22,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.Window;
-import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -132,7 +131,7 @@ public class TestAudioActivity extends Activity {
 		// 引入窗口配置文件
 
 		 view = inflater.inflate(R.layout.question_popup_layout, null);
-		 popup_recode_lay = (LinearLayout)view.findViewById(R.id.popup_recode_lay);
+		 popup_recode_lay = (LinearLayout)view.findViewById(R.id.popup_record_lay);
 		 popup_camera_lay = (LinearLayout)view.findViewById(R.id.popup_camera_lay);
 		 popup_imgpicker_lay = (LinearLayout)view.findViewById(R.id.popup_imgpicker_lay);
 		 popup_handwrite_lay = (LinearLayout)view.findViewById(R.id.popup_handwrite_lay);
@@ -326,7 +325,7 @@ public class TestAudioActivity extends Activity {
 //			pop.show
 			 }
 			break;
-		case R.id.popup_recode_lay:
+		case R.id.popup_record_lay:
 //			rcChat_popup.setVisibility(View.VISIBLE);
 			if(pop.isShowing()) { 
 				 pop.dismiss();

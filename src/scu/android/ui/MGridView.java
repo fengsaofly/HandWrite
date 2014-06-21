@@ -3,8 +3,12 @@ package scu.android.ui;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.GridView;
-/*
+
+/**
  * 自定义GridView，解决ListView中嵌套只显示一行的问题
+ * 
+ * @author YouMingyang
+ * @version 1.0
  */
 public class MGridView extends GridView {
 

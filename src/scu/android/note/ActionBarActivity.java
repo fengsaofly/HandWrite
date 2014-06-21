@@ -72,6 +72,8 @@ public class ActionBarActivity extends FragmentActivity {
 		// pd = new ProgressDialog(this);
 		// pd.setTitle("温馨提示");
 		// pd.setMessage("正在登陆");
+
+		// //////////////////////////////////////////////
 		handler.sendEmptyMessage(5);
 		searchGroupPd = new ProgressDialog(this);
 		searchGroupPd.setTitle("温馨提示");
@@ -96,6 +98,8 @@ public class ActionBarActivity extends FragmentActivity {
 				getSupportFragmentManager()));
 		mViewPager.setOnPageChangeListener(new TestPagerListener());
 		mViewPager.setCurrentItem(TAB_INDEX_TAB_2);
+		// 保存fragmemt状态
+		mViewPager.setOffscreenPageLimit(2);
 	}
 
 	public void initialListener() {
@@ -558,7 +562,9 @@ public class ActionBarActivity extends FragmentActivity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-
+		/**
+		 * @author YouMingyang
+		 */
 		Intent intent = getIntent();
 		if (intent.getAction().equals(
 				"scu.android.activity.IssueQuestionActivity")) {

@@ -4,10 +4,14 @@ import java.io.File;
 import java.util.Date;
 
 import scu.android.activity.DoodleBoardActivity;
+import scu.android.activity.ImageCropperActivity;
 import scu.android.activity.NativePhotosActivity;
-import scu.android.demo.Demo;
+import scu.android.handwrite.HwActivity;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -17,29 +21,13 @@ import android.view.ViewGroup.LayoutParams;
 
 public class AppUtils {
 
-	public static final String CAMERA_PHOTO_DIR = "ConquerQuestion/CurrentUser/NewQuestion/image/camera";
-	public static final String DOODLE_DIR = "ConquerQuestion/CurrentUser/NewQuestion/image/doodle";
-	public static final String HANDWRITE_DIR = "ConquerQuestion/CurrentUser/NewQuestion/image/handwrite";
-
-	public static final String SCAN_PHOTOS_ACTION = "scu.android.ui.ScanPhotosActivity";
-
-	public final static int SYS_CAMEAR = 1;
-	public final static int PHONE_PICTURES = 2;
-	public final static int HANDWRITE_BOARD = 3;
-	public final static int DOODLE_BOARD = 4;
-
-	public final static int ISSUE_QUESTION = 11;
-	public final static int ISSUE_QUESTION_REPLY = 12;
-
-	public final static int MAX_PHOTOS_NUM = 6;
-
 	// 调用系统相机
 	public static String sysCamera(Activity activity) {
 		String imgPath = null;
 		if (Environment.getExternalStorageState().equals(
 				Environment.MEDIA_MOUNTED)) {
 			File dir = new File(Environment.getExternalStorageDirectory() + "/"
-					+ CAMERA_PHOTO_DIR);
+					+ Constants.CAMERA_PHOTO_DIR);
 			if (!dir.exists())
 				dir.mkdirs();
 			Intent intent = new Intent(
@@ -49,7 +37,7 @@ public class AppUtils {
 			Uri u = Uri.fromFile(f);
 			intent.putExtra(MediaStore.Images.Media.ORIENTATION, 0);
 			intent.putExtra(MediaStore.EXTRA_OUTPUT, u);
-			activity.startActivityForResult(intent, SYS_CAMEAR);
+			activity.startActivityForResult(intent, Constants.SYS_CAMEAR);
 			imgPath = f.getAbsolutePath();
 		}
 		return imgPath;
@@ -59,19 +47,19 @@ public class AppUtils {
 	public static void phonePictures(Activity activity, int availNumber) {
 		Intent selectPhoto = new Intent(activity, NativePhotosActivity.class);
 		selectPhoto.putExtra("availNumber", availNumber);
-		activity.startActivityForResult(selectPhoto, AppUtils.PHONE_PICTURES);
+		activity.startActivityForResult(selectPhoto, Constants.PHONE_PICTURES);
 	}
 
 	// 调用手写功能
 	public static void hwBoard(Activity activity) {
-		Intent intent = new Intent(activity, Demo.class);
-		activity.startActivityForResult(intent, AppUtils.HANDWRITE_BOARD);
+		Intent intent = new Intent(activity, HwActivity.class);
+		activity.startActivityForResult(intent, Constants.HANDWRITE_BOARD);
 	}
 
 	// 调用手写功能
 	public static void doodleBoard(Activity activity) {
 		Intent intent = new Intent(activity, DoodleBoardActivity.class);
-		activity.startActivityForResult(intent, AppUtils.DOODLE_BOARD);
+		activity.startActivityForResult(intent, Constants.DOODLE_BOARD);
 	}
 
 	// 获取手机屏幕尺寸
@@ -140,8 +128,56 @@ public class AppUtils {
 		view.setLayoutParams(params);
 	}
 
-	public static int getDefaultPhotoWidth(Activity activity) {
-		return (getWindowMetrics(activity).widthPixels - 4) / 3;
+	public static int getDefaultPhotoWidth(Activity activity, int columnNum) {
+		return (getWindowMetrics(activity).widthPixels - (columnNum - 1) * 2)
+				/ columnNum;
 	}
 
+	public static void sysCrop(Activity activity, String imgPath) {
+		Intent intent = new Intent(activity, ImageCropperActivity.class);
+		intent.putExtra("imgPath", imgPath);
+		activity.startActivityForResult(intent, Constants.SYS_CROP);
+	}
+
+	public static boolean delete(String path) {
+		File file = new File(path);
+		if (file.exists()) { // 判断文件是否存在
+			if (file.isFile()) { // 判断是否是文件
+				file.delete(); // delete()方法 你应该知道 是删除的意思;
+			} else if (file.isDirectory()) { // 否则如果它是一个目录
+				File files[] = file.listFiles(); // 声明目录下所有的文件 files[];
+				for (int i = 0; i < files.length; i++) { // 遍历目录下所有的文件
+					delete(files[i].getAbsolutePath()); // 把每个文件 用这个方法进行迭代
+				}
+			}
+			file.delete();
+		} else {
+			return false;
+		}
+		return true;
+	}
+
+	/*
+	 * 获取手机当前网络连接
+	 */
+	public static boolean isNetworkConnect(Activity activity) {
+		ConnectivityManager connectivityManager = (ConnectivityManager) activity
+				.getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+		if (networkInfo != null) {
+			switch (networkInfo.getType()) {
+			case ConnectivityManager.TYPE_MOBILE:
+			case ConnectivityManager.TYPE_WIFI:
+				return true;
+			default:
+				return false;
+			}
+		}
+		return false;
+	}
+
+	public static void networkSet(Activity activity) {
+		Intent intent = new Intent("android.settings.WIRELESS_SETTINGS");
+		activity.startActivity(intent);
+	}
 }

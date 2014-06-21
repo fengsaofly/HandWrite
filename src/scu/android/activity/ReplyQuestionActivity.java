@@ -1,36 +1,49 @@
 package scu.android.activity;
 
 import java.util.ArrayList;
-import scu.android.base.CommonEditText;
+import scu.android.application.MyApplication;
+import scu.android.base.CommonEditor;
 import scu.android.db.ReplyDao;
 import scu.android.entity.Question;
 import scu.android.entity.Reply;
+import scu.android.entity.User;
 import scu.android.ui.PhotosAdapter;
 import scu.android.util.AppUtils;
+import scu.android.util.Constants;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.demo.note.R;
 
-/*
+import com.demo.note.R;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+
+/**
  * 回复问题
+ * 
+ * @author YouMingyang
+ * @version 1.0
  */
 public class ReplyQuestionActivity extends Activity {
 	private Question question;// 问题
-	private ArrayList<Reply> replys;// 回复
-	private CommonEditText commonEditText;
+	private User user;
+	private int replyNum;
+	private CommonEditor editor;
 	private BroadcastReceiver receiver;
+	private final String action = "scu.android.activiy.RelpyQuestionActivity";
+	private ImageLoader loader;
+	private DisplayImageOptions options;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -40,10 +53,18 @@ public class ReplyQuestionActivity extends Activity {
 	}
 
 	public void init() {
-		question = (Question) getIntent().getSerializableExtra("question");
-		new GetReplysTask().execute();
+		loader = ImageLoader.getInstance();
+		options = new DisplayImageOptions.Builder()
+				.showImageOnLoading(R.drawable.default_avatar)
+				.showImageForEmptyUri(R.drawable.default_avatar)
+				.showImageOnFail(R.drawable.default_avatar).cacheInMemory(true)
+				.cacheOnDisk(true).considerExifParams(true)
+				.bitmapConfig(Bitmap.Config.RGB_565).build();
 
-		((TextView) findViewById(R.id.nickname)).setText("测试用户名");
+		question = (Question) getIntent().getSerializableExtra("question");
+		user = (User) getIntent().getSerializableExtra("user");
+		getActionBar().setTitle(question.getTitle());
+		((TextView) findViewById(R.id.nickname)).setText(user.getNickname());
 		((TextView) findViewById(R.id.publish_time)).setText(AppUtils
 				.timeToNow(question.getPublishTime()));
 		((TextView) findViewById(R.id.title)).setText(question.getTitle());
@@ -51,155 +72,178 @@ public class ReplyQuestionActivity extends Activity {
 		((TextView) findViewById(R.id.subject)).setText(question.getSubject());
 		((TextView) findViewById(R.id.content)).setText(question.getContent());
 		((TextView) findViewById(R.id.reply_number)).setText("获取中...");
-		((GridView) findViewById(R.id.photos_view))
-				.setAdapter(new PhotosAdapter(this, question.getImages()));
+		GridView view = ((GridView) findViewById(R.id.photos_view));
+		view.setAdapter(new PhotosAdapter(this, question.getImages()));
 		ImageView avatar = (ImageView) findViewById(R.id.avatar);
-		int width = AppUtils.getDefaultPhotoWidth(this) / 3;
-		AppUtils.setViewSize(avatar, width, width);
-		avatar.setBackgroundResource(R.drawable.avatar);
+		// final int width = AppUtils.getDefaultPhotoWidth(this, 9);
+		// AppUtils.setViewSize(avatar, width, width);
+		loader.displayImage(user.getAvatar(), avatar, options);
+		editor = (CommonEditor) findViewById(R.id.common_editor);
+		editor.setActivity(this);
+		editor.setAction(action);
 
-		commonEditText = (CommonEditText) findViewById(R.id.common_edit_text);
-		commonEditText.setActivity(this);
-		commonEditText.setAction("scu.android.activiy.ReplyQuestionActivity");
 		receiver = new PhotoReceiver();
-		registerReceiver(receiver,
-				new IntentFilter(AppUtils.SCAN_PHOTOS_ACTION));
+		registerReceiver(receiver, new IntentFilter(action));
 	}
 
 	/*
-	 * 首次获取回复信息
+	 * 获取问题的回复数目
 	 */
-	private class GetReplysTask extends AsyncTask<Void, Void, ArrayList<Reply>> {
+	private class GetReplysTask extends AsyncTask<Long, Void, Integer> {
 
 		@Override
-		protected ArrayList<Reply> doInBackground(Void... params) {
-			ArrayList<Reply> replys = ReplyDao.getReply(
-					ReplyQuestionActivity.this, question.getQuesId());
-			return replys;
+		protected Integer doInBackground(Long... params) {
+			int replyNum = ReplyDao.getReplyNum(ReplyQuestionActivity.this,
+					params[0]);
+			return replyNum;
 		}
 
 		@Override
-		protected void onPostExecute(ArrayList<Reply> result) {
-			ReplyQuestionActivity.this.replys = result;
-			((TextView) findViewById(R.id.reply_number)).setText("回答("
-					+ replys.size() + ")");
+		protected void onPostExecute(Integer result) {
+			replyNum = result;
+			((TextView) findViewById(R.id.reply_number)).setText("回答(" + result
+					+ ")");
 			super.onPostExecute(result);
 		}
 
-		@Override
-		protected void onProgressUpdate(Void... values) {
-			super.onProgressUpdate(values);
-		}
-
 	}
 
+	/*
+	 * 获取图片删除信息
+	 */
 	private class PhotoReceiver extends BroadcastReceiver {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			if (intent.getAction().equals(AppUtils.SCAN_PHOTOS_ACTION)) {
-				int index = intent.getIntExtra("photoIndex", 0);
-				commonEditText.getThumbnails().remove(index);
-				commonEditText.getThumbnailsAdapter().notifyDataSetChanged();
-				commonEditText
-						.setCurPhotosNum(commonEditText.getCurPhotosNum() - 1);
+			if (intent.getAction().equals(action)) {
+				int index = intent.getIntExtra("photoIndex", 10);
+				if (index != 10) {
+					editor.getThumbnails().remove(index);
+					editor.getThumbnailsAdapter().notifyDataSetChanged();
+					int curPhotosNum = editor.getCurPhotosNum() - 1;
+					editor.setCurPhotosNum(curPhotosNum);
+					if (curPhotosNum == 0) {
+						editor.getThumbnailsParentView().setVisibility(
+								View.INVISIBLE);
+						editor.getExtrasView().setVisibility(View.GONE);
+					}
+				} else {
+					doReply();
+				}
 			}
 		}
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.reply_question_actionbar_menu, menu);
-		return true;
 	}
 
 	@Override
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.reply:
-			String content = commonEditText.getContent();
-			if (content != null && content.length() > 0) {
-				String audio = null;
-				Reply reply = new Reply(0, content, audio,
-						commonEditText.getThumbnails(), null,
-						question.getQuesId(), 0);
-				long repId = ReplyDao.insertReply(this, reply);
-				replys.add(0, ReplyDao.getReplyById(this, repId));
-				commonEditText.getThumbnailsParentView().setVisibility(
-						View.INVISIBLE);
-				commonEditText.getThumbnails().clear();
-				commonEditText.clearContent();
-				commonEditText.setCurPhotosNum(0);
-				reply();
-			} else {
-				Toast.makeText(this, "忘记输入内容啦。。。", Toast.LENGTH_SHORT).show();
-			}
+			doReply();
 			break;
 		}
 		return true;
 	}
 
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		final String prefix = "file:///";
 		switch (requestCode) {
-		case AppUtils.SYS_CAMEAR:// 相机
+		case Constants.SYS_CAMEAR:// 相机
 			if (resultCode == Activity.RESULT_OK) {
-				commonEditText.getThumbnails().add(
-						commonEditText.getCameraName());
-				commonEditText
-						.setCurPhotosNum(commonEditText.getCurPhotosNum() + 1);
+				String imgPath = editor.getCameraName();
+				int curPhotosNum = editor.getCurPhotosNum() + 1;
+				editor.getThumbnails().add(prefix + imgPath);
+				editor.setCurPhotosNum(curPhotosNum);
 			}
 			break;
-		case AppUtils.PHONE_PICTURES:// 图库
+		case Constants.PHONE_PICTURES:// 图库
 			if (resultCode == Activity.RESULT_OK) {
 				ArrayList<String> photos = data
 						.getStringArrayListExtra("photos");
-				commonEditText.getThumbnails().addAll(photos);
-				commonEditText.setCurPhotosNum(commonEditText.getCurPhotosNum()
-						+ photos.size());
+				for (String photo : photos) {
+					editor.getThumbnails().add(prefix + photo);
+				}
+				editor.setCurPhotosNum(editor.getCurPhotosNum() + photos.size());
 			}
 			break;
-		case AppUtils.DOODLE_BOARD:// 涂鸦
+		case Constants.DOODLE_BOARD:// 涂鸦
 			if (resultCode == Activity.RESULT_OK) {
 				String imgPath = data.getStringExtra("doodlePath");
-				commonEditText.getThumbnails().add(imgPath);
-				commonEditText
-						.setCurPhotosNum(commonEditText.getCurPhotosNum() + 1);
+				editor.getThumbnails().add(prefix + imgPath);
+				editor.setCurPhotosNum(editor.getCurPhotosNum() + 1);
 			}
 			break;
-		case AppUtils.HANDWRITE_BOARD:// 手写
+		case Constants.HANDWRITE_BOARD:// 手写
 			if (resultCode == Activity.RESULT_OK) {
 				String imgPath = data.getStringExtra("handwritePath");
-				commonEditText.getThumbnails().add(imgPath);
-				commonEditText
-						.setCurPhotosNum(commonEditText.getCurPhotosNum() + 1);
+				editor.getThumbnails().add(prefix + imgPath);
+				editor.setCurPhotosNum(editor.getCurPhotosNum() + 1);
 			}
 			break;
 		default:
 			break;
 		}
-		commonEditText.getThumbnailsAdapter().notifyDataSetChanged();// 需要和数据更新在一个线程
-		if (commonEditText.getThumbnailsParentView().getVisibility() == View.INVISIBLE)
-			commonEditText.getThumbnailsParentView()
-					.setVisibility(View.VISIBLE);
+		editor.getThumbnailsAdapter().notifyDataSetChanged();// 需要和数据更新在一个线程
+		if (editor.getThumbnails().size() > 0)
+			editor.getThumbnailsParentView().setVisibility(View.VISIBLE);
 		super.onActivityResult(requestCode, resultCode, data);
 	}
 
-	// 显示回复
-	public void reply() {
+	// 回复问题
+	public void doReply() {
+		editor.hideSoft();
+		String content = editor.getContent();
+		ArrayList<String> thumbnails = editor.getThumbnails();
+		if ((content != null && content.length() > 0) || thumbnails.size() > 0) {
+			Reply reply = new Reply(0, content, null, thumbnails, null,
+					question.getQuesId(), MyApplication.getLoginUser(this)
+							.getUserId(), 0);
+			ReplyDao.insertReply(this, reply);
+			editor.getThumbnailsParentView().setVisibility(View.INVISIBLE);
+			editor.getExtrasView().setVisibility(View.GONE);
+			editor.getThumbnails().clear();
+			editor.clearContent();
+			editor.setCurPhotosNum(0);
+			goReply();
+		} else {
+			Toast.makeText(this, "没有发现回复内容。。。", Toast.LENGTH_SHORT).show();
+		}
+	}
+
+	// 转到回复页面
+	public void goReply() {
 		Intent intent = new Intent(ReplyQuestionActivity.this,
 				ReplysActiviy.class);
-		Bundle bundle = new Bundle();
-		bundle.putSerializable("replys", replys);
-		intent.putExtras(bundle);
+		intent.putExtra("quesId", question.getQuesId());
 		startActivity(intent);
 	}
 
 	public void myOnclick(View view) {
 		switch (view.getId()) {
 		case R.id.reply_number:
-			if (replys.size() > 0)
-				reply();
+			if (replyNum > 0) {
+				editor.hideSoft();
+				goReply();
+			}
 			break;
 		}
+	}
+
+	@Override
+	public void onBackPressed() {
+		if (editor.getThumbnails().size() > 0) {
+			editor.getExtrasView().setVisibility(View.GONE);
+			editor.getThumbnailsParentView().setVisibility(View.INVISIBLE);
+			editor.getThumbnails().clear();
+			editor.clearContent();
+			editor.setCurPhotosNum(0);
+		} else {
+			super.onBackPressed();
+		}
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		new GetReplysTask().execute(question.getQuesId());// 重新设置问题回复数目
 	}
 
 	@Override

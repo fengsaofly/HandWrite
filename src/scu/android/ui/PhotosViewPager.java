@@ -5,6 +5,12 @@ import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
+/**
+ * 解决PhotoView类的PointIndex out of range异常
+ * 
+ * @author YouMingyang
+ * @version 1.0
+ */
 public class PhotosViewPager extends ViewPager {
 
 	public PhotosViewPager(Context context) {
@@ -21,9 +27,9 @@ public class PhotosViewPager extends ViewPager {
 			return super.onInterceptTouchEvent(ev);
 		} catch (IllegalArgumentException e) {
 		} catch (ArrayIndexOutOfBoundsException e) {
-
+			e.printStackTrace();
 		}
-		return true;
+		return false;
 	}
 
 }

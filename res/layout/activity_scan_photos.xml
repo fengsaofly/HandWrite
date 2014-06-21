@@ -8,7 +8,17 @@
         android:id="@+id/viewPager"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-   
+
+    <TextView
+        android:id="@+id/delete_photo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|right"
+        android:layout_margin="10dp"
+        android:background="@drawable/del"
+        android:clickable="true"
+        android:onClick="OnClick"
+        android:visibility="invisible" />
 
     <TextView
         android:id="@+id/pageIndex"
@@ -19,4 +29,5 @@
         android:gravity="center_horizontal"
         android:textColor="#fff"
         android:textSize="18sp" />
+
 </FrameLayout>

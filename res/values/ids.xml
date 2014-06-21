@@ -29,10 +29,11 @@
     <item name="gallery" type="id"/>
     <item name="publish_state_title" type="id"/>
     <item name="publish_state_text_content" type="id"/>
-    <item name="popup_recode_lay" type="id"/>
+    <item name="popup_record_lay" type="id"/>
     <item name="popup_camera_lay" type="id"/>
     <item name="popup_imgpicker_lay" type="id"/>
     <item name="popup_handwrite_lay" type="id"/>
+    <item name="popup_doodle_lay" type="id"/>
     <item name="select_grade_btn" type="id"/>
     <item name="select_subject_btn" type="id"/>
     <item name="distance_textview" type="id"/>
@@ -49,5 +50,51 @@
     <item name="chat_record_btn" type="id"/>
     <item name="chat_input_field" type="id"/>
     <item name="chat_add_btn" type="id"/>
+    <item name="question_popup_layout" type="id"/>
+    <item name="common_editor" type="id"/>
+
+    <!-- 用户信息描述:请老师 -->
+    <item name="tag_addr" type="id"/>
+    <item name="tag_grade" type="id"/>
+    <item name="tag_subject" type="id"/>
+    <item name="tag_phone" type="id"/>
+    <item name="tag_detail_description" type="id"/>
+    <item name="tag_addr_val" type="id"/>
+    <item name="tag_grade_val" type="id"/>
+    <item name="tag_subject_val" type="id"/>
+    <item name="tag_phone_val" type="id"/>
+    <item name="tag_detail_description_val" type="id"/>
+
+    <!-- 基本action -->
+    <item name="submit" type="id"/>
+    <item name="action_back" type="id"/>
+
+    <!-- 群 -->
+    <item name="tag_group_name" type="id"/>
+    <item name="tag_group_owner_val" type="id"/>
+    <item name="tag_group_name_val" type="id"/>
+    <item name="tag_group_occupant_val" type="id"/>
+
+    <!-- 应用基本 -->
+    <item name="activity_title" type="id"/>
+    <item name="activity_top" type="id"/>
+    <item name="activity_top_right_action" type="id"/>
+    <item name="activity_actionbar_tab_val" type="id"/>
+
+    <!-- 基本控件，一般一个页面只有一个 -->
+    <item name="thumbnails" type="id"/> <!-- 缩略图，是一个gridview -->
+    <item name="popup_gridview" type="id"/>
+    <!-- @YouMingyang 新添加 -->
+    <item name="nearby_people" type="id"/>
+    <item name="nearby_list" type="id"/>
+    <item name="nearby_settings" type="id"/>
+    <item name="popup_menu_option_girls" type="id"/>
+    <item name="popup_menu_option_boys" type="id"/>
+    <item name="popup_menu_option_all" type="id"/>
+    <item name="popup_menu_option_clear" type="id"/>
+    <item name="groups_list" type="id"/>
+    <item name="no_network_connect" type="id"/>
+    <item name="upload_status" type="id"/>
+    <item name="upload_complete" type="id"/>
 
 </resources>

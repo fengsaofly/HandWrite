@@ -43,8 +43,11 @@ import com.demo.note.R;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
-/*
+/**
  * 浏览手机图库
+ * 
+ * @author YouMingyang
+ * @version 1.0
  */
 public class NativePhotosActivity extends Activity {
 
@@ -98,7 +101,7 @@ public class NativePhotosActivity extends Activity {
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 
 		availNumber = intent.getIntExtra("availNumber", 4);
-		width = AppUtils.getDefaultPhotoWidth(this);
+		width = AppUtils.getDefaultPhotoWidth(this, 3);
 
 		photos = getPhotos();
 		if (photos.size() > 0) {
@@ -208,7 +211,8 @@ public class NativePhotosActivity extends Activity {
 			final ImageView thumbnail = ((ImageView) convertView
 					.findViewById(R.id.thumbnail));
 			AppUtils.setViewSize(thumbnail, width, width);// 设置图片大小
-			loader.displayImage("file:///" + photo.path, thumbnail, options);
+			final String imageUri = "file:///" + photo.path;
+			loader.displayImage(imageUri, thumbnail, options);
 			final ImageView back = ((ImageView) convertView
 					.findViewById(R.id.back));
 			AppUtils.setViewSize(back, width, width);// 设置和后面的图片一样大小

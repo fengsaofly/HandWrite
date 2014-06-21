@@ -102,6 +102,7 @@
             android:gravity="left|top"
             android:hint="问题描述..."
             android:padding="4dp"
+            android:inputType="textMultiLine"
             android:textAlignment="textStart" />
 
         <ImageView

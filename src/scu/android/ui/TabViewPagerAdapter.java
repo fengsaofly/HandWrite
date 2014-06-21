@@ -1,6 +1,5 @@
 package scu.android.ui;
 
-import scu.android.fragment.AccountFragment;
 import scu.android.fragment.FindFragment;
 import scu.android.fragment.FriendFragment;
 import scu.android.fragment.HomeFragment;
@@ -21,15 +20,16 @@ public class TabViewPagerAdapter extends FragmentPagerAdapter {
 		switch (arg0) {
 		case ActionBarActivity.TAB_INDEX_TAB_1:
 			return HomeFragment.newInstance();
-
 		case ActionBarActivity.TAB_INDEX_TAB_2:
 			return QuestionsFragment.newInstance();
-
 		case ActionBarActivity.TAB_INDEX_TAB_3:
 			return FriendFragment.newInstance();
-
 		case ActionBarActivity.TAB_INDEX_TAB_4:
-			return AccountFragment.newInstance();
+			// return AccountFragment.newInstance();
+			/**
+			 * @author YouMingyang 06/18: 修改为发现页面
+			 */
+			return FindFragment.newInstance();
 		}
 
 		throw new IllegalStateException("No fragment at position " + arg0);

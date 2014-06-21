@@ -17,28 +17,49 @@ import android.widget.ImageView;
 import com.demo.note.R;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
-/*
+/**
+ * 图片适配器
  * 
+ * @author YouMingyang
+ * @version 1.0
  */
 public class PhotosAdapter extends BaseAdapter {
 	private Activity activity;
 	private ArrayList<String> bitmaps;
+	private int columnNum;
+	private String imgSaveDir;
+
 	private ImageLoader loader;
 	private DisplayImageOptions options;
-	private int width;
 
 	public PhotosAdapter(Activity activity, ArrayList<String> bitmaps) {
+		init(activity, bitmaps);
+	}
+
+	public PhotosAdapter(Activity activity, ArrayList<String> bitmaps,
+			String imgSaveDir) {
+		init(activity, bitmaps);
+		this.imgSaveDir = imgSaveDir;
+	}
+
+	public void init(Activity activity, ArrayList<String> bitmaps) {
 		this.activity = activity;
 		this.bitmaps = bitmaps;
+
 		this.loader = ImageLoader.getInstance();
-		options = new DisplayImageOptions.Builder()
+		this.options = new DisplayImageOptions.Builder()
 				.showImageOnLoading(R.drawable.default_photo)
 				.showImageForEmptyUri(R.drawable.default_photo)
 				.showImageOnFail(R.drawable.default_photo).cacheInMemory(true)
 				.cacheOnDisk(true).considerExifParams(true)
 				.bitmapConfig(Bitmap.Config.RGB_565).build();
-		this.width = AppUtils.getDefaultPhotoWidth(activity);
+		this.columnNum = 3;
+	}
+
+	public void setColumnNum(int columnNum) {
+		this.columnNum = columnNum;
 	}
 
 	public int getCount() {
@@ -58,15 +79,11 @@ public class PhotosAdapter extends BaseAdapter {
 			convertView = LayoutInflater.from(activity.getApplicationContext())
 					.inflate(R.layout.thumbnail_item, null);
 		}
-		String photo = bitmaps.get(position);
-		ImageView thumbnail = ((ImageView) convertView
+		final ImageView view = ((ImageView) convertView
 				.findViewById(R.id.thumbnail));
-
-		AppUtils.setViewSize(thumbnail, width, width);
-		loader.displayImage("file:///" + photo, thumbnail, options);
+		showImage(bitmaps.get(position), view);
 		final int index = position;
-		thumbnail.setOnClickListener(new OnClickListener() {
-
+		view.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				Intent intent = new Intent(activity, ScanPhotosActivity.class);
@@ -76,6 +93,27 @@ public class PhotosAdapter extends BaseAdapter {
 			}
 		});
 		return convertView;
+	}
+
+	public void showImage(final String imageDir, final ImageView imageView) {
+		final int width = AppUtils.getDefaultPhotoWidth(activity, columnNum);
+		AppUtils.setViewSize(imageView, width, width);
+		final String uri = imageDir;
+		final boolean isFromNetwork = (uri.startsWith("http://")) ? true
+				: false;
+		if (isFromNetwork) {
+			loader.loadImage(uri, options, new SimpleImageLoadingListener() {
+				@Override
+				public void onLoadingComplete(String imageUri, View view,
+						Bitmap loadedImage) {
+					imageView.setImageBitmap(loadedImage);
+					// BitmapUtils.saveBitmap(activity, loadedImage,
+					// imgSaveDir);
+				}
+			});
+		} else {
+			loader.displayImage(imageDir, imageView, options);
+		}
 	}
 
 	public void clear() {

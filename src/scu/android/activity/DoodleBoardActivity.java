@@ -18,8 +18,11 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 
 import com.demo.note.R;
 
-/*
+/**
  * 涂鸦板
+ * 
+ * @author YouMingyang
+ * @version 1.0
  */
 public class DoodleBoardActivity extends Activity {
 
@@ -86,7 +89,8 @@ public class DoodleBoardActivity extends Activity {
 						color = getResources().getString(R.color.black);
 						break;
 					}
-					AppUtils.setViewSize(paintDemo, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+					AppUtils.setViewSize(paintDemo, LayoutParams.MATCH_PARENT,
+							LayoutParams.MATCH_PARENT);
 					paintDemo.setBackgroundColor(Color.parseColor(color));
 					doodleCanvas.setPaintColor(color);
 				} else {
@@ -101,16 +105,16 @@ public class DoodleBoardActivity extends Activity {
 						paintSize = 2 * baseSize;
 						break;
 					case 2:
-						paintSize = 3 * baseSize;
-						break;
-					case 3:
 						paintSize = 4 * baseSize;
 						break;
+					case 3:
+						paintSize = 6 * baseSize;
+						break;
 					case 4:
-						paintSize = 5 * baseSize;
+						paintSize = 8 * baseSize;
 						break;
 					case 5:
-						paintSize = 6 * baseSize;
+						paintSize = 10 * baseSize;
 						break;
 					default:
 						baseSize = doodleCanvas.getPaintSize();
@@ -150,9 +154,6 @@ public class DoodleBoardActivity extends Activity {
 			break;
 		case R.id.withdraw:
 			doodleCanvas.withdraw(false);
-			break;
-		case R.id.doodlePaint:
-			setPaintSetVisibility();
 			break;
 		case R.id.doodleColor:
 			setPaintSetVisibility();

@@ -56,10 +56,12 @@ public class ImagesDao {
 	public static boolean deleteImages(Context context, long quesId, long userId) {
 		SQLiteDatabase aDatabase = DBHelper.getInstance(context)
 				.getReadableDatabase();
-		return aDatabase
+		boolean result= aDatabase
 				.delete(DBHelper.TABLE_REPLY,
 						"quesId=? and userId=?",
 						new String[] { String.valueOf(quesId),
 								String.valueOf(userId) }) == 1;
+		aDatabase.close();
+		return result;
 	}
 }

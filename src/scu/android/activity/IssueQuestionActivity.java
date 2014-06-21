@@ -9,8 +9,9 @@ import scu.android.application.MyApplication;
 import scu.android.db.QuestionDao;
 import scu.android.entity.Question;
 import scu.android.note.ActionBarActivity;
-import scu.android.ui.ThumbnailsAdapter;
+import scu.android.ui.PhotosAdapter;
 import scu.android.util.AppUtils;
+import scu.android.util.Constants;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -36,6 +37,7 @@ import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
@@ -52,8 +54,11 @@ import android.widget.Toast;
 
 import com.demo.note.R;
 
-/*
+/**
  * 发布问题
+ * 
+ * @author YouMingyang
+ * @version 1.0
  */
 @SuppressLint({ "HandlerLeak", "SimpleDateFormat" })
 public class IssueQuestionActivity extends Activity {
@@ -147,7 +152,7 @@ public class IssueQuestionActivity extends Activity {
 
 		view = inflater.inflate(R.layout.question_popup_layout, null);
 		popup_recode_lay = (LinearLayout) view
-				.findViewById(R.id.popup_recode_lay);
+				.findViewById(R.id.popup_record_lay);
 		popup_camera_lay = (LinearLayout) view
 				.findViewById(R.id.popup_camera_lay);
 		popup_imgpicker_lay = (LinearLayout) view
@@ -342,8 +347,10 @@ public class IssueQuestionActivity extends Activity {
 						location[1] - pop.getHeight());
 				// pop.show
 			}
+			record_pressbtn_lay.setVisibility(View.INVISIBLE);
+			hideSoft();
 			break;
-		case R.id.popup_recode_lay:
+		case R.id.popup_record_lay:
 			if (pop.isShowing()) {
 				pop.dismiss();
 			}
@@ -351,30 +358,46 @@ public class IssueQuestionActivity extends Activity {
 			break;
 
 		case R.id.popup_camera_lay:
-			imgPath = AppUtils.sysCamera(IssueQuestionActivity.this);
+			if (curPhotosNum < (Constants.MAX_PHOTOS_NUM)) {
+				cameraPath = AppUtils.sysCamera(IssueQuestionActivity.this);
+			} else {
+				alertFull();
+			}
 			break;
 		case R.id.popup_imgpicker_lay:
-			if (selectNativePhotosNumber < (MAX_NUMBER - 2)) {
-				int availNumber = MAX_NUMBER - 2 - selectNativePhotosNumber;
+			if (curPhotosNum < (Constants.MAX_PHOTOS_NUM)) {
+				int availNumber = Constants.MAX_PHOTOS_NUM - curPhotosNum;
 				AppUtils.phonePictures(this, availNumber);
 			} else {
-				Toast.makeText(IssueQuestionActivity.this,
-						"最多只能选择" + (MAX_NUMBER - 2) + "张图片", Toast.LENGTH_SHORT)
-						.show();
+				alertFull();
 			}
 			break;
 		case R.id.popup_handwrite_lay:
-			AppUtils.hwBoard(this);
+			if (curPhotosNum < (Constants.MAX_PHOTOS_NUM)) {
+				AppUtils.hwBoard(this);
+			} else {
+				alertFull();
+			}
+			break;
+		case R.id.popup_doodle_lay:
+			if (curPhotosNum < (Constants.MAX_PHOTOS_NUM)) {
+				AppUtils.doodleBoard(this);
+			} else {
+				alertFull();
+			}
 			break;
 		case R.id.select_grade_btn:
+			hideSoft();
 			which = 0;
 			selectExtra();
 			break;
 		case R.id.select_subject_btn:
+			hideSoft();
 			which = 1;
 			selectExtra();
 			break;
 		case R.id.find_send:// 发布问题
+			hideSoft();
 			publishQuestion();
 			break;
 		case R.id.find_btn_back:
@@ -420,12 +443,12 @@ public class IssueQuestionActivity extends Activity {
 	}
 
 	// ////////////////////////////////////////////////////////////////////////////////
-	private String imgPath;
+	private String cameraPath;
 	private ArrayList<String> paths;// 图片路径
 	private GridView thumbnails;
-	private ThumbnailsAdapter adapter;
-	private final int MAX_NUMBER = 6;
-	private int selectNativePhotosNumber;// 选择图库图片数目
+	private PhotosAdapter adapter;
+	// private final int MAX_NUMBER = 6;
+	private int curPhotosNum;// 选择图库图片数目
 
 	private TextView grade, subject;
 	private PopupWindow selectWindow;// select grade or subject
@@ -436,15 +459,17 @@ public class IssueQuestionActivity extends Activity {
 	private TextView content;
 
 	private BroadcastReceiver receiver;
+	private final String action = "scu.android.activity.IssueQuestionActivity";
 
 	// 初始化
 	public void init() {
 		paths = new ArrayList<String>();
-		adapter = new ThumbnailsAdapter(this, paths);
+		adapter = new PhotosAdapter(this, paths);
+		adapter.setColumnNum(4);
 		thumbnails = (GridView) findViewById(R.id.thumbnails);
 		thumbnails.setAdapter(adapter);
 		thumbnails.setOnItemClickListener(new ThumbnailListener());
-		selectNativePhotosNumber = 0;
+		curPhotosNum = 0;
 		// ///////////////////////////////////////////////
 		grade = (TextView) findViewById(R.id.select_grade_btn);
 		subject = (TextView) findViewById(R.id.select_subject_btn);
@@ -456,17 +481,15 @@ public class IssueQuestionActivity extends Activity {
 
 			@Override
 			public void onReceive(Context context, Intent intent) {
-				if (intent.getAction().equals(
-						"scu.android.ui.ScanPhotosActivity")) {
+				if (intent.getAction().equals(action)) {
 					int index = intent.getIntExtra("photoIndex", 0);
 					paths.remove(index);
 					adapter.notifyDataSetChanged();
-					--selectNativePhotosNumber;
+					--curPhotosNum;
 				}
 			}
 		};
-		registerReceiver(receiver, new IntentFilter(
-				"scu.android.ui.ScanPhotosActivity"));
+		registerReceiver(receiver, new IntentFilter(action));
 
 	}
 
@@ -478,7 +501,7 @@ public class IssueQuestionActivity extends Activity {
 				long id) {
 			Intent intent = new Intent(IssueQuestionActivity.this,
 					ScanPhotosActivity.class);
-			intent.setAction("scu.android.activiy.IssueQuestionActivity");
+			intent.setAction(action);
 			intent.putStringArrayListExtra("photos", paths);
 			intent.putExtra("index", position + 1);
 			startActivity(intent);
@@ -486,32 +509,44 @@ public class IssueQuestionActivity extends Activity {
 	}
 
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		final String prefix="file:///";
 		switch (requestCode) {
-		case AppUtils.SYS_CAMEAR:// 相机
+		case Constants.SYS_CAMEAR:// 相机
 			if (resultCode == Activity.RESULT_OK) {
-				paths.add(imgPath);
+				AppUtils.sysCrop(this, cameraPath);
+			} else {
+				AppUtils.delete(cameraPath);
 			}
 			break;
-		case AppUtils.PHONE_PICTURES:// 图库
+		case Constants.PHONE_PICTURES:// 图库
 			if (resultCode == Activity.RESULT_OK) {
 				ArrayList<String> photos = data
 						.getStringArrayListExtra("photos");
 				for (String imgPath : photos) {
-					paths.add(imgPath);
-					++selectNativePhotosNumber;
+					paths.add(prefix+imgPath);
+					++curPhotosNum;
 				}
 			}
 			break;
-		case AppUtils.DOODLE_BOARD:// 涂鸦
+		case Constants.DOODLE_BOARD:// 涂鸦
 			if (resultCode == Activity.RESULT_OK) {
 				String imgPath = data.getStringExtra("doodlePath");
-				paths.add(imgPath);
+				paths.add(prefix+imgPath);
+				++curPhotosNum;
 			}
 			break;
-		case AppUtils.HANDWRITE_BOARD:// 手写
+		case Constants.HANDWRITE_BOARD:// 手写
 			if (resultCode == Activity.RESULT_OK) {
 				String imgPath = data.getStringExtra("handwritePath");
-				paths.add(imgPath);
+				paths.add(prefix+imgPath);
+				++curPhotosNum;
+			}
+			break;
+		case Constants.SYS_CROP:
+			if (resultCode == Activity.RESULT_OK) {
+				String imgPath = data.getStringExtra("cropPath");
+				paths.add(prefix+imgPath);
+				++curPhotosNum;
 			}
 			break;
 		default:
@@ -604,13 +639,13 @@ public class IssueQuestionActivity extends Activity {
 	public void publishQuestion() {
 		String sTitle = title.getText().toString().trim();
 		if (sTitle.length() != 0 && !sTitle.equals("标题...")) {
-			// /
-
 			Question question = new Question(0, sTitle, content.getText()
 					.toString(), path, paths, new Date(), false, grade
-					.getText().toString(), subject.getText().toString(), 0);
+					.getText().toString(), subject.getText().toString(),
+					MyApplication.getLoginUser(this).getUserId());
 			QuestionDao.insertQuestion(this, question);
-
+			MyApplication.uploadQuestion(question);
+			
 			Intent intent = new Intent(IssueQuestionActivity.this,
 					ActionBarActivity.class);
 			intent.setAction("scu.android.activity.IssueQuestionActivity");
@@ -643,6 +678,21 @@ public class IssueQuestionActivity extends Activity {
 					}
 				}).create();
 		alert.show();
+	}
+
+	public void alertFull() {
+		Toast.makeText(IssueQuestionActivity.this,
+				"最多只能选择" + Constants.MAX_PHOTOS_NUM + "张图片", Toast.LENGTH_SHORT)
+				.show();
+	}
+
+	public void hideSoft() {
+		// 隐藏软键盘
+		InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+		View view = getCurrentFocus();
+		if (view != null)
+			imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
+					InputMethodManager.HIDE_NOT_ALWAYS);
 	}
 
 	@Override

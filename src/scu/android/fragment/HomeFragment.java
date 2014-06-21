@@ -11,7 +11,6 @@ import scu.android.db.ChatRecord;
 import scu.android.db.DbManager2;
 import scu.android.util.HomeAdapter;
 import scu.android.util.TimeRender;
-
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;

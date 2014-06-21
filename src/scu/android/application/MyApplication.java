@@ -3,14 +3,35 @@ package scu.android.application;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
 import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.RosterEntry;
 import org.jivesoftware.smack.RosterGroup;
@@ -18,21 +39,30 @@ import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.provider.ProviderManager;
+import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.Form;
 import org.jivesoftware.smackx.ReportedData;
 import org.jivesoftware.smackx.ReportedData.Row;
+import org.jivesoftware.smackx.filetransfer.FileTransfer;
+import org.jivesoftware.smackx.filetransfer.FileTransferManager;
+import org.jivesoftware.smackx.filetransfer.OutgoingFileTransfer;
 import org.jivesoftware.smackx.packet.VCard;
 import org.jivesoftware.smackx.search.UserSearchManager;
 
+import scu.android.db.UserDao;
+import scu.android.entity.Question;
+import scu.android.entity.User;
+import scu.android.util.UploadUtils;
 import scu.android.util.XmppTool;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Build;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
-import android.os.StrictMode;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
@@ -44,7 +74,7 @@ public class MyApplication extends Application {
 	public static String hostIp = "218.244.144.212";
 	public String hostName = "handwriteserver";
 
-	// public static String hostIp = "192.168.1.105";
+	// public static String hostIp = "192.168.1.116";
 	// public String hostName = "dolphin0520-pc";
 
 	public String userName = "jalsary";
@@ -59,6 +89,8 @@ public class MyApplication extends Application {
 
 	public static VCard vCard = null;
 	public SharedPreferences sp = null;
+
+	private static User loginUser;
 
 	@Override
 	public void onCreate() {
@@ -318,8 +350,29 @@ public class MyApplication extends Application {
 		return Environment.getExternalStorageDirectory().getPath();
 	}
 
-	public static ByteArrayInputStream getUserImage(XMPPConnection connection,
-			String user) {
+	public static void changeImage(XMPPConnection connection, File f)
+			throws XMPPException, IOException {
+
+		VCard vcard = new VCard();
+		vcard.load(connection);
+
+		byte[] bytes;
+
+		bytes = getFileBytes(f);
+		String encodedImage = StringUtils.encodeBase64(bytes);
+		vcard.setAvatar(bytes);
+		vcard.setEncodedImage(encodedImage);
+		vcard.setField("PHOTO", "<TYPE>image/jpg</TYPE><BINVAL>" + encodedImage
+				+ "</BINVAL>", true);
+
+		// ByteArrayInputStream bais = new
+		// ByteArrayInputStream(vcard.getAvatar());
+		// FormatTools.getInstance().InputStream2Bitmap(bais);
+
+		vcard.save(connection);
+	}
+
+	public static Bitmap getUserImage(XMPPConnection connection, String user) {
 		ByteArrayInputStream bais = null;
 		try {
 			VCard vcard = new VCard();
@@ -338,7 +391,9 @@ public class MyApplication extends Application {
 		}
 		if (bais == null)
 			return null;
-		return bais;
+		Bitmap bitmap = BitmapFactory.decodeStream(bais);
+
+		return bitmap;
 	}
 
 	public static VCard getUserVcard(XMPPConnection connection, String user) {
@@ -418,17 +473,257 @@ public class MyApplication extends Application {
 
 		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
 		// loadArray(list);
+
 	}
 
+	public static void sendFile(String userName, String passWord, String user,
+			File file) {
+		try {
+			XMPPConnection connection = XmppTool.getConnection();
+			System.out.println("发送文件开始" + file.getName());
+			FileTransferManager transfer = new FileTransferManager(connection);
+			String destination = user + "/spark";
+			final OutgoingFileTransfer out = transfer
+					.createOutgoingFileTransfer(destination);
+			System.out.println(connection.getPort());
+			if (file.exists()) {
+				System.out.println("文件存在");
+			}
+			long timeOut = 100000;
+			long sleepMin = 3000;
+			long spTime = 0;
+			int rs = 0;
+			try {
+				byte[] fileData = getFileBytes(file);
+				OutputStream os = out.sendFile(file.getName(), fileData.length,
+						"you won't like it");
+				os.write(fileData);
+				os.flush();
+				rs = out.getStatus().compareTo(FileTransfer.Status.complete);
+				while (rs != 0) {
+					System.out
+							.println("getStatus" + out.getStatus().toString());
+					rs = out.getStatus()
+							.compareTo(FileTransfer.Status.complete);
+					System.out.println(rs);
+					spTime = spTime + sleepMin;
+					if (spTime > timeOut) {
+						System.out.println("fail" + "文件发送失败");
+						return;
+					}
+					Thread.sleep(sleepMin);
+				}
+				System.out.println("end send file");
+			} catch (XMPPException e) {
+				e.printStackTrace();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * @author YouMingyang
+	 * @param context
+	 *            初始化图片加载器
+	 */
 	public static void initImageLoader(Context context) {
 		ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(
 				context).threadPriority(Thread.NORM_PRIORITY - 2)
 				.denyCacheImageMultipleSizesInMemory()
 				.diskCacheFileNameGenerator(new Md5FileNameGenerator())
 				.tasksProcessingOrder(QueueProcessingType.LIFO)
-				.writeDebugLogs() // Remove for release app
+				//.writeDebugLogs() // Remove for release app
 				.build();
 		ImageLoader.getInstance().init(config);
+	}
+
+	/**
+	 * @author YouMingyang
+	 * @param context
+	 * @return 当前登录用户
+	 */
+	public static User getLoginUser(Context context) {
+		if (loginUser == null) {
+			if (UserDao.getUsers(context).size() == 0) {
+				User user = new User(0l, "jalsary", null, 0, 0, "jalsary",
+						"assets://avatar.jpg", null, null, 'M', 0, 0, 0,
+						new Date());
+				long userId = UserDao.insertUser(context, user);
+				loginUser = UserDao.getUserById(context, userId);
+			}
+			loginUser = UserDao.getUsers(context).get(0);
+		}
+		return loginUser;
+	}
+
+	private static byte[] getFileBytes(File file) throws IOException {
+		BufferedInputStream bis = null;
+		try {
+			bis = new BufferedInputStream(new FileInputStream(file));
+			int bytes = (int) file.length();
+			byte[] buffer = new byte[bytes];
+			int readBytes = bis.read(buffer);
+			if (readBytes != buffer.length) {
+				throw new IOException("Entire file not read");
+			}
+			return buffer;
+		} finally {
+			if (bis != null) {
+				bis.close();
+			}
+		}
+	}
+
+	public static VCard getUserVCard(XMPPConnection connection)
+			throws XMPPException {
+		VCard vcard = new VCard();
+		vcard.load(connection);
+		System.out.println(vcard.getField("sex"));
+		System.out.println(vcard.getField("DESC"));
+		System.out.println(vcard.getEmailHome());
+		System.out.println(vcard.getOrganization());
+		System.out.println(vcard.getNickName());
+		System.out.println(vcard.getPhoneWork("PHONE"));
+		System.out.println(vcard.getProperty("DESC"));
+		System.out.println(vcard.getAvatar());
+		return vcard;
+	}
+
+	public static VCard getUserVCard(XMPPConnection connection, String userJid)
+			throws XMPPException {
+		VCard vcard = new VCard();
+		vcard.load(connection, userJid);
+		System.out.println(vcard.getOrganization());
+		System.out.println(vcard.getField("sex"));
+		System.out.println(vcard.getNickName());
+		System.out.println(vcard.getAvatar());
+		System.out.println(vcard.getField("DESC"));
+		return vcard;
+	}
+
+	public static void setUserVCard(XMPPConnection connection, int type,
+			String value) throws XMPPException {
+		VCard vCard = new VCard();
+		vCard.load(connection);
+		switch (type) {
+		case 1:
+			vCard.setOrganization(value);
+			break;
+		case 2:
+			vCard.setNickName(value);
+			break;
+		case 3:
+			vCard.setField("sex", value);
+			break;
+		case 4:
+			vCard.setEmailHome(value);
+			break;
+		case 5:
+			vCard.setEmailWork(value);
+			break;
+		}
+
+		vCard.save(connection);
+		System.out.println("添加成功");
+	}
+
+	public static void uploadQuestion(final Question question) {
+		final String uploadUrl = "http://192.168.1.148:8000/question/add";
+		new Thread() {
+			public void run() {
+				Map<String, String> params = new HashMap<String, String>();
+				params.put("q_title", question.getTitle());
+				params.put("q_grade", question.getGrade());
+				params.put("q_subject", question.getSubject());
+				params.put("q_text_content", question.getContent());
+				params.put("q_user", Long.toString(question.getUserId()));
+
+				Map<String, File> files = new HashMap<String, File>();
+				ArrayList<String> images = question.getImages();
+				for (String imagePath : images) {
+					final String name = imagePath.substring(imagePath
+							.lastIndexOf("/") + 1);
+					final String imgPath=imagePath.substring("file:///".length()+1);
+					System.out.println(imgPath);
+					files.put(name, new File(imagePath));
+					Log.i("name", name);
+				}
+				final String audioPath = question.getAudio();
+				if (audioPath != null) {
+					final String audioName = audioPath.substring(audioPath
+							.lastIndexOf("/") + 1);
+					files.put(audioName, new File(audioPath));
+				}
+				try {
+					UploadUtils.post(uploadUrl, params, files);
+					Log.i("--------上传提示信息！----------", "上传成功！");
+				} catch (IOException e) {
+					e.printStackTrace();
+					Log.i("有没有错误看这里：", e.toString());
+				}
+			}
+		}.run();
+	}
+
+	public static void uploadFile(String uploadUrl, String srcPath) {
+		String end = "\r\n";
+		String twoHyphens = "--";
+		String boundary = "******";
+		try {
+			URL url = new URL(uploadUrl);
+			HttpURLConnection httpURLConnection = (HttpURLConnection) url
+					.openConnection();
+			// 设置每次传输的流大小，可以有效防止手机因为内存不足崩溃
+			// 此方法用于在预先不知道内容长度时启用没有进行内部缓冲的 HTTP 请求正文的流。
+			httpURLConnection.setChunkedStreamingMode(128 * 1024);// 128K
+			// 允许输入输出流
+			httpURLConnection.setDoInput(true);
+			httpURLConnection.setDoOutput(true);
+			httpURLConnection.setUseCaches(false);
+			// 使用POST方法
+			httpURLConnection.setRequestMethod("POST");
+			httpURLConnection.setRequestProperty("Connection", "Keep-Alive");
+			httpURLConnection.setRequestProperty("Charset", "UTF-8");
+			httpURLConnection.setRequestProperty("Content-Type",
+					"multipart/form-data;boundary=" + boundary);
+
+			DataOutputStream dos = new DataOutputStream(
+					httpURLConnection.getOutputStream());
+			dos.writeBytes(twoHyphens + boundary + end);
+			dos.writeBytes("Content-Disposition: form-data; name=\"q_resources\"; filename=\""
+					+ srcPath.substring(srcPath.lastIndexOf("/") + 1)
+					+ "\""
+					+ end);
+			dos.writeBytes(end);
+
+			FileInputStream fis = new FileInputStream(srcPath);
+			byte[] buffer = new byte[8192]; // 8k
+			int count = 0;
+			// 读取文件
+			while ((count = fis.read(buffer)) != -1) {
+				dos.write(buffer, 0, count);
+			}
+			fis.close();
+
+			dos.writeBytes(end);
+			dos.writeBytes(twoHyphens + boundary + twoHyphens + end);
+			dos.flush();
+
+			InputStream is = httpURLConnection.getInputStream();
+			InputStreamReader isr = new InputStreamReader(is, "utf-8");
+			BufferedReader br = new BufferedReader(isr);
+			String result = br.readLine();
+			Log.i("uploadQuestion", result);
+			dos.close();
+			is.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 }

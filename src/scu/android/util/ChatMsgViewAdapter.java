@@ -2,7 +2,6 @@ package scu.android.util;
 
 import java.util.List;
 
-import scu.android.application.MyApplication;
 import android.content.Context;
 import android.content.res.Resources;
 import android.media.MediaPlayer;

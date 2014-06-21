@@ -16,8 +16,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -29,8 +27,11 @@ import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingProgressListener;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
-/*
+/**
  * 图片浏览
+ * 
+ * @author YouMingyang
+ * @version 1.0
  */
 public class ScanPhotosActivity extends Activity {
 
@@ -70,11 +71,14 @@ public class ScanPhotosActivity extends Activity {
 		adapter = new ScanPageAdater(photos);
 		viewPager.setAdapter(adapter);
 		viewPager.setOnPageChangeListener(new PageListener());
+		if (photos.size() > 3)
+			viewPager.setOffscreenPageLimit(photos.size() - 2);
 
 		pageIndex = (TextView) findViewById(R.id.pageIndex);
 		pageIndex.setText(index + "/" + photos.size());
 
 		viewPager.setCurrentItem(index - 1);
+		toggleDel();
 	}
 
 	private class ScanPageAdater extends PagerAdapter {
@@ -110,34 +114,44 @@ public class ScanPhotosActivity extends Activity {
 					.findViewById(R.id.photo);
 			final ProgressBar loading = (ProgressBar) photoLayout
 					.findViewById(R.id.loading);
+			/* "file:///" + photos.get(position) */
+			final String uri = photos.get(position);
+			final boolean isFromNetwork = (uri.startsWith("http://")) ? true
+					: false;
+			if (isFromNetwork) {
+				imageLoader.displayImage(uri, photo, options,
+						new SimpleImageLoadingListener() {
+							@Override
+							public void onLoadingStarted(String imageUri,
+									View view) {
+								loading.setProgress(0);
+								loading.setVisibility(View.VISIBLE);
+							}
 
-			imageLoader.displayImage("file:///" + photos.get(position), photo,
-					options, new SimpleImageLoadingListener() {
-						@Override
-						public void onLoadingStarted(String imageUri, View view) {
-							loading.setProgress(0);
-							loading.setVisibility(View.VISIBLE);
-						}
+							@Override
+							public void onLoadingFailed(String imageUri,
+									View view, FailReason failReason) {
+								loading.setVisibility(View.GONE);
+							}
 
-						@Override
-						public void onLoadingFailed(String imageUri, View view,
-								FailReason failReason) {
-							loading.setVisibility(View.GONE);
-						}
-
-						@Override
-						public void onLoadingComplete(String imageUri,
-								View view, Bitmap loadedImage) {
-							loading.setVisibility(View.GONE);
-						}
-					}, new ImageLoadingProgressListener() {
-						@Override
-						public void onProgressUpdate(String imageUri,
-								View view, int current, int total) {
-							loading.setProgress(Math.round(100.0f * current
-									/ total));
-						}
-					});
+							@Override
+							public void onLoadingComplete(String imageUri,
+									View view, Bitmap loadedImage) {
+								loading.setVisibility(View.GONE);
+								// BitmapUtils.saveBitmap(activity, loadedImage,
+								// imgSaveDir);
+							}
+						}, new ImageLoadingProgressListener() {
+							@Override
+							public void onProgressUpdate(String imageUri,
+									View view, int current, int total) {
+								loading.setProgress(Math.round(100.0f * current
+										/ total));
+							}
+						});
+			} else {
+				imageLoader.displayImage(uri, photo, options);
+			}
 
 			((ViewPager) view).addView(photoLayout, 0);
 			return photoLayout;
@@ -168,30 +182,26 @@ public class ScanPhotosActivity extends Activity {
 
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// 添加刪除
+	public void toggleDel() {
 		String action = intent.getAction();
 		if (action != null
-				&& (action.equals("scu.android.activiy.IssueQuestionActivity") || action
-						.equals("scu.android.activiy.ReplyQuestionActivity"))) {
-			getMenuInflater().inflate(R.menu.scan_photos_actionbar_menu, menu);
+				&& (action.equals("scu.android.activity.IssueQuestionActivity") || action
+						.equals("scu.android.activiy.RelpyQuestionActivity"))) {
+			findViewById(R.id.delete_photo).setVisibility(View.VISIBLE);
 		}
-		return true;
 	}
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
+	public void OnClick(View view) {
+		switch (view.getId()) {
 		case R.id.delete_photo:
 			deletePhoto();
 			break;
 		}
-		return true;
 	}
 
 	public void deletePhoto() {
 		final int index = viewPager.getCurrentItem();
+		final String action = intent.getAction();
 		Dialog alert = new AlertDialog.Builder(this).setTitle("破题")
 				.setMessage("删除这张照片?")
 				.setPositiveButton("确定", new Dialog.OnClickListener() {
@@ -200,7 +210,7 @@ public class ScanPhotosActivity extends Activity {
 						photos.remove(index);
 						adapter.notifyDataSetChanged();
 						Intent del = new Intent();
-						del.setAction(scu.android.util.AppUtils.SCAN_PHOTOS_ACTION);
+						del.setAction(action);
 						del.putExtra("photoIndex", index);
 						sendBroadcast(del);
 						if (photos.size() <= 0)
@@ -238,6 +248,7 @@ public class ScanPhotosActivity extends Activity {
 	protected void onDestroy() {
 		imageLoader.clearMemoryCache();
 		imageLoader.clearDiskCache();
+		// viewPager.destroyDrawingCache();
 		super.onDestroy();
 	}
 

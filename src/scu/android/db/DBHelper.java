@@ -12,18 +12,20 @@ public class DBHelper extends SQLiteOpenHelper {
 	public final static String TABLE_REPLY = "aReply";
 	public final static String TABLE_IMAGES = "aImages";
 
-	private final String table_user = "CREATE TABLE aUser(userId INTEGER PRIMARY KEY AUTOINCREMENT,userName VARCHAR,password VARCHAR,email VARCHAR,phone INTEGER,type INTEGER,nickname VARCHAR,avatar VARCHAR,school VARCHAR,grade VARCHAR,sex CHAR,age INTEGER,curLon REAL,curLat REAL)";
+	private final String table_user = "CREATE TABLE aUser(userId INTEGER PRIMARY KEY AUTOINCREMENT,userName VARCHAR,password VARCHAR,email VARCHAR,phone INTEGER,type INTEGER,nickname VARCHAR,avatar VARCHAR,school VARCHAR,grade VARCHAR,sex CHAR,age INTEGER,curLon REAL,curLat REAL,createTime DATETIME DEFAULT CURRENT_TIMESTAMP)";
 	private final String table_question = "CREATE TABLE aQuestion(quesId INTEGER PRIMARY KEY AUTOINCREMENT,title VARCHAR,content VARCHAR,audio VARCHAR,publishTime DATETIME DEFAULT CURRENT_TIMESTAMP,status INTEGER,grade VARCHAR,subject VARCHAR,userId INTEGER,FOREIGN KEY(userId) REFERENCES aUser(userId))";
-	private final String table_reply = "CREATE TABLE aReply(repId INTEGER PRIMARY KEY AUTOINCREMENT,content VARCHAR,audio VARCHAR,replyTime DATETIME DEFAULT CURRENT_TIMESTAMP,userId INTEGER,quesId INTEGER,FOREIGN KEY(userId) REFERENCES aUser(userId),FOREIGN KEY(quesId) REFERENCES aQuestion(quesId))";
+	private final String table_reply = "CREATE TABLE aReply(repId INTEGER PRIMARY KEY AUTOINCREMENT,content VARCHAR,audio VARCHAR,replyTime DATETIME DEFAULT CURRENT_TIMESTAMP,userId INTEGER,quesId INTEGER,type INTEGER,FOREIGN KEY(userId) REFERENCES aUser(userId),FOREIGN KEY(quesId) REFERENCES aQuestion(quesId))";
 	private final String table_images = "CREATE TABLE aImages(imgId INTEGER PRIMARY KEY AUTOINCREMENT,imgPath VARCHAR,imgFrom VARCHAR,imgSize INTEGER,type INTEGER)";
 
+//	private final String deleteQuestionTrigger="CREATE TRIGGER delQues AFTER DELETE ON aQuestion BEGIN DELETE FROM aReply WHERE aReply.quesId=old.quesId; END";
+//	private final String delete
 	public static DBHelper getInstance(Context context) {
 		DBHelper dbHelper = new DBHelper(context);
 		return dbHelper;
 	}
 
 	public DBHelper(Context context) {
-		super(context, "test.db", null, 6);
+		super(context, "test.db", null, 15);
 	}
 
 	@Override
@@ -32,6 +34,7 @@ public class DBHelper extends SQLiteOpenHelper {
 		db.execSQL(table_question);
 		db.execSQL(table_reply);
 		db.execSQL(table_images);
+//		db.execSQL(deleteQuestionTrigger);
 		Log.i("SQL-CREATE", "CREATE_TABLE");
 	}
 

@@ -1,6 +1,7 @@
 package scu.android.entity;
 
 import java.io.Serializable;
+import java.util.Date;
 
 public class User implements Serializable {
 
@@ -23,10 +24,34 @@ public class User implements Serializable {
 	private int age;
 	private double curLon;
 	private double curLat;//
+	private Date createTime;
+
+	
+	public User(long userId, String userName, String email, int phone,
+			int type, String nickname, String avatar, String school,
+			String grade, char sex, int age, double curLon, double curLat,
+			Date createTime) {
+		super();
+		this.userId = userId;
+		this.userName = userName;
+		this.email = email;
+		this.phone = phone;
+		this.type = type;
+		this.nickname = nickname;
+		this.avatar = avatar;
+		this.school = school;
+		this.grade = grade;
+		this.sex = sex;
+		this.age = age;
+		this.curLon = curLon;
+		this.curLat = curLat;
+		this.createTime = createTime;
+	}
 
 	public User(long userId, String userName, String password, String email,
 			int phone, int type, String nickname, String avatar, String school,
-			String grade, char sex, int age, double curLon, double curLat) {
+			String grade, char sex, int age, double curLon, double curLat,
+			Date createTime) {
 		super();
 		this.userId = userId;
 		this.userName = userName;
@@ -42,6 +67,7 @@ public class User implements Serializable {
 		this.age = age;
 		this.curLon = curLon;
 		this.curLat = curLat;
+		this.createTime = createTime;
 	}
 
 	public long getUserId() {
@@ -154,6 +180,14 @@ public class User implements Serializable {
 
 	public void setCurLat(double curLat) {
 		this.curLat = curLat;
+	}
+
+	public Date getCreateTime() {
+		return createTime;
+	}
+
+	public void setCreateTime(Date createTime) {
+		this.createTime = createTime;
 	}
 
 }

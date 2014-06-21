@@ -18,15 +18,10 @@ import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.ParticipantStatusListener;
 import org.jivesoftware.smackx.packet.DelayInformation;
 
-import com.demo.note.R;
-
 import scu.android.application.MyApplication;
 import scu.android.util.MemberAdapter;
 import scu.android.util.MessageReceiver;
 import scu.android.util.XmppTool;
-
-
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -35,18 +30,14 @@ import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
-import android.view.ContextMenu;
 import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Toast;
-import android.widget.AdapterView.AdapterContextMenuInfo;
+
+import com.demo.note.R;
 
 public class ActivityMultiRoom extends Activity implements OnClickListener {
 
