@@ -46,6 +46,13 @@ import org.jivesoftware.smackx.search.UserSearchManager;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import scu.android.db.UserDao;
+import scu.android.entity.Question;
+import scu.android.entity.User;
+import scu.android.util.DownloadUtils;
+import scu.android.util.UploadUtils;
+import scu.android.util.XmppTool;
+
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -63,6 +70,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.os.StrictMode;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
@@ -909,7 +917,9 @@ public class MyApplication extends Application {
 				.denyCacheImageMultipleSizesInMemory()
 				.diskCacheFileNameGenerator(new Md5FileNameGenerator())
 				.tasksProcessingOrder(QueueProcessingType.LIFO)
+
 				.writeDebugLogs() // Remove for release app
+
 				.build();
 		ImageLoader.getInstance().init(config);
 
@@ -961,6 +971,7 @@ public class MyApplication extends Application {
 		updateAvatar(bais, con);
 
 	}
+
 
 	public void updateAvatar(ByteArrayInputStream bais, XMPPConnection con)
 			throws XMPPException, IOException {
@@ -1040,5 +1051,112 @@ public class MyApplication extends Application {
 		}
 		return null;
 	}
+	public static void uploadQuestion(final Question question) {
+		final String uploadUrl = "http://192.168.1.148:8000/question/add";
+		final String filePrefix = "file:///";
+		new Thread() {
+			public void run() {
+				Map<String, String> params = new HashMap<String, String>();
+
+				params.put("q_title", question.getTitle());
+				params.put("q_grade", question.getGrade());
+				params.put("q_subject", question.getSubject());
+				params.put("q_text_content", question.getContent());
+				params.put("q_user", Long.toString(question.getUserId()));
+
+				Map<String, File> files = new HashMap<String, File>();
+				ArrayList<String> images = question.getImages();
+				for (String imagePath : images) {
+					String name = imagePath.substring(imagePath
+							.lastIndexOf("/") + 1);
+					String imgPath = imagePath
+							.substring(filePrefix.length() + 1);
+					File file = new File(imgPath);
+					files.put(name, file);
+				}
+				final String audioPath = question.getAudio();
+				if (audioPath != null) {
+					final String audioName = audioPath.substring(audioPath
+							.lastIndexOf("/") + 1);
+					final String audioDir = audioPath.substring(filePrefix
+							.length() + 1);
+					files.put(audioName, new File(audioDir));
+				}
+				try {
+					UploadUtils.post(uploadUrl, params, files);
+					Log.i("--------上传提示信息！----------", "上传成功！");
+				} catch (IOException e) {
+					e.printStackTrace();
+					Log.i("有没有错误看这里：", e.toString());
+				}
+			}
+		}.run();
+	}
+
+	public static ArrayList<Question> downloadAllQuestion(
+			HashMap<String, String> params) {
+		final String downUrl = "http://192.168.1.148:8000/question/getAll?ak=7244d82a2ef54bfa015a0d7d6f85f372";
+		// for(Map.Entry<String, String> params.)
+		ArrayList<Question> questions = new ArrayList<Question>();
+		DownloadUtils.get(downUrl);
+		return questions;
+
+	}
+
+	// public static void uploadFile(String uploadUrl, String srcPath) {
+	// String end = "\r\n";
+	// String twoHyphens = "--";
+	// String boundary = "******";
+	// try {
+	// URL url = new URL(uploadUrl);
+	// HttpURLConnection httpURLConnection = (HttpURLConnection) url
+	// .openConnection();
+	// // 设置每次传输的流大小，可以有效防止手机因为内存不足崩溃
+	// // 此方法用于在预先不知道内容长度时启用没有进行内部缓冲的 HTTP 请求正文的流。
+	// httpURLConnection.setChunkedStreamingMode(128 * 1024);// 128K
+	// // 允许输入输出流
+	// httpURLConnection.setDoInput(true);
+	// httpURLConnection.setDoOutput(true);
+	// httpURLConnection.setUseCaches(false);
+	// // 使用POST方法
+	// httpURLConnection.setRequestMethod("POST");
+	// httpURLConnection.setRequestProperty("Connection", "Keep-Alive");
+	// httpURLConnection.setRequestProperty("Charset", "UTF-8");
+	// httpURLConnection.setRequestProperty("Content-Type",
+	// "multipart/form-data;boundary=" + boundary);
+	//
+	// DataOutputStream dos = new DataOutputStream(
+	// httpURLConnection.getOutputStream());
+	// dos.writeBytes(twoHyphens + boundary + end);
+	// dos.writeBytes("Content-Disposition: form-data; name=\"q_resources\"; filename=\""
+	// + srcPath.substring(srcPath.lastIndexOf("/") + 1)
+	// + "\""
+	// + end);
+	// dos.writeBytes(end);
+	//
+	// FileInputStream fis = new FileInputStream(srcPath);
+	// byte[] buffer = new byte[8192]; // 8k
+	// int count = 0;
+	// // 读取文件
+	// while ((count = fis.read(buffer)) != -1) {
+	// dos.write(buffer, 0, count);
+	// }
+	// fis.close();
+	//
+	// dos.writeBytes(end);
+	// dos.writeBytes(twoHyphens + boundary + twoHyphens + end);
+	// dos.flush();
+	//
+	// InputStream is = httpURLConnection.getInputStream();
+	// InputStreamReader isr = new InputStreamReader(is, "utf-8");
+	// BufferedReader br = new BufferedReader(isr);
+	// String result = br.readLine();
+	// Log.i("uploadQuestion", result);
+	// dos.close();
+	// is.close();
+	// } catch (Exception e) {
+	// e.printStackTrace();
+	// }
+	// }
 
 }

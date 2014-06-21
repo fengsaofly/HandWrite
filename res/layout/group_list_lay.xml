@@ -1,17 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" 
+    android:layout_height="match_parent"
     android:background="@color/BackgroundGrayColor"
-    android:orientation="vertical">
-    
-	<include layout="@layout/activity_top"/>
-    <include layout="@layout/search_bar_lay" android:visibility="visible"/>
-    <GridView android:layout_marginTop="10dp" android:verticalSpacing="5dp" android:layout_width="fill_parent" android:layout_height="wrap_content" android:numColumns="2" android:padding="5dp" android:horizontalSpacing="10dp">
-        
-        
-        
+    android:orientation="vertical" >
+
+    <include
+        android:id="@id/activity_top"
+        layout="@layout/activity_top" />
+
+    <include
+        layout="@layout/search_bar_lay"
+        android:visibility="visible" />
+
+    <include
+        android:id="@id/no_network_connect"
+        android:layout_gravity="top"
+        layout="@layout/no_network_connect"
+        android:onClick="OnClick"
+        android:visibility="gone" />
+
+    <GridView
+        android:id="@id/groups_list"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:horizontalSpacing="10dp"
+        android:numColumns="2"
+        android:padding="5dp"
+        android:verticalSpacing="5dp" >
     </GridView>
-    
 
 </LinearLayout>
+

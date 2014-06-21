@@ -7,3 +7,4 @@
      <TextView android:textSize="14.0sp" android:textStyle="bold" android:textColor="#ffffffff" android:gravity="center" android:layout_gravity="right|center" android:id="@id/search_bt" android:background="@anim/btn_selector" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginRight="5.0dip" android:text="搜索" android:layout_alignParentRight="true" android:layout_centerVertical="true" />
 </RelativeLayout>
 
+

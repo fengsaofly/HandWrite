@@ -1,6 +1,9 @@
 package scu.android.util;
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 添加附近的人和群组资源文件
 import scu.android.application.MyApplication;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -48,11 +51,19 @@ public class ActivitySupport extends Activity implements IActivitySupport {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		context = this;
+<<<<<<< HEAD
 //		preferences = getSharedPreferences(Constant.LOGIN_SET, 0);
 		notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 		pg = new ProgressDialog(context);
 		eimApplication = (MyApplication) getApplication();
 //		eimApplication.addActivity(this);
+=======
+		// preferences = getSharedPreferences(Constant.LOGIN_SET, 0);
+		notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+		pg = new ProgressDialog(context);
+		eimApplication = (MyApplication) getApplication();
+		// eimApplication.addActivity(this);
+>>>>>>> 添加附近的人和群组资源文件
 	}
 
 	@Override
@@ -75,8 +86,17 @@ public class ActivitySupport extends Activity implements IActivitySupport {
 		super.onStop();
 	}
 
+<<<<<<< HEAD
 	@Override
 	public void onDestroy() {
+=======
+	/**
+	 * @author YouMingyang
+	 * 修改为protected
+	 */
+	@Override
+	protected void onDestroy() {
+>>>>>>> 添加附近的人和群组资源文件
 		super.onDestroy();
 	}
 
@@ -88,6 +108,7 @@ public class ActivitySupport extends Activity implements IActivitySupport {
 	@Override
 	public void startService() {
 		// 好友联系人服务
+<<<<<<< HEAD
 //		Intent server = new Intent(context, IMContactService.class);
 //		context.startService(server);
 //		// 聊天服务
@@ -100,6 +121,21 @@ public class ActivitySupport extends Activity implements IActivitySupport {
 //		Intent imSystemMsgService = new Intent(context,
 //				IMSystemMsgService.class);
 //		context.startService(imSystemMsgService);
+=======
+		// Intent server = new Intent(context, IMContactService.class);
+		// context.startService(server);
+		// // 聊天服务
+		// Intent chatServer = new Intent(context, IMChatService.class);
+		// context.startService(chatServer);
+		// // 自动恢复连接服务
+		// Intent reConnectService = new Intent(context,
+		// ReConnectService.class);
+		// context.startService(reConnectService);
+		// // 系统消息连接服务
+		// Intent imSystemMsgService = new Intent(context,
+		// IMSystemMsgService.class);
+		// context.startService(imSystemMsgService);
+>>>>>>> 添加附近的人和群组资源文件
 	}
 
 	/**
@@ -111,6 +147,7 @@ public class ActivitySupport extends Activity implements IActivitySupport {
 	 */
 	@Override
 	public void stopService() {
+<<<<<<< HEAD
 //		// 好友联系人服务
 //		Intent server = new Intent(context, IMContactService.class);
 //		context.stopService(server);
@@ -126,6 +163,24 @@ public class ActivitySupport extends Activity implements IActivitySupport {
 //		Intent imSystemMsgService = new Intent(context,
 //				IMSystemMsgService.class);
 //		context.stopService(imSystemMsgService);
+=======
+		// // 好友联系人服务
+		// Intent server = new Intent(context, IMContactService.class);
+		// context.stopService(server);
+		// // 聊天服务
+		// Intent chatServer = new Intent(context, IMChatService.class);
+		// context.stopService(chatServer);
+		//
+		// // 自动恢复连接服务
+		// Intent reConnectService = new Intent(context,
+		// ReConnectService.class);
+		// context.stopService(reConnectService);
+		//
+		// // 系统消息连接服务
+		// Intent imSystemMsgService = new Intent(context,
+		// IMSystemMsgService.class);
+		// context.stopService(imSystemMsgService);
+>>>>>>> 添加附近的人和群组资源文件
 	}
 
 	@Override
@@ -135,7 +190,11 @@ public class ActivitySupport extends Activity implements IActivitySupport {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						stopService();
+<<<<<<< HEAD
 //						eimApplication.exit();
+=======
+						// eimApplication.exit();
+>>>>>>> 添加附近的人和群组资源文件
 					}
 				})
 				.setNegativeButton("取消", new DialogInterface.OnClickListener() {
@@ -228,7 +287,11 @@ public class ActivitySupport extends Activity implements IActivitySupport {
 								public void onClick(DialogInterface dialog,
 										int which) {
 									dialog.cancel();
+<<<<<<< HEAD
 //									eimApplication.exit();
+=======
+									// eimApplication.exit();
+>>>>>>> 添加附近的人和群组资源文件
 								}
 							}).create().show();
 		}
@@ -239,6 +302,7 @@ public class ActivitySupport extends Activity implements IActivitySupport {
 		dialogBuilder
 				.setTitle("系统提示")
 				.setMessage("无可用网络连接，请检查网络设置！")
+<<<<<<< HEAD
 				.setPositiveButton("设置",
 						new DialogInterface.OnClickListener() {
 							@Override
@@ -258,6 +322,23 @@ public class ActivitySupport extends Activity implements IActivitySupport {
 								dialog.cancel();
 							}
 						});
+=======
+				.setPositiveButton("设置", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.cancel();
+						Intent intent = new Intent(
+								Settings.ACTION_WIRELESS_SETTINGS);
+						context.startActivity(intent);
+					}
+				})
+				.setNegativeButton("关闭", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int whichButton) {
+						dialog.cancel();
+					}
+				});
+>>>>>>> 添加附近的人和群组资源文件
 		dialogBuilder.show();
 	}
 
@@ -347,6 +428,7 @@ public class ActivitySupport extends Activity implements IActivitySupport {
 		return preferences;
 	}
 
+<<<<<<< HEAD
 //	@Override
 //	public void saveLoginConfig(LoginConfig loginConfig) {
 //		preferences.edit()
@@ -405,16 +487,82 @@ public class ActivitySupport extends Activity implements IActivitySupport {
 //				Constant.IS_FIRSTSTART, true));
 //		return loginConfig;
 //	}
+=======
+	// @Override
+	// public void saveLoginConfig(LoginConfig loginConfig) {
+	// preferences.edit()
+	// .putString(Constant.XMPP_HOST, loginConfig.getXmppHost())
+	// .commit();
+	// preferences.edit()
+	// .putInt(Constant.XMPP_PORT, loginConfig.getXmppPort()).commit();
+	// preferences
+	// .edit()
+	// .putString(Constant.XMPP_SEIVICE_NAME,
+	// loginConfig.getXmppServiceName()).commit();
+	// preferences.edit()
+	// .putString(Constant.USERNAME, loginConfig.getUsername())
+	// .commit();
+	// preferences.edit()
+	// .putString(Constant.PASSWORD, loginConfig.getPassword())
+	// .commit();
+	// preferences.edit()
+	// .putBoolean(Constant.IS_AUTOLOGIN, loginConfig.isAutoLogin())
+	// .commit();
+	// preferences.edit()
+	// .putBoolean(Constant.IS_NOVISIBLE, loginConfig.isNovisible())
+	// .commit();
+	// preferences.edit()
+	// .putBoolean(Constant.IS_REMEMBER, loginConfig.isRemember())
+	// .commit();
+	// preferences.edit()
+	// .putBoolean(Constant.IS_ONLINE, loginConfig.isOnline())
+	// .commit();
+	// preferences.edit()
+	// .putBoolean(Constant.IS_FIRSTSTART, loginConfig.isFirstStart())
+	// .commit();
+	// }
+
+	// @Override
+	// public LoginConfig getLoginConfig() {
+	// LoginConfig loginConfig = new LoginConfig();
+	// String a = preferences.getString(Constant.XMPP_HOST, null);
+	// String b = getResources().getString(R.string.xmpp_host);
+	// loginConfig.setXmppHost(preferences.getString(Constant.XMPP_HOST,
+	// getResources().getString(R.string.xmpp_host)));
+	// loginConfig.setXmppPort(preferences.getInt(Constant.XMPP_PORT,
+	// getResources().getInteger(R.integer.xmpp_port)));
+	// loginConfig.setUsername(preferences.getString(Constant.USERNAME, null));
+	// loginConfig.setPassword(preferences.getString(Constant.PASSWORD, null));
+	// loginConfig.setXmppServiceName(preferences.getString(
+	// Constant.XMPP_SEIVICE_NAME,
+	// getResources().getString(R.string.xmpp_service_name)));
+	// loginConfig.setAutoLogin(preferences.getBoolean(Constant.IS_AUTOLOGIN,
+	// getResources().getBoolean(R.bool.is_autologin)));
+	// loginConfig.setNovisible(preferences.getBoolean(Constant.IS_NOVISIBLE,
+	// getResources().getBoolean(R.bool.is_novisible)));
+	// loginConfig.setRemember(preferences.getBoolean(Constant.IS_REMEMBER,
+	// getResources().getBoolean(R.bool.is_remember)));
+	// loginConfig.setFirstStart(preferences.getBoolean(
+	// Constant.IS_FIRSTSTART, true));
+	// return loginConfig;
+	// }
+>>>>>>> 添加附近的人和群组资源文件
 
 	@Override
 	public boolean getUserOnlineState() {
 		// preferences = getSharedPreferences(Constant.LOGIN_SET,0);
+<<<<<<< HEAD
 		return preferences.getBoolean(MyApplication.IS_ONLINE, true);
+=======
+		// return preferences.getBoolean(MyApplication.IS_ONLINE, true);
+		return false;
+>>>>>>> 添加附近的人和群组资源文件
 	}
 
 	@Override
 	public void setUserOnlineState(boolean isOnline) {
 		// preferences = getSharedPreferences(Constant.LOGIN_SET,0);
+<<<<<<< HEAD
 		preferences.edit().putBoolean(MyApplication.IS_ONLINE, isOnline).commit();
 
 	}
@@ -427,3 +575,14 @@ public class ActivitySupport extends Activity implements IActivitySupport {
 	
 }
 
+=======
+		// preferences.edit().putBoolean(MyApplication.IS_ONLINE,
+		// isOnline).commit();
+	}
+	//
+	// @Override
+	// public MyApplication getEimApplication() {
+	// return eimApplication;
+	// }
+}
+>>>>>>> 添加附近的人和群组资源文件

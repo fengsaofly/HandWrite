@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@id/popup_menu_option_girls"
+        android:title="@string/see_grils"/>
+    <item
+        android:id="@id/popup_menu_option_boys"
+        android:title="@string/see_boys"/>
+    <item
+        android:id="@id/popup_menu_option_all"
+        android:title="@string/see_all"/>
+    <item
+        android:id="@+id/popup_menu_option_clear"
+        android:title="@string/clear"/>
+
+</menu>
