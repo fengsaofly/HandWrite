@@ -56,6 +56,10 @@
             android:textColor="#ffffffff" />
     </FrameLayout>
 
+    <RelativeLayout android:gravity="center" android:layout_width="fill_parent" android:layout_height="wrap_content" >
+        <scu.android.ui.CircularImage  android:src="@drawable/default_avatar" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+        
+    </RelativeLayout>
     <RelativeLayout
         android:id="@+id/userLoginLay"
         android:layout_width="fill_parent"
