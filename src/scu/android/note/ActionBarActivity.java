@@ -47,6 +47,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.PopupMenu;
 import android.widget.PopupMenu.OnMenuItemClickListener;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.demo.note.R;
@@ -98,7 +99,17 @@ public class ActionBarActivity extends FragmentActivity {
 		mViewPager.setOnPageChangeListener(new TestPagerListener());
 		mViewPager.setCurrentItem(TAB_INDEX_TAB_2);
 	}
-
+//	public void initTabStyle{
+//		int count = getActionBar().getChildCount();//TabHost中有一个getTabWidget()的方法
+//		  for (int i = 0; i < count; i++) {
+//		   View view = tabWidget.getChildTabViewAt(i);   
+//		   view.getLayoutParams().height = 80; //tabWidget.getChildAt(i)
+//		   final TextView tv = (TextView) view.findViewById(android.R.id.title);
+//		   tv.setTextSize(28);
+//		   tv.setTextColor(this.getResources().getColorStateList(
+//		     android.R.color.white));
+//		  }
+//	}
 	public void initialListener() {
 		db = new DbManager2(this);
 		ChatManager cm = XmppTool.getConnection().getChatManager();
@@ -401,9 +412,17 @@ public class ActionBarActivity extends FragmentActivity {
 
 		// tab.setCustomView(R.id.);
 
-		tab.setText("消息");
-
+//		tab.setText("消息");
 		tab.setTabListener(mTabListener);
+		
+		tab.setCustomView(R.layout.actionbar_tab_lay);
+		
+		
+		TextView tabView = (TextView)tab.getCustomView().findViewById(R.id.activity_actionbar_tab_val);
+		tabView.setText("消息");
+
+//		
+		
 		getActionBar().addTab(tab);
 	}
 
@@ -440,6 +459,7 @@ public class ActionBarActivity extends FragmentActivity {
 		tab.setText("破题");
 		tab.setTabListener(mTabListener);
 		getActionBar().addTab(tab);
+		
 	}
 
 	private void setupTest3() {

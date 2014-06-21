@@ -29,7 +29,7 @@ public class TabViewPagerAdapter extends FragmentPagerAdapter {
 			return FriendFragment.newInstance();
 
 		case ActionBarActivity.TAB_INDEX_TAB_4:
-			return AccountFragment.newInstance();
+			return FindFragment.newInstance();
 		}
 
 		throw new IllegalStateException("No fragment at position " + arg0);

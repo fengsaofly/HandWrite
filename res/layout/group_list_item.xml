@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:id="@+id/scan_item_layout"  
+    android:background="#ffffff" android:layout_width="fill_parent" android:layout_height="wrap_content"
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:padding="5dp">
+    
+    		<TextView android:id="@id/tag_group_name_val" style="@style/text_style_big_gray" android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="成都7中初二(3)班"/>
+        	<RelativeLayout android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_below="@id/tag_group_name_val">
+	        	<ImageView 
+
+	            	android:layout_width="70dp"
+	                android:layout_height="70dp"
+	                android:src="@drawable/group_icon"
+	                android:id="@id/list_item_icon"        
+	            />
+	        	<LinearLayout android:padding="2dp" android:layout_toRightOf="@id/list_item_icon" android:orientation="vertical" android:layout_height="wrap_content" android:layout_width="fill_parent" >
+					<LinearLayout android:orientation="horizontal" android:layout_height="wrap_content" android:layout_width="fill_parent" >
+			            <TextView
+			                
+			         
+			                android:layout_width="wrap_content"
+			                android:layout_height="wrap_content"
+			                android:layout_marginLeft="10.0dip"
+							
+			                android:singleLine="true"
+			                android:text="群主:"
+			           		style="@style/text_style_medium_normal_black" 
+			          
+			            />
+			            <TextView
+			                android:layout_toRightOf="@id/group_icon"
+			                android:id="@id/tag_group_owner_val"
+			                android:layout_width="wrap_content"
+			                android:layout_height="wrap_content"
+			                android:layout_marginLeft="10.0dip"
+							
+			                android:singleLine="true"
+			                android:text="刘德华"
+			           		style="@style/text_style_medium_normal_black" 
+			          
+			            />
+		            </LinearLayout>
+		            <LinearLayout android:orientation="horizontal" android:layout_height="wrap_content" android:layout_width="fill_parent" >
+			            <TextView
+			                
+			                android:id="@id/tag_group_occupant_val"
+			                android:layout_width="wrap_content"
+			                android:layout_height="wrap_content"
+			                android:layout_marginLeft="10.0dip"
+							android:textColor="@color/gray_normal"
+			                android:singleLine="true"
+			                android:text="20/30"
+			           		style="@style/text_style_big_gray" 
+			          
+			            />
+
+		            </LinearLayout>
+		            <LinearLayout android:orientation="horizontal" android:layout_height="wrap_content" android:layout_width="fill_parent" >
+			            <TextView
+			                
+			                android:id="@+id/tag_addr_val"
+			                android:layout_width="wrap_content"
+			                android:layout_height="wrap_content"
+			                android:layout_marginLeft="10.0dip"
+							
+			                android:singleLine="true"
+			                android:text="成都 锦江区"
+			           		style="@style/text_style_medium_normal_black" 
+			          
+			            />
+
+		            </LinearLayout>
+	            </LinearLayout>
+			</RelativeLayout>
+
+</RelativeLayout>

@@ -71,6 +71,7 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 
 public class MyApplication extends Application {
+
 	// public static String hostIp = "218.244.144.212";
 	// public String hostName = "handwriteserver";
 
@@ -78,6 +79,7 @@ public class MyApplication extends Application {
 	public static String hostName = "dolphin0520-pc";
 	public static final String IS_ONLINE = "is_online";
 	public String userName = "jalsary";
+
 	public String passWord = "123456";
 	public String nickName = "";
 

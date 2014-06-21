@@ -539,6 +539,13 @@ public class ActivityMultiRoom extends Activity implements OnClickListener {
 			// 发送已完成的表单（有默认值）到服务器来配置聊天室
 			muc.sendConfigurationForm(submitForm);
 			
+			
+			Form fo =   muc.getConfigurationForm();
+			
+			  for(Iterator<FormField> it =   fo.getFields(); it.hasNext(); ) {
+				  FormField o = (FormField) it.next();
+				   System.out.println("formfield为："+o.toXML()); 
+				}
 			List<Map<String,Object>> roomInformationList = new ArrayList<Map<String,Object>>();
 			((MyApplication)getApplication()).loadArray(roomInformationList);
 			Map<String,Object> map = new HashMap<String, Object>();

@@ -102,7 +102,7 @@
     
     <item name="popup_doodle_lay" type="id"/>
     <item name="common_editor" type="id"/>
-    
+    <item name="popup_record_lay" type="id"/>
     
 
 </resources>

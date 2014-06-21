@@ -1,10 +1,13 @@
 package scu.android.ui;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smackx.Form;
+import org.jivesoftware.smackx.FormField;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 
 import scu.android.application.MyApplication;
@@ -100,6 +103,22 @@ public class MultiRoomListActivity extends Activity{
 				handler.sendMessage(msg);
 			}
 		}).start();
+		
+		muc = new MultiUserChat(XmppTool.getConnection(), "爱我" + "@conference"+"."+((MyApplication)getApplication()).hostName);
+		Form fo;
+		try {
+			fo = muc.getConfigurationForm();
+			 for(Iterator<FormField> it =   fo.getFields(); it.hasNext(); ) {
+				  FormField o = (FormField) it.next();
+				   System.out.println("formfield为："+o.toXML()); 
+				}
+		} catch (XMPPException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		 
+		
 		
 		multiListView.setOnItemClickListener(new OnItemClickListener() {
 
