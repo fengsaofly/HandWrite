@@ -15,6 +15,7 @@ import scu.android.ui.MGridView;
 import scu.android.ui.PhotosAdapter;
 import scu.android.util.AppUtils;
 import scu.android.util.Constants;
+import scu.android.util.DownloadUtils;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -187,7 +188,8 @@ public class QuestionsFragment extends Fragment implements OnClickListener,
 					}
 					break;
 				case Constants.DATA_AFTER:
-					resultCode = -1;
+//					resultCode = -1;
+					MyApplication.downloadAllQuestion(null);
 					break;
 
 				}
