@@ -15,6 +15,8 @@ import android.view.Window;
 
 import com.demo.note.R;
 
+
+
 public class ModifyAvatarActivity extends Activity{
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

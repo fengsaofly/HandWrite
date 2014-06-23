@@ -209,6 +209,5 @@
             android:textColor="#ffffffff"
             android:textSize="20.0sp" />
     </RelativeLayout>
-    
+   </LinearLayout>
 
-</LinearLayout>
