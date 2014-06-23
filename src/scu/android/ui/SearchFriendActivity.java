@@ -190,12 +190,20 @@ public class SearchFriendActivity extends Activity{
 	public boolean inEntities(String name){
 		 List<RosterEntry> entries = ((MyApplication)getApplication()).getAllEntries();
 		 System.out.println("entries.size()"+entries.size());
+		 System.out.println("输入的名字： "+name);
+		 for(RosterEntry entity:entries){
+			 System.out.println("名字： "+entity.getName());
+		 }
 		 if(entries==null||entries.size()==0){
 			 return false;
 		 }
 		 else{
 			 for(RosterEntry entity:entries){
-				 if(entity.getName().equals(name)){
+				 if(entity.getName()==null||entity.getName().equals("")||entity.getName().equals("null")){
+					 continue;
+				 }
+				
+				 else if(entity.getName().equals(name)){
 					 return true;
 				 }
 				 else continue;

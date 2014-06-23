@@ -5,20 +5,17 @@ import java.util.regex.Pattern;
 
 import org.jivesoftware.smack.PacketCollector;
 import org.jivesoftware.smack.SmackConfiguration;
-import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.AndFilter;
 import org.jivesoftware.smack.filter.PacketFilter;
 import org.jivesoftware.smack.filter.PacketIDFilter;
 import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Registration;
-import org.jivesoftware.smackx.packet.VCard;
 
 import scu.android.util.XmppTool;
+
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Intent;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -26,9 +23,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.AutoCompleteTextView;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -225,7 +220,7 @@ public class RegisterActivity extends Activity{
 					
 //					VCard vCard = new VCard();
 //					try {
-//						vCard.load(XmppTool.getConnection());
+//						vCard.load(XmppConnectionManager.getInstance().getConnection());
 //					} catch (XMPPException e) {
 //						// TODO Auto-generated catch block
 //						e.printStackTrace();

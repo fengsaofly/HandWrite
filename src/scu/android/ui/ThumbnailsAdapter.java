@@ -49,7 +49,7 @@ public class ThumbnailsAdapter extends BaseAdapter {
 				.findViewById(R.id.thumbnail);
 		thumbnail.setImageBitmap(BitmapUtils.getThumbnails(activity,
 				(String) getItem(position), width, width));
-		AppUtils.setThumbnailSize(thumbnail, width, width);
+		AppUtils.setViewSize(thumbnail, width, width);
 		return convertView;
 	}
 

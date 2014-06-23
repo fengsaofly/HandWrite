@@ -2,54 +2,60 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-     android:background="#F0F0F6">
+     android:background="@color/BackgroundGrayColor">
+     
+    <ScrollView 
+         android:layout_width="match_parent"
+    android:layout_height="match_parent"
+        >
     
 	<LinearLayout android:orientation="vertical"  android:layout_width="fill_parent" android:layout_marginTop="20dp" android:layout_marginLeft="5dp" android:layout_marginRight="5dp" android:layout_marginBottom="20dp" android:layout_height="fill_parent" android:background="@anim/shape_rounded_rectangle_gray" >
 	    
-	    <RelativeLayout android:id="@+id/setting_modify_avatar" android:onClick="myOnclick" android:gravity="center_vertical" android:padding="20dp" android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
+	    <RelativeLayout android:id="@id/lay_avatar" android:onClick="myOnclick" android:clickable="true" android:gravity="center_vertical" android:padding="20dp" android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
 
 	        <TextView style="@style/DefaultTextStyle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="头像"    android:layout_centerVertical="true"      />
 	        
-	        <ImageView android:id="@+id/setting_value_avatar" android:layout_alignParentRight="true" android:layout_marginRight="30dp" android:layout_width="90dp" android:src="@drawable/friend_icon_sample"  android:layout_height="90dp" android:gravity="right" android:layout_gravity="right"/>
+	        <ImageView android:id="@id/tag_avatar_val" android:layout_alignParentRight="true" android:layout_marginRight="30dp" android:layout_width="90dp"   android:layout_height="90dp" android:gravity="right" android:layout_gravity="right"/>
 	        <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content"  android:src="@drawable/triangle" android:layout_alignParentRight="true" android:layout_centerVertical="true" />
 	    </RelativeLayout>
 	    <ImageView android:id="@id/line1" android:background="@drawable/line" android:layout_width="fill_parent" android:layout_height="wrap_content"/>
-	      <RelativeLayout android:id="@+id/setting_modify_nickname" android:onClick="myOnclick" android:gravity="center_vertical" android:padding="20dp" android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
+	      <RelativeLayout android:id="@id/lay_nickname"  android:onClick="myOnclick" android:clickable="true" android:gravity="center_vertical" android:padding="20dp" android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
 
 	        <TextView style="@style/DefaultTextStyle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="昵称"    android:layout_centerVertical="true"      />
-	        <TextView android:text="未设置" android:id="@+id/setting_value_nickname" style="@style/text_style_big_gray" android:layout_alignParentRight="true" android:layout_marginRight="30dp" android:layout_width="wrap_content"  android:layout_height="wrap_content" android:gravity="right" android:layout_gravity="right"/>
+	        <TextView android:id="@id/tag_nickname_val" android:text="未设置"  style="@style/text_style_big_gray" android:layout_alignParentRight="true" android:layout_marginRight="30dp" android:layout_width="wrap_content"  android:layout_height="wrap_content" android:gravity="right" android:layout_gravity="right"/>
 	        <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content"  android:src="@drawable/triangle" android:layout_alignParentRight="true" android:layout_centerVertical="true" />
 	    </RelativeLayout>
 	    <ImageView android:id="@id/line1" android:background="@drawable/line" android:layout_width="fill_parent" android:layout_height="wrap_content"/>
 	    
-	      <RelativeLayout  android:id="@+id/setting_modify_zone" android:onClick="myOnclick" android:gravity="center_vertical" android:padding="20dp" android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
+	      <RelativeLayout android:id="@id/lay_sex" android:onClick="myOnclick" android:clickable="true" android:layout_width="fill_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:orientation="horizontal" android:padding="20dp">
+	          <TextView style="@style/DefaultTextStyle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_centerVertical="true" android:text="性别"/>
+	          <TextView android:id="@id/tag_sex_val" style="@style/text_style_big_gray" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentRight="true" android:layout_gravity="right" android:layout_marginRight="30dp" android:gravity="right" android:text="未设置"/>
+	          <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content"  android:src="@drawable/triangle" android:layout_alignParentRight="true" android:layout_centerVertical="true" /></RelativeLayout>
+	    <ImageView android:id="@id/line1" android:background="@drawable/line" android:layout_width="fill_parent" android:layout_height="wrap_content"/>
+	    
+	      <RelativeLayout android:id="@id/lay_career"  android:onClick="myOnclick" android:clickable="true" android:gravity="center_vertical" android:padding="20dp" android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
+
+	        <TextView style="@style/DefaultTextStyle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="职业"    android:layout_centerVertical="true"      />
+	        <TextView android:id="@id/tag_career_val" android:text="未设置"  style="@style/text_style_big_gray" android:layout_alignParentRight="true" android:layout_marginRight="30dp" android:layout_width="wrap_content"  android:layout_height="wrap_content" android:gravity="right" android:layout_gravity="right"/>
+	        <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content"  android:src="@drawable/triangle" android:layout_alignParentRight="true" android:layout_centerVertical="true" />
+	    </RelativeLayout>
+	      
+	    <ImageView android:id="@id/line1" android:background="@drawable/line" android:layout_width="fill_parent" android:layout_height="wrap_content"/>
+	      <RelativeLayout android:id="@id/lay_region" android:onClick="myOnclick" android:clickable="true" android:gravity="center_vertical" android:padding="20dp" android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
 
 	        <TextView style="@style/DefaultTextStyle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="地区"    android:layout_centerVertical="true"      />
-	        <TextView android:text="未设置" android:id="@+id/setting_value_zone"  style="@style/text_style_big_gray" android:layout_alignParentRight="true" android:layout_marginRight="30dp" android:layout_width="wrap_content"  android:layout_height="wrap_content" android:gravity="right" android:layout_gravity="right"/>
+	        <TextView  android:id="@id/tag_region_val" android:text="未设置"  style="@style/text_style_big_gray" android:layout_alignParentRight="true" android:layout_marginRight="30dp" android:layout_width="wrap_content"  android:layout_height="wrap_content" android:gravity="right" android:layout_gravity="right"/>
 	        <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content"  android:src="@drawable/triangle" android:layout_alignParentRight="true" android:layout_centerVertical="true" />
 	    </RelativeLayout>
 	    <ImageView android:id="@id/line1" android:background="@drawable/line" android:layout_width="fill_parent" android:layout_height="wrap_content"/>
-	      <RelativeLayout  android:id="@+id/setting_modify_gender" android:onClick="myOnclick" android:gravity="center_vertical" android:padding="20dp" android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
-
-	        <TextView style="@style/DefaultTextStyle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="性别"    android:layout_centerVertical="true"      />
-	        <TextView android:text="未设置" android:id="@+id/setting_value_gender"  style="@style/text_style_big_gray" android:layout_alignParentRight="true" android:layout_marginRight="30dp" android:layout_width="wrap_content"  android:layout_height="wrap_content" android:gravity="right" android:layout_gravity="right"/>
-	        <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content"  android:src="@drawable/triangle" android:layout_alignParentRight="true" android:layout_centerVertical="true" />
-	    </RelativeLayout>
-	    <ImageView android:id="@id/line1" android:background="@drawable/line" android:layout_width="fill_parent" android:layout_height="wrap_content"/>
-	      <RelativeLayout android:id="@+id/setting_modify_grade" android:onClick="myOnclick" android:gravity="center_vertical" android:padding="20dp" android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
-
-	        <TextView style="@style/DefaultTextStyle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="年级"    android:layout_centerVertical="true"      />
-	        <TextView android:text="未设置"  android:id="@+id/setting_value_grade"  style="@style/text_style_big_gray" android:layout_alignParentRight="true" android:layout_marginRight="30dp" android:layout_width="wrap_content"  android:layout_height="wrap_content" android:gravity="right" android:layout_gravity="right"/>
-	        <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content"  android:src="@drawable/triangle" android:layout_alignParentRight="true" android:layout_centerVertical="true" />
-	    </RelativeLayout>
-	    <ImageView android:id="@id/line1" android:background="@drawable/line" android:layout_width="fill_parent" android:layout_height="wrap_content"/>
-	      <RelativeLayout android:id="@+id/setting_modify_sign" android:onClick="myOnclick" android:gravity="center_vertical" android:padding="20dp" android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
+	      <RelativeLayout android:id="@id/lay_sign" android:onClick="myOnclick" android:clickable="true" android:gravity="center_vertical" android:padding="20dp" android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
 
 	        <TextView style="@style/DefaultTextStyle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="个性签名"    android:layout_centerVertical="true"      />
-	        <TextView android:text="未设置" android:id="@+id/setting_value_sign"  style="@style/text_style_big_gray" android:layout_alignParentRight="true" android:layout_marginRight="30dp" android:layout_width="wrap_content"  android:layout_height="wrap_content" android:gravity="right" android:layout_gravity="right"/>
+	        <TextView android:id="@id/tag_sign_val" android:text="未设置"  style="@style/text_style_big_gray" android:layout_alignParentRight="true" android:layout_marginRight="30dp" android:layout_width="wrap_content"  android:layout_height="wrap_content" android:gravity="right" android:layout_gravity="right"/>
 	        <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content"  android:src="@drawable/triangle" android:layout_alignParentRight="true" android:layout_centerVertical="true" />
 	    </RelativeLayout>
-	    <ImageView android:id="@id/line1" android:background="@drawable/line" android:layout_width="fill_parent" android:layout_height="wrap_content"/>
 	    
 	</LinearLayout>
+	
+	</ScrollView>
 </LinearLayout>

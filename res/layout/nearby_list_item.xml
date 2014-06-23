@@ -5,7 +5,7 @@
     android:layout_margin="5dp"
    >
 
-   <scu.android.ui.CircularImage
+   <ImageView
         android:id="@id/list_item_icon"
         android:layout_width="50dp"
         android:layout_height="50.0dip"
@@ -17,10 +17,11 @@
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
 	    android:text="肖逸飞"
-	   
+	    android:layout_marginLeft="5dp"
 	    style="@style/list_item_name_text_style"
 	    android:layout_toRightOf="@id/list_item_icon"
-	    android:drawableRight="@drawable/male_icon"/>
+	    android:drawableRight="@drawable/male_icon"
+	    android:drawablePadding="2dp"/>
 	<TextView 
 	    android:layout_below="@id/find_user" 
 	    android:id="@id/distance_textview"
@@ -31,7 +32,8 @@
 	    android:layout_marginTop="10dp"
 	    android:layout_alignBottom="@id/list_item_icon"
 	    android:layout_toRightOf="@id/list_item_icon"
-	    style="@style/list_item_time"/>
+	    style="@style/list_item_time"
+	    android:layout_marginLeft="5dp"/>
 
 	
 	<TextView 

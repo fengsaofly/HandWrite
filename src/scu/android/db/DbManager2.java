@@ -19,13 +19,15 @@ public class DbManager2 {
 	
 	public void insertRecord(ChatRecord chatRecord){
 
-		db.execSQL("insert into tb_chatrecord values(null,?,?,?,?,?,?)",
+		db.execSQL("insert into tb_chatrecord values(null,?,?,?,?,?,?,?,?)",
                 new String[]{chatRecord.getAccount(),
 				chatRecord.getTime(),
 				chatRecord.getContent(),
 				chatRecord.getFlag(),
 				chatRecord.getDate(),
-				chatRecord.getType()
+				chatRecord.getType(),
+				chatRecord.getIsGroupChat(),
+				chatRecord.getJid()
 		});
 
 	}
@@ -33,19 +35,24 @@ public class DbManager2 {
 		   db.delete(DbHelper2.TABLE_NAME, "custom1 = ? and account=? and time=?", new String[]{user,account, time});
 	    }
 	
-public Cursor readRecord(String account,String date){	
-		Cursor cursor = db.query(DbHelper2.TABLE_NAME, null, "account=? and date = ?", new String[]{account,date}, null, null ,"_id ASC");
+public Cursor readRecord(String account,String date,String isGroupChat){	
+		Cursor cursor = db.query(DbHelper2.TABLE_NAME, null, "account=? and date = ? and isGroupChat = ?", new String[]{account,date,isGroupChat}, null, null ,"_id ASC");
 		return cursor;
 	}
+
+public Cursor readGroupChatRecord(String jid,String date,String isGroupChat){	
+	Cursor cursor = db.query(DbHelper2.TABLE_NAME, null, "jid=? and date = ? and isGroupChat = ?", new String[]{jid,date,isGroupChat}, null, null ,"_id ASC");
+	return cursor;
+}
 public Cursor readAllRecord(){	
-	String selectSql = "select * from " + DbHelper2.TABLE_NAME +" order by time DESC";
+	String selectSql = "select * from " + DbHelper2.TABLE_NAME +" where isGroupChat = 'false' order by time DESC";
 	Cursor cursor = db.rawQuery(selectSql, null);
 	return cursor;
 }
 	
 public Cursor queryRecent(){
 //	String selectSql = "select * from " + DbHelper2.TABLE_NAME +" group by account"+" order by time DESC limit 1";
-	String selectSql = "select * from ( select * from "+DbHelper2.TABLE_NAME+" order by time ASC )"+" group by account order by time ASC";
+	String selectSql = "select * from ( select * from "+DbHelper2.TABLE_NAME+" where isGroupChat = \"false\" order by time ASC )"+" group by account order by time ASC";
 	Cursor cursor = db.rawQuery(selectSql, null);
 	return cursor;
 	

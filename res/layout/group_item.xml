@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout android:id="@+id/scan_item_layout"  android:background="#ffffff" android:layout_width="fill_parent" android:layout_height="wrap_content"
-  xmlns:android="http://schemas.android.com/apk/res/android">
+<RelativeLayout android:id="@+id/scan_item_layout"  
+    android:background="@color/TextColorWhite" android:layout_width="fill_parent" android:layout_height="wrap_content"
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:padding="5dp">
     
     
-        <ImageView 
-            android:layout_marginLeft="30dp"
-            android:layout_width="wrap_content"
+        	<ImageView 
+            	android:layout_marginLeft="10dp"
+            	android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/group_icon"
-                android:id="@+id/group_icon"
-            
+                android:id="@+id/group_icon"        
             />
 
             <TextView
@@ -18,20 +19,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10.0dip"
-                android:layout_marginRight="10.0dip"
-                android:layout_marginTop="10.0dip"
-               android:textSize="30sp"
+                android:layout_centerVertical="true"
                 android:singleLine="true"
                 android:text="Group"
-                android:textColor="#ff333333"
-                
-                
-                android:textStyle="bold" />
-            
-            
-          
-            
-          
-       
+           		style="@style/text_style_big"   
+            />
+
 
 </RelativeLayout>

@@ -7,7 +7,7 @@
     <!-- 回复问题的图片和语言显示 -->
 
     <RelativeLayout
-        android:id="@+id/chat_input_extras"
+        android:id="@+id/thumbnails_parent_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -16,7 +16,7 @@
         android:visibility="invisible" >
 
         <GridView
-            android:id="@+id/reply_photos_view"
+            android:id="@+id/thumbnails_view"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"

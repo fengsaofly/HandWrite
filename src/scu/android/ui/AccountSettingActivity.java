@@ -6,6 +6,8 @@ import scu.android.application.MyApplication;
 import scu.android.util.XmppTool;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
@@ -33,28 +35,31 @@ public class AccountSettingActivity extends Activity{
 	}
 	
 	public void initial(){
-		setting_modify_avatar = (RelativeLayout)findViewById(R.id.setting_modify_avatar);
-		setting_modify_nickname = (RelativeLayout)findViewById(R.id.setting_modify_nickname);
-		setting_modify_zone = (RelativeLayout)findViewById(R.id.setting_modify_zone);
-		setting_modify_gender = (RelativeLayout)findViewById(R.id.setting_modify_gender);
-		setting_modify_grade = (RelativeLayout)findViewById(R.id.setting_modify_grade);
-		setting_modify_sign = (RelativeLayout)findViewById(R.id.setting_modify_sign);
+		setting_modify_avatar = (RelativeLayout)findViewById(R.id.lay_avatar);
+		setting_modify_nickname = (RelativeLayout)findViewById(R.id.lay_nickname);
+		setting_modify_zone = (RelativeLayout)findViewById(R.id.lay_region);
+		setting_modify_gender = (RelativeLayout)findViewById(R.id.lay_sex);
+		setting_modify_grade = (RelativeLayout)findViewById(R.id.lay_career);
+		setting_modify_sign = (RelativeLayout)findViewById(R.id.lay_sign);
 		
-		setting_value_avatar = (ImageView)findViewById(R.id.setting_value_avatar);
-		setting_value_nickname = (TextView)findViewById(R.id.setting_value_nickname);
-		setting_value_zone = (TextView)findViewById(R.id.setting_value_zone);
-		setting_value_gender = (TextView)findViewById(R.id.setting_value_gender);
-		setting_value_grade = (TextView)findViewById(R.id.setting_value_grade);
-		setting_value_sign = (TextView)findViewById(R.id.setting_value_sign);
+		setting_value_avatar = (ImageView)findViewById(R.id.tag_avatar_val);
+		setting_value_nickname = (TextView)findViewById(R.id.tag_nickname_val);
+		setting_value_zone = (TextView)findViewById(R.id.tag_region_val);
+		setting_value_gender = (TextView)findViewById(R.id.tag_sex_val);
+		setting_value_grade = (TextView)findViewById(R.id.tag_career_val);
+		setting_value_sign = (TextView)findViewById(R.id.tag_sign_val);
 		VCard vcard = ((MyApplication)getApplication()).getUserVcard(XmppTool.getConnection(),((MyApplication)getApplication()).userName);
 		if(vcard!=null){
-			setting_value_avatar.setImageBitmap(((MyApplication)getApplication()).getUserImage(XmppTool.getConnection(), ((MyApplication)getApplication()).userName));
+			
 			setting_value_nickname.setText(vcard.getNickName());
 			setting_value_zone.setText(vcard.getAddressFieldHome("zone"));
 			setting_value_gender.setText(vcard.getFirstName());
 			setting_value_grade.setText(vcard.getMiddleName());
 			setting_value_sign.setText(vcard.getLastName());
 		}
+		Bitmap bm = BitmapFactory.decodeStream(((MyApplication)getApplication()).getUserImage(XmppTool.getConnection(), ((MyApplication)getApplication()).userName));
+		if(bm!=null)
+		setting_value_avatar.setImageBitmap(bm);
 
 	}
 	
@@ -69,26 +74,26 @@ public class AccountSettingActivity extends Activity{
 		
 		Intent intent = new Intent();
 		switch(v.getId()){
-		case R.id.setting_modify_avatar:
+		case R.id.lay_avatar:
 			intent.setClass(AccountSettingActivity.this,ModifyAvatarActivity.class);
 			break;
-		case R.id.setting_modify_nickname:
+		case R.id.lay_nickname:
 			intent.setClass(AccountSettingActivity.this, ModifyNomalActivity.class);
 			intent.putExtra("type", "nickName");
 			break;
-		case R.id.setting_modify_zone:
+		case R.id.lay_region:
 			intent.setClass(AccountSettingActivity.this, ModifyNomalActivity.class);
 			intent.putExtra("type", "zone");
 			break;
-		case R.id.setting_modify_gender:
+		case R.id.lay_sex:
 			intent.setClass(AccountSettingActivity.this, ModifyNomalActivity.class);
 			intent.putExtra("type", "gender");
 			break;
-		case R.id.setting_modify_grade:
+		case R.id.lay_career:
 			intent.setClass(AccountSettingActivity.this, ModifyNomalActivity.class);
 			intent.putExtra("type", "grade");
 			break;
-		case R.id.setting_modify_sign:
+		case R.id.lay_sign:
 			intent.setClass(AccountSettingActivity.this, ModifyNomalActivity.class);
 			intent.putExtra("type", "sign");
 			break;

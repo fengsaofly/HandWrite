@@ -30,6 +30,7 @@
     <item name="publish_state_title" type="id"/>
     <item name="publish_state_text_content" type="id"/>
     <item name="popup_recode_lay" type="id"/>
+    <item name="popup_doodle_lay" type="id"/>
     <item name="popup_camera_lay" type="id"/>
     <item name="popup_imgpicker_lay" type="id"/>
     <item name="popup_handwrite_lay" type="id"/>
@@ -49,5 +50,59 @@
     <item name="chat_record_btn" type="id"/>
     <item name="chat_input_field" type="id"/>
     <item name="chat_add_btn" type="id"/>
+    <item name="question_popup_layout" type="id"/>
+    
+    <!--用户信息描述:请老师 -->
+     <item name="tag_addr" type="id"/>
+    <item name="tag_grade" type="id"/>
+    <item name="tag_subject" type="id"/>
+    <item name="tag_phone" type="id"/>
+    <item name="tag_detail_description" type="id"/>
+    
+    <item name="tag_addr_val" type="id"/>
+    <item name="tag_grade_val" type="id"/>
+    <item name="tag_subject_val" type="id"/>
+    <item name="tag_phone_val" type="id"/>
+    <item name="tag_detail_description_val" type="id"/>
+    
+    <item  type="id" name="tag_avatar_val"/>
+    <item  type="id" name="tag_nickname_val"/>
+    <item  type="id" name="tag_career_val"/>
+    <item  type="id" name="tag_region_val"/>
+    <item  type="id" name="tag_sex_val"/>
+    <!-- settings  layout -->
+    <item  type="id" name="lay_sign"/>
+    <item  type="id" name="lay_region"/>
+    <item  type="id" name="lay_sex"/>
+    <item  type="id" name="lay_career"/>
+    <item  type="id" name="lay_nickname"/>
+    <item  type="id" name="lay_avatar"/>
+    
+    <!-- 基本action  -->
+    <item name="submit" type="id"/>
+    <item  type="id" name="action_back"/>
+    
+    <!-- 群 -->
+    <item  type="id" name="tag_group_name"/>
+    <item  type="id" name="tag_group_owner_val"/>
+    <item  type="id" name="tag_group_name_val"/>
+    <item  type="id" name="tag_group_occupant_val"/>
+    
+    <!-- 应用基本 -->
+    <item  type="id" name="activity_title"/>
+    <item  type="id" name="activity_top"/>
+    <item  type="id" name="activity_top_right_action"/>
+    <item  type="id" name="activity_actionbar_tab_val"/>
+    <item  type="id" name="username_val"/>
+    <item  type="id" name="password_val"/>
+    
+    <!-- 基本控件，一般一个页面只有一个 -->
+    <item  type="id" name="thumbnails"/> <!-- 缩略图，是一个gridview -->
+    <item  type="id" name="popup_gridview"/>
+    
+    <item name="popup_doodle_lay" type="id"/>
+    <item name="common_editor" type="id"/>
+    
+    
 
 </resources>

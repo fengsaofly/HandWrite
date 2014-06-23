@@ -37,6 +37,8 @@
             android:screenOrientation="portrait" >
           
         </activity>
+         <activity android:name="scu.android.ui.ModifyAvatarActivity" />
+        <activity android:name="scu.android.ui.ModifyNomalActivity" />
         <activity android:name="scu.android.ui.SearchGroupResultActivity" />
         <activity android:name="scu.android.ui.MultiRoomListActivity" />
         <activity android:name="scu.android.ui.SearchResultActivity" />
@@ -54,6 +56,8 @@
         <activity android:name="scu.android.ui.AccountSettingActivity" />
         <activity android:name="scu.android.activity.ReplyQuestionActivity" />
         <activity android:name="scu.android.activity.IssueQuestionActivity" />
+          <activity android:name="scu.android.ui.ContactDetailActivity" />
+        
         <activity android:name="scu.android.ui.HandWriteCanvasActivity" />
         <activity android:name="scu.android.activity.DoodleBoardActivity" />
         <activity android:name="scu.android.activity.ScanPhotosActivity" />

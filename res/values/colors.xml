@@ -5,7 +5,6 @@
     <color name="TextColorBlack">#ff000000</color>
     <color name="TextColorWhite">#ffffffff</color>
     <color name="TextColorBlue">#ff0066cc</color>
-    <color name="TextColorGray">#ff505050</color>
     <color name="TextColorRed">#ffe26926</color>
     <color name="BgColor">#ffd1dce9</color>
     <color name="my_buddy_footer_color">#ffd0d0d0</color>
@@ -38,7 +37,6 @@
     <color name="viewfinder_laser">#ffff0000</color>
     <color name="viewfinder_mask">#60000000</color>
     <color name="header">#ff58567d</color>
-    <color name="grgray">#ff686868</color>
     <color name="jumeired">#ffed145b</color>
     <color name="com_tenpay_form_edit_hint">#ffcccccc</color>
     <color name="com_tenpay_back_btn_bg_pressed">#ff2694cf</color>
@@ -55,8 +53,7 @@
     <color name="cashcoupon_tab_text_color_selected">#ffffffff</color>
     <!-- A light Holo shade of blue -->
     <color name="holo_blue_light">#ff33b5e5</color>
-    <!-- A light Holo shade of gray -->
-    <color name="holo_gray_light">#33999999</color>
+
     <!-- A light Holo shade of green -->
     <color name="holo_green_light">#ff99cc00</color>
     <!-- A light Holo shade of red -->
@@ -75,14 +72,27 @@
     <color name="holo_orange_dark">#ffff8800</color>
     <!-- A really bright Holo shade of blue -->
     <color name="holo_blue_bright">#ff00ddff</color>
-    <!-- A really bright Holo shade of gray -->
-    <color name="holo_gray_bright">#33CCCCCC</color>
     <color name="question_item_backgrond">#ffffff</color>
     <color name="question_item_border">#aaa</color>
+    <color name="text_normal_black">#ff333333</color>
+
+    <!-- 灰色 -->
+
+    <color name="BackgroundGrayColor">#EFEFF4</color>
+ <!-- 浅灰 -->
+    <color name="TextColorGray">#ff505050</color>
+ <!-- 接近黑色的灰色 -->
+    <color name="gray_normal">#ff686868</color>
+ <!-- 灰色 -->
+    <color name="gray_light">#33999999</color>
+ <!-- 非常浅灰 -->
+    <color name="gray_bright">#33CCCCCC</color>
+ <!-- 最浅灰 -->
     <color name="black">#000000</color>
     <color name="red">#ff0000</color>
     <color name="blue">#0080ff</color>
     <color name="green">#00ff00</color>
     <color name="purbe">#ff00ff</color>
     <color name="orange">#ff8000</color>
+
 </resources>

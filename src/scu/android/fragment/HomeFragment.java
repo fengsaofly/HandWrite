@@ -87,7 +87,10 @@ public class HomeFragment extends Fragment{
 		home_List = (ListView)view.findViewById(R.id.home_List);
 		
 		home_List.setAdapter(adapter);
-	
+		if(cursor!=null)
+			cursor.close();
+			if(db!=null)
+			db.close();
 	      return view;
 	  } 
 	
@@ -162,11 +165,11 @@ public class HomeFragment extends Fragment{
 		
 		
 		
+		
 	}
 	public void onDestroy() {
 		super.onDestroy();
-		cursor.close();
-		db.close();
+	
 	};
 
 }

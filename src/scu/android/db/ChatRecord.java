@@ -28,9 +28,34 @@ public class ChatRecord implements Serializable {
 	private String flag;
 	private String date;
 	private String type;   //数据类型   0为消息数据，1为通知数据，2为破题数据，3为动态数据
+	private String isGroupChat;
+	private String jid;
+	
+	
+	
 
 	
 	
+	public String getJid() {
+		return jid;
+	}
+
+
+	public void setJid(String jid) {
+		this.jid = jid;
+	}
+
+
+	public String getIsGroupChat() {
+		return isGroupChat;
+	}
+
+
+	public void setIsGroupChat(String isGroupChat) {
+		this.isGroupChat = isGroupChat;
+	}
+
+
 	public String getType() {
 		return type;
 	}

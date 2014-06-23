@@ -125,17 +125,21 @@ public class ActionBarActivity extends FragmentActivity {
 							android.os.Message msg = handler.obtainMessage();
 							msg.what = 1;
 							msg.obj = args;
-							handler.sendMessage(msg);
+							if(!message.getBody().equals("")&&!message.getBody().equals("null")){
+								handler.sendMessage(msg);
+								Intent intent = new Intent();
+								intent.setAction("cn.abel.action.broadcast");
 
-							Intent intent = new Intent();
-							intent.setAction("cn.abel.action.broadcast");
+								// 要发送的内容
+								intent.putExtra("author", args[0] + "|" + args[1]
+										+ "|" + args[2] + "|" + args[3]);
 
-							// 要发送的内容
-							intent.putExtra("author", args[0] + "|" + args[1]
-									+ "|" + args[2] + "|" + args[3]);
+								// 发送 一个无序广播
+								sendBroadcast(intent);
+							}
+							
 
-							// 发送 一个无序广播
-							sendBroadcast(intent);
+							
 							// if(handler2 !=null){
 							// handler2.sendMessage(msg);
 							// }
@@ -148,7 +152,9 @@ public class ActionBarActivity extends FragmentActivity {
 							android.os.Message msg = handler.obtainMessage();
 							msg.what = 1;
 							msg.obj = args;
-							handler.sendMessage(msg);
+							if(!message.getBody().equals("")&&!message.getBody().equals("null")){
+								handler.sendMessage(msg);
+							}
 						}
 
 					}
@@ -343,8 +349,8 @@ public class ActionBarActivity extends FragmentActivity {
 
 							System.out.println("正在登陆");
 							handler.sendEmptyMessage(2);
-							((MyApplication) getApplication()).roster = XmppTool
-									.getConnection().getRoster();
+							((MyApplication) getApplication()).roster = XmppTool.getConnection()
+									.getRoster();
 
 							((MyApplication) getApplication()).entries = ((MyApplication) getApplication())
 									.getAllEntries();
@@ -504,6 +510,9 @@ public class ActionBarActivity extends FragmentActivity {
 		// TODO Auto-generated method stub
 		super.onDestroy();
 		XmppTool.closeConnection();
+		
+			if(db!=null)
+			db.close();
 		System.exit(0);
 	}
 
@@ -512,12 +521,15 @@ public class ActionBarActivity extends FragmentActivity {
 		ChatRecord chatRecord = new ChatRecord();
 		String s = args[0].toString().contains("@") ? args[0].toString().split(
 				"@")[0] : args[0].toString();
+				
 		chatRecord.setAccount(s);
 		chatRecord.setContent(args[1]);
 		chatRecord.setFlag("in");
 		chatRecord.setTime(TimeRender.getDate().split(" ")[1]);
 		chatRecord.setDate(TimeRender.getDate().split(" ")[0]);
 		chatRecord.setType("0");
+		chatRecord.setIsGroupChat("false");
+		chatRecord.setJid("-1");
 		System.out.println("写入数据库成功，内容为： " + args[1]);
 		db.insertRecord(chatRecord);
 

@@ -50,7 +50,7 @@
     </LinearLayout>
     
     
-    <TextView android:id="@+id/joinInTheRoom" android:onClick="true" android:layout_marginTop="10dp" android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="加入该群" style="@style/text_style_big_black" android:textColor="@color/TextColorWhite" android:background="@drawable/button_long_green_bg" />
-	<TextView android:layout_marginTop="10dp" android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="投诉" style="@style/text_style_big_black" android:background="@drawable/button_long_white_bg"/>
+    <TextView android:id="@+id/joinInTheRoom" android:onClick="true" android:layout_marginTop="10dp" android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="加入该群" style="@style/text_style_big" android:textColor="@color/TextColorWhite" android:background="@drawable/button_long_green_bg" />
+	<TextView android:layout_marginTop="10dp" android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="投诉" style="@style/text_style_big" android:background="@drawable/button_long_white_bg"/>
     
 </LinearLayout>

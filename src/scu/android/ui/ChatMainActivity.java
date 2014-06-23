@@ -43,12 +43,12 @@ import com.demo.note.R;
 public class ChatMainActivity extends Activity implements OnClickListener {
 	/** Called when the activity is first created. */
 
-	private Button mBtnSend;
+	private TextView mBtnSend;
 	private TextView mBtnRcd, currentChat = null;
 	private Button mBtnBack;
 	ImageButton right_btn = null;
 	private EditText mEditTextContent;
-	private RelativeLayout mBottom;
+	private LinearLayout mBottom;
 	private ListView mListView;
 	private ChatMsgViewAdapter mAdapter;
 	private List<ChatMsgEntity> mDataArrays = new ArrayList<ChatMsgEntity>();
@@ -189,13 +189,13 @@ public class ChatMainActivity extends Activity implements OnClickListener {
 		currentChat.setText(chatContact);
 		right_btn = (ImageButton) findViewById(R.id.right_btn);
 		mListView = (ListView) findViewById(R.id.listview);
-		mBtnSend = (Button) findViewById(R.id.btn_send);
+		mBtnSend = (TextView) findViewById(R.id.chat_send);
 		mBtnRcd = (TextView) findViewById(R.id.btn_rcd);
 		mBtnSend.setOnClickListener(this);
 		mBtnBack = (Button) findViewById(R.id.btn_back);
-		mBottom = (RelativeLayout) findViewById(R.id.btn_bottom);
+		mBottom = (LinearLayout) findViewById(R.id.chat_input_field);
 		mBtnBack.setOnClickListener(this);
-		chatting_mode_btn = (ImageView) this.findViewById(R.id.ivPopUp);
+//		chatting_mode_btn = (ImageView) this.findViewById(R.id.ivPopUp);
 		// volume = (ImageView) this.findViewById(R.id.volume);
 		// rcChat_popup = this.findViewById(R.id.rcChat_popup);
 		// img1 = (ImageView) this.findViewById(R.id.img1);
@@ -208,29 +208,29 @@ public class ChatMainActivity extends Activity implements OnClickListener {
 		// voice_rcd_hint_tooshort = (LinearLayout) this
 		// .findViewById(R.id.voice_rcd_hint_tooshort);
 		// mSensor = new SoundMeter();
-		mEditTextContent = (EditText) findViewById(R.id.et_sendmessage);
+		mEditTextContent = (EditText) findViewById(R.id.input_field);
 
 		// 语音文字切换按钮
-		chatting_mode_btn.setOnClickListener(new OnClickListener() {
-
-			public void onClick(View v) {
-
-				// if (btn_vocie) {
-				// mBtnRcd.setVisibility(View.GONE);
-				// mBottom.setVisibility(View.VISIBLE);
-				// btn_vocie = false;
-				// chatting_mode_btn
-				// .setImageResource(R.drawable.chatting_setmode_msg_btn);
-				//
-				// } else {
-				// mBtnRcd.setVisibility(View.VISIBLE);
-				// mBottom.setVisibility(View.GONE);
-				// chatting_mode_btn
-				// .setImageResource(R.drawable.chatting_setmode_voice_btn);
-				// btn_vocie = true;
-				// }
-			}
-		});
+//		chatting_mode_btn.setOnClickListener(new OnClickListener() {
+//
+//			public void onClick(View v) {
+//
+//				// if (btn_vocie) {
+//				// mBtnRcd.setVisibility(View.GONE);
+//				// mBottom.setVisibility(View.VISIBLE);
+//				// btn_vocie = false;
+//				// chatting_mode_btn
+//				// .setImageResource(R.drawable.chatting_setmode_msg_btn);
+//				//
+//				// } else {
+//				// mBtnRcd.setVisibility(View.VISIBLE);
+//				// mBottom.setVisibility(View.GONE);
+//				// chatting_mode_btn
+//				// .setImageResource(R.drawable.chatting_setmode_voice_btn);
+//				// btn_vocie = true;
+//				// }
+//			}
+//		});
 		mBtnRcd.setOnTouchListener(new OnTouchListener() {
 
 			public boolean onTouch(View v, MotionEvent event) {
@@ -244,11 +244,11 @@ public class ChatMainActivity extends Activity implements OnClickListener {
 			@Override
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
-				// Intent intent = new Intent();
-				// intent.setClass(ChatMainActivity.this,
-				// ContactDetailActivity.class);
-				// intent.putExtra("contactName", chatContact);
-				// startActivity(intent);
+				 Intent intent = new Intent();
+				 intent.setClass(ChatMainActivity.this,
+				 ContactDetailActivity.class);
+				 intent.putExtra("contactName", chatContact);
+				 startActivity(intent);
 			}
 		});
 
@@ -277,7 +277,7 @@ public class ChatMainActivity extends Activity implements OnClickListener {
 		// entity.setText(msgArray[i]);
 		// mDataArrays.add(entity);
 		mDataArrays = new ArrayList<ChatMsgEntity>();
-		cursor = db.readRecord(chatContact, TimeRender.getDate().split(" ")[0]);
+		cursor = db.readRecord(chatContact, TimeRender.getDate().split(" ")[0],"false");
 		cursor.moveToPosition(-1);
 		while (cursor.moveToNext()) {
 			System.out.println("1: " + cursor.getString(1) + "2: "
@@ -299,7 +299,7 @@ public class ChatMainActivity extends Activity implements OnClickListener {
 	public void onClick(View v) {
 		// TODO Auto-generated method stub
 		switch (v.getId()) {
-		case R.id.btn_send:
+		case R.id.chat_send:
 			send();
 			break;
 		case R.id.btn_back:
@@ -339,6 +339,8 @@ public class ChatMainActivity extends Activity implements OnClickListener {
 			chatRecord.setTime(TimeRender.getDate().split(" ")[1]);
 			chatRecord.setDate(TimeRender.getDate().split(" ")[0]);
 			chatRecord.setType("0");
+			chatRecord.setIsGroupChat("false");
+			chatRecord.setJid("-1");
 			db.insertRecord(chatRecord);
 			// }
 

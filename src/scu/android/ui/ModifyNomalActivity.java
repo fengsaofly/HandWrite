@@ -1,5 +1,7 @@
 package scu.android.ui;
 
+import java.io.IOException;
+
 import org.jivesoftware.smack.XMPPException;
 
 import scu.android.application.MyApplication;
@@ -48,14 +50,11 @@ public class ModifyNomalActivity extends Activity{
 		}
 		
 		else if(type.equals("gender")){
-
-		else if(type.equals("sex")){
-
 			s1 = "性别";
 			s2 = "请填写你的性别（男/女）";
 			tag = 3;
 		}
-		
+
 		else if(type.equals("zone")){
 			s1 = "地区";
 			s2 = "请填写你所在的城市";
@@ -80,15 +79,17 @@ public class ModifyNomalActivity extends Activity{
 			finish();
 			break;
 		case R.id.modify_save:
-			((MyApplication)getApplication()).setUserVCard(XmppTool.getConnection(),tag,modifyNomal_value.getText().toString());
-
 			try {
 				((MyApplication)getApplication()).setUserVCard(XmppTool.getConnection(),tag,modifyNomal_value.getText().toString());
 			} catch (XMPPException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 
+	
 			finish();
 			break;
 		}
