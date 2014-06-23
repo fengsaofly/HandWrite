@@ -5,12 +5,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
+
 import scu.android.util.AppUtils;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -40,7 +42,6 @@ import android.widget.Toast;
 import com.demo.note.R;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 
 /*
  * 浏览手机图库
@@ -132,10 +133,12 @@ public class NativePhotosActivity extends Activity {
 
 			loader = ImageLoader.getInstance();
 			options = new DisplayImageOptions.Builder()
-					.showStubImage(R.drawable.default_photo)
+					.showImageOnLoading(R.drawable.default_photo)
 					.showImageForEmptyUri(R.drawable.default_photo)
-					.cacheInMemory().cacheOnDisc()
-					.imageScaleType(ImageScaleType.IN_SAMPLE_INT).build();
+					.showImageOnFail(R.drawable.default_photo)
+					.cacheInMemory(true).cacheOnDisk(true)
+					.considerExifParams(true)
+					.bitmapConfig(Bitmap.Config.RGB_565).build();
 
 			selectParent = (TextView) findViewById(R.id.selectParent);
 			selectNumber = (TextView) findViewById(R.id.selectNumber);
@@ -202,7 +205,7 @@ public class NativePhotosActivity extends Activity {
 						R.layout.native_photo_item, null);
 			}
 			final Photo photo = bitmaps.get(position);
-			ImageView thumbnail = ((ImageView) convertView
+			final ImageView thumbnail = ((ImageView) convertView
 					.findViewById(R.id.thumbnail));
 			AppUtils.setViewSize(thumbnail, width, width);// 设置图片大小
 			loader.displayImage("file:///" + photo.path, thumbnail, options);
@@ -275,7 +278,7 @@ public class NativePhotosActivity extends Activity {
 		// 清空cache
 		if (loader != null) {
 			loader.clearMemoryCache();
-			loader.clearDiscCache();
+			loader.clearDiskCache();
 		}
 		super.onDestroy();
 	}
@@ -409,3 +412,4 @@ public class NativePhotosActivity extends Activity {
 		});
 	}
 }
+
