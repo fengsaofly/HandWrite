@@ -66,6 +66,7 @@ import android.os.Message;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.demo.note.R;
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -74,10 +75,10 @@ import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 public class MyApplication extends Application {
 
 //	 public static String hostIp = "218.244.144.212";
-//	 public String hostName = "handwriteserver";
+	 public String hostName = "handwriteserver";
 
 	public static String hostIp = "192.168.1.148";
-	public static String hostName = "183.221.126.230";
+//	public static String hostName = "dolphin0520-pc";
 	public static final String IS_ONLINE = "is_online";
 	public String userName = "jalsary";
 
@@ -1003,8 +1004,11 @@ public class MyApplication extends Application {
 		vcard.save(con);
 	}
 
-	public static final byte[] input2byte(ByteArrayInputStream inStream)
+	public  final byte[] input2byte(ByteArrayInputStream inStream)
 			throws IOException {
+		if(inStream!=null){
+			
+		
 		ByteArrayOutputStream swapStream = new ByteArrayOutputStream();
 		byte[] buff = new byte[100];
 		int rc = 0;
@@ -1013,7 +1017,18 @@ public class MyApplication extends Application {
 		}
 		byte[] in2b = swapStream.toByteArray();
 		return in2b;
+		}
+		else {
+			Bitmap bm = drawable2Bitmap(MyApplication.this.getResources().getDrawable(R.drawable.default_avatar));
+			return Bitmap2Bytes(bm);
+		}
 	}
+	
+	 public static byte[] Bitmap2Bytes(Bitmap bm) {
+		          ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		          bm.compress(Bitmap.CompressFormat.PNG, 100, baos);
+		         return baos.toByteArray();
+		      }
 	
 	
 	/**

@@ -123,6 +123,7 @@ public class ActivityMultiRoom extends Activity implements OnClickListener {
 
 			switch (msg.what) {
 			case RECEIVE: {
+				db.deleteGroupChatRecord(jid, TimeRender.getDate().split(" ")[0], "true");
 				ChatMsgEntity entity = new ChatMsgEntity();
 				
 

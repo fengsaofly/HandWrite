@@ -5,6 +5,7 @@ import org.jivesoftware.smackx.packet.VCard;
 import scu.android.application.MyApplication;
 import scu.android.util.XmppTool;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -50,8 +51,11 @@ public class AccountSettingActivity extends Activity{
 		setting_value_sign = (TextView)findViewById(R.id.tag_sign_val);
 		VCard vcard = ((MyApplication)getApplication()).getUserVcard(XmppTool.getConnection(),((MyApplication)getApplication()).userName);
 		if(vcard!=null){
+			System.out.println("vcard.getNickName:"+vcard.getNickName());
+			if(vcard.getNickName()!=null&&(!vcard.getNickName().equals(""))&&(!vcard.getNickName().equals("null"))){
+				setting_value_nickname.setText(vcard.getNickName());
+			}
 			
-			setting_value_nickname.setText(vcard.getNickName());
 			setting_value_zone.setText(vcard.getAddressFieldHome("zone"));
 			setting_value_gender.setText(vcard.getFirstName());
 			setting_value_grade.setText(vcard.getMiddleName());
@@ -76,29 +80,35 @@ public class AccountSettingActivity extends Activity{
 		switch(v.getId()){
 		case R.id.lay_avatar:
 			intent.setClass(AccountSettingActivity.this,ModifyAvatarActivity.class);
+			startActivity(intent);
 			break;
 		case R.id.lay_nickname:
 			intent.setClass(AccountSettingActivity.this, ModifyNomalActivity.class);
 			intent.putExtra("type", "nickName");
+			startActivity(intent);
 			break;
 		case R.id.lay_region:
 			intent.setClass(AccountSettingActivity.this, ModifyNomalActivity.class);
 			intent.putExtra("type", "zone");
+			startActivity(intent);
 			break;
 		case R.id.lay_sex:
-			intent.setClass(AccountSettingActivity.this, ModifyNomalActivity.class);
-			intent.putExtra("type", "gender");
+//			intent.setClass(AccountSettingActivity.this, ModifyNomalActivity.class);
+//			intent.putExtra("type", "gender");
+//			new AlertDialog.Builder(this).setTitle("系统提示").setMessage("请选择性别").setMultiChoiceItems(items, checkedItems, listener)
 			break;
 		case R.id.lay_career:
 			intent.setClass(AccountSettingActivity.this, ModifyNomalActivity.class);
 			intent.putExtra("type", "grade");
+			startActivity(intent);
 			break;
 		case R.id.lay_sign:
 			intent.setClass(AccountSettingActivity.this, ModifyNomalActivity.class);
 			intent.putExtra("type", "sign");
+			startActivity(intent);
 			break;
 		}
-		startActivity(intent);
+		
 		
 		
 //		switch(v.getId()){

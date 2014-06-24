@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
 import scu.android.activity.ReplyQuestionActivity;
 import scu.android.application.MyApplication;
 import scu.android.db.QuestionDao;
@@ -16,6 +15,7 @@ import scu.android.ui.MGridView;
 import scu.android.ui.PhotosAdapter;
 import scu.android.util.AppUtils;
 import scu.android.util.Constants;
+import scu.android.util.DownloadUtils;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -188,8 +188,7 @@ public class QuestionsFragment extends Fragment implements OnClickListener,
 					}
 					break;
 				case Constants.DATA_AFTER:
-//					resultCode = -1;
-					MyApplication.downloadAllQuestion(null);
+					resultCode = 2;
 					break;
 
 				}
@@ -246,6 +245,9 @@ public class QuestionsFragment extends Fragment implements OnClickListener,
 					break;
 				case Constants.ERR_LOCAL_NO_NEW_DATA:
 					showToast("请打开网络连接,加载新数据...", Toast.LENGTH_SHORT);
+					break;
+				case 2:
+					MyApplication.downloadAllQuestion(null);
 					break;
 				}
 			}

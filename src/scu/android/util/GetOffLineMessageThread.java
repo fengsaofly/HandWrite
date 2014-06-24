@@ -56,7 +56,7 @@ public class GetOffLineMessageThread extends AsyncTask<Void, Integer, Void>{
 	                .getMessages();  
 
 //	        System.out.println(offlineManager.supportsFlexibleRetrieval());  
-	        System.out.println("离线消息数量: " + offlineManager.getMessageCount());  
+//	        System.out.println("离线消息数量: " + offlineManager.getMessageCount());  
 
 	          
 	        Map<String,ArrayList<org.jivesoftware.smack.packet.Message>> offlineMsgs = new HashMap<String,ArrayList<org.jivesoftware.smack.packet.Message>>();  

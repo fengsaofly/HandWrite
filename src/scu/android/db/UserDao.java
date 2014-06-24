@@ -108,18 +108,18 @@ public class UserDao {
 		int age = cursor.getInt(cursor.getColumnIndex("age"));
 		double curLon = cursor.getDouble(cursor.getColumnIndex("curLon"));
 		double curLat = cursor.getDouble(cursor.getColumnIndex("curLat"));
-		String mCreateTime = cursor.getString(cursor
-				.getColumnIndex("createTime"));
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		Date createTime = null;
-		try {
-			createTime = format.parse(mCreateTime);
-			createTime.setHours(createTime.getHours() + 8);
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
+//		String mCreateTime = cursor.getString(cursor
+//				.getColumnIndex("createTime"));
+//		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//		Date createTime = null;
+//		try {
+//			createTime = format.parse(mCreateTime);
+//			createTime.setHours(createTime.getHours() + 8);
+//		} catch (ParseException e) {
+//			e.printStackTrace();
+//		}
 		return new User(userId, userName, email, phone, type, nickname, avatar,
-				school, grade, sex, age, curLon, curLat, createTime);
+				school, grade, sex, age, curLon, curLat, new Date());
 	}
 
 	public static int getRecordsNum(Context context, String tblName) {

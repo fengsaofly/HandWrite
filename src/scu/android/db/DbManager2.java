@@ -66,6 +66,12 @@ public Cursor queryRecent(){
 //	GROUP BY  `find_username` 
 //	ORDER BY  `create_date` DESC
 }
+
+
+public void deleteGroupChatRecord(String jid,String date,String isGroupChat){
+	 db.delete(DbHelper2.TABLE_NAME, "jid = ? and date=? and isGroupChat=?", new String[]{jid,date, isGroupChat});
+	
+}
 public void deleteAllRecord(){
 		String selectSql = "select * from " + DbHelper2.TABLE_NAME + " order by _id DESC";
 		Cursor cursor = db.rawQuery(selectSql, null);
