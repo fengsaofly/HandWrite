@@ -18,11 +18,15 @@ public class Reply implements Serializable {
 	private ArrayList<String> images;
 	private Date replyTime;
 
+	private ArrayList<Reply> replys;
 	private long quesId;
 	private long userId;
 
+	private int type;
+
 	public Reply(long repId, String content, String audio,
-			ArrayList<String> images, Date replyTime, long quesId, long userId) {
+			ArrayList<String> images, Date replyTime, long quesId, long userId,
+			int type) {
 		super();
 		this.repId = repId;
 		this.content = content;
@@ -31,6 +35,7 @@ public class Reply implements Serializable {
 		this.replyTime = replyTime;
 		this.quesId = quesId;
 		this.userId = userId;
+		this.type = type;
 	}
 
 	public long getRepId() {
@@ -89,5 +94,22 @@ public class Reply implements Serializable {
 		this.userId = userId;
 	}
 
-	
+	public int getType() {
+		return type;
+	}
+
+	public void setType(int type) {
+		this.type = type;
+	}
+
+	public ArrayList<Reply> getReplys() {
+		return replys;
+	}
+
+	public void setReplys(ArrayList<Reply> replys) {
+		this.replys = replys;
+	}
+
+
+
 }

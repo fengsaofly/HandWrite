@@ -38,20 +38,21 @@ public class QuestionDao {
 			aDatabase.endTransaction();
 		}
 		aDatabase.close();
-		if (quesId != 0)
+		if (quesId != 0 && question.getImages().size() > 0)
 			ImagesDao.insertImages(context, question.getImages(), quesId, 2);
 		Log.i("QuestionDao", "INSERT_Question|quesId=" + String.valueOf(quesId));
 		return quesId;
 	}
 
 	// 获取问题列表
-	public static ArrayList<Question> getQuestions(Context context) {
-
+	public static ArrayList<Question> getQuestions(Context context, long start,
+			long end) {
 		ArrayList<Question> questions = new ArrayList<Question>();
 		SQLiteDatabase aDatabase = DBHelper.getInstance(context)
 				.getReadableDatabase();
 		Cursor cursor = aDatabase.query(DBHelper.TABLE_QUESTION, null, null,
-				null, null, null, "publishTime desc limit 10");
+				null, null, null, "publishTime desc limit  " + start + ","
+						+ end);
 		while (cursor.moveToNext()) {
 			questions.add(getQuestion(context, cursor));
 		}
@@ -59,6 +60,19 @@ public class QuestionDao {
 		aDatabase.close();
 		Log.i("QuestionDao", "GET_QUESTIONS|size=" + questions.size());
 		return questions;
+	}
+
+	public static int getQuesNum(Context context) {
+		int quesNum = 0;
+		SQLiteDatabase aDatabase = DBHelper.getInstance(context)
+				.getReadableDatabase();
+		Cursor cursor = aDatabase.rawQuery(
+				"select count(quesId) from aQuestion", null);
+		cursor.moveToFirst();
+		quesNum = cursor.getInt(0);
+		cursor.close();
+		aDatabase.close();
+		return quesNum;
 	}
 
 	public static Question getQuestionById(Context context, int quesId) {
@@ -93,7 +107,6 @@ public class QuestionDao {
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
-		Log.i("date", publishTime.toString());
 		boolean status = cursor.getInt(cursor.getColumnIndex("status")) == 1 ? true
 				: false;
 		String grade = cursor.getString(cursor.getColumnIndex("grade"));
@@ -103,10 +116,14 @@ public class QuestionDao {
 				status, grade, subject, userId);
 	}
 
-	public static boolean deleteQuestion(Context context, long quesId) {
+	public static boolean deleteQuestion(Context context, long quesId,
+			long userId) {
 		SQLiteDatabase aDatabase = DBHelper.getInstance(context)
 				.getReadableDatabase();
-		return (aDatabase.delete(DBHelper.TABLE_QUESTION, "quesId=?",
+		
+		boolean result = (aDatabase.delete(DBHelper.TABLE_QUESTION, "quesId=?",
 				new String[] { String.valueOf(quesId) }) == 1);
+		aDatabase.close();
+		return result;
 	}
 }

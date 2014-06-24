@@ -28,6 +28,7 @@ public class ReplyDao {
 			values.put("audio", reply.getAudio());
 			values.put("quesId", reply.getQuesId());
 			values.put("userId", reply.getUserId());
+			values.put("type", reply.getType());
 			repId = aDatabase.insert(DBHelper.TABLE_REPLY, null, values);
 			aDatabase.setTransactionSuccessful();
 			values.clear();
@@ -35,19 +36,21 @@ public class ReplyDao {
 			aDatabase.endTransaction();
 		}
 		aDatabase.close();
-		if (repId != 0)
+		if (repId != 0 && reply.getImages() != null)
 			ImagesDao.insertImages(context, reply.getImages(), repId, 3);
 		Log.i("ReplyDao", "INSERT_REPLY|repId=" + String.valueOf(repId));
 		return repId;
 	}
 
-	public static ArrayList<Reply> getReply(Context context, long quesId) {
+	public static ArrayList<Reply> getReply(Context context, long quesId,
+			long start, long end, int type) {
 		ArrayList<Reply> replys = new ArrayList<Reply>();
 		SQLiteDatabase aDatabase = DBHelper.getInstance(context)
 				.getReadableDatabase();
-		Cursor cursor = aDatabase.query(DBHelper.TABLE_REPLY, null, "quesId=?",
-				new String[] { String.valueOf(quesId) }, null, null,
-				"replyTime desc limit 10");
+		Cursor cursor = aDatabase.query(DBHelper.TABLE_REPLY, null,
+				"quesId=? and type=?", new String[] { String.valueOf(quesId),
+						String.valueOf(type) }, null, null,
+				"replyTime desc limit " + start + "," + end);
 		while (cursor.moveToNext()) {
 			replys.add(getReply(context, cursor));
 		}
@@ -55,6 +58,33 @@ public class ReplyDao {
 		aDatabase.close();
 		Log.i("ReplyDao", "GET_REPLYS|size=" + replys.size());
 		return replys;
+	}
+
+	public static int getReplyNum(Context context, long quesId) {
+		int replyNum = 0;
+		SQLiteDatabase aDatabase = DBHelper.getInstance(context)
+				.getReadableDatabase();
+		Cursor cursor = aDatabase.rawQuery(
+				"select count(repId) from aReply where quesId=? and type=?",
+				new String[] { String.valueOf(quesId), String.valueOf(0) });
+		cursor.moveToFirst();
+		replyNum = cursor.getInt(0);
+		cursor.close();
+		aDatabase.close();
+		return replyNum;
+	}
+
+	public static int getTotalReplyNum(Context context) {
+		int replyNum = 0;
+		SQLiteDatabase aDatabase = DBHelper.getInstance(context)
+				.getReadableDatabase();
+		Cursor cursor = aDatabase.rawQuery("select count(repId) from aReply",
+				null);
+		cursor.moveToFirst();
+		replyNum = cursor.getInt(0);
+		cursor.close();
+		aDatabase.close();
+		return replyNum;
 	}
 
 	@SuppressWarnings("deprecation")
@@ -73,11 +103,12 @@ public class ReplyDao {
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
-		Log.i("date", replyTime.toString());
 		long userId = cursor.getLong(cursor.getColumnIndex("userId"));
-		return new Reply(repId, content, audio, images, replyTime, 0l, userId);
+		int type = cursor.getInt(cursor.getColumnIndex("type"));
+		return new Reply(repId, content, audio, images, replyTime, 0l, userId,
+				type);
 	}
-	
+
 	public static Reply getReplyById(Context context, long repId) {
 		Reply reply = null;
 		SQLiteDatabase aDatabase = DBHelper.getInstance(context)
@@ -92,10 +123,13 @@ public class ReplyDao {
 		return reply;
 	}
 
-	public static boolean deleteReply(Context context, long repId) {
+	public static boolean deleteReply(Context context, long repId, long userId) {
 		SQLiteDatabase aDatabase = DBHelper.getInstance(context)
 				.getReadableDatabase();
-		return aDatabase.delete(DBHelper.TABLE_REPLY, "repId=?",
+
+		boolean result = aDatabase.delete(DBHelper.TABLE_REPLY, "repId=?",
 				new String[] { String.valueOf(repId) }) == 1;
+		aDatabase.close();
+		return result;
 	}
 }

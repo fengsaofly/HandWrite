@@ -1,6 +1,6 @@
 package scu.android.util;
 
-<<<<<<< HEAD
+
 
 import scu.android.application.MyApplication;
 import android.app.ProgressDialog;
@@ -284,14 +284,14 @@ public interface IActivitySupport {
 //	 * @author shimiso
 //	 * @update 2012-7-6 上午9:59:49
 //	 */
-=======
-	 * ��ȡ��ǰ��¼�û���SharedPreferences����.
+
+	/* * ��ȡ��ǰ��¼�û���SharedPreferences����.
 	 * 
 	 * @return
 	 * @author shimiso
 	 * @update 2012-7-6 ����9:23:02
 	 */
-	public SharedPreferences getLoginUserSharedPre();
+
 
 	/**
 	 * 
@@ -311,7 +311,7 @@ public interface IActivitySupport {
 	 * @author shimiso
 	 * @update 2012-7-6 ����9:59:49
 	 */
->>>>>>> 添加附近的人和群组资源文件
+
 //	public LoginConfig getLoginConfig();
 
 	/**

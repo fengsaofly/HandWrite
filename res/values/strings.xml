@@ -12,6 +12,13 @@
     <string name="reply">回复</string>
     <string name="all">全部</string>
     <string name="issue_question">发布问题</string>
+    <string name="dis_more">显示更多&#8230;</string>
+    <string name="send">发送</string>
+    <string name="see_grils">只看女生</string>
+    <string name="see_boys">只看男生</string>
+    <string name="see_all">查看全部</string>
+    <string name="clear">清除位置并退出</string>
+    <string name="no_network_connect">网络没有连接，打开网络连接设置</string>
 
     <string-array name="classifies">
         <item>年级</item>
@@ -51,5 +58,7 @@
         <item>1km内</item>
         <item>10km内</item>
     </string-array>
+
+    <string name="nearby_error_tips">破题高手不能确定你的位置,你可以通过以下操作提高破题高手的定位精度：\n●在位置设置中打开GPS和无线网络</string>
 
 </resources>

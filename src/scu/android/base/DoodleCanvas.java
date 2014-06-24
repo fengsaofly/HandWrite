@@ -1,8 +1,8 @@
 package scu.android.base;
 
 import java.util.ArrayList;
-import scu.android.util.AppUtils;
 import scu.android.util.BitmapUtils;
+import scu.android.util.Constants;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
@@ -10,7 +10,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.Rect;
+import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -19,6 +19,12 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.View.OnTouchListener;
 
+/**
+ * 涂鸦板
+ * 
+ * @author YouMingyang
+ * @version 1.0
+ */
 public class DoodleCanvas extends SurfaceView implements
 		SurfaceHolder.Callback, OnTouchListener {
 	private SurfaceHolder holder;// 控制
@@ -32,6 +38,7 @@ public class DoodleCanvas extends SurfaceView implements
 	private ArrayList<DrawPath> paths;// 路径
 	private int paintColor;
 	private int paintSize;
+	private long lastDrawTime;
 
 	public DoodleCanvas(Context context) {
 		super(context);
@@ -62,6 +69,7 @@ public class DoodleCanvas extends SurfaceView implements
 		bitCanvas = new Canvas(bitmap);
 		drawThread = new DrawThread();
 		this.canDraw = this.isDrawing = true;
+		lastDrawTime = SystemClock.uptimeMillis();
 		new Thread(drawThread).start();
 	}
 
@@ -176,7 +184,10 @@ public class DoodleCanvas extends SurfaceView implements
 		public void run() {
 			while (canDraw) {
 				if (isDrawing) {
-					drawBitmap();
+					long now = SystemClock.uptimeMillis();
+					if (now - lastDrawTime >= 100) {
+						drawBitmap();
+					}
 				}
 			}
 		}
@@ -184,8 +195,9 @@ public class DoodleCanvas extends SurfaceView implements
 
 	// 保存涂鸦
 	public String getDoodlePath() {
+		canDraw = false;
 		return BitmapUtils.saveBitmap(getContext(), bitmap,
-				AppUtils.DOODLE_DIR, new Rect(), getWidth(), getHeight());
+				Constants.DOODLE_DIR);
 	}
 
 	public void setPaintColor(String color) {

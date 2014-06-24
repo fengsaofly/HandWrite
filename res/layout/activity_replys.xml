@@ -1,15 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ffffff"
-    android:orientation="vertical" >
+    android:background="#ffffff" >
 
-    <ListView
-        android:id="@+id/replys"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:divider="#ffb4b4b4"
-        android:dividerHeight="1.0px" />
+        android:orientation="vertical" >
 
-</LinearLayout>
+        <include
+            android:id="@id/no_network_connect"
+            android:layout_gravity="top"
+            layout="@layout/no_network_connect"
+            android:visibility="gone" />
+
+        <com.handmark.pulltorefresh.library.PullToRefreshListView
+            xmlns:ptr="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/replys"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:cacheColorHint="#00000000"
+            android:divider="#ffffffff"
+            android:dividerHeight="2dp"
+            android:fadingEdge="none"
+            android:fastScrollEnabled="false"
+            android:footerDividersEnabled="true"
+            android:headerDividersEnabled="true"
+            android:smoothScrollbar="true"
+            ptr:ptrHeaderBackground="#000000"
+            ptr:ptrHeaderSubTextColor="#eeeeee"
+            ptr:ptrHeaderTextColor="#ffffff" />
+
+        <Button
+            android:id="@+id/dis_more"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:onClick="OnClick"
+            android:text="@string/dis_more"
+            android:visibility="gone" />
+    </LinearLayout>
+
+    <scu.android.base.CommonEditor
+        android:id="@+id/reply_editor"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
+
+</FrameLayout>

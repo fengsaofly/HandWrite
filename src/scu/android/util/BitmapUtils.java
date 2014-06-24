@@ -6,14 +6,11 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-
 import scu.android.application.MyApplication;
-
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Rect;
 import android.os.Environment;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -75,29 +72,26 @@ public class BitmapUtils {
 
 	// 保存图片到SD卡
 	public static String saveBitmap(Context context, Bitmap bitmap,
-			String path, Rect rect, int width, int height) {
-		String bitmapPath = null;
+			String imageDir) {
 		// if (Environment.getExternalStorageState().equals(// SD卡可用
 		// Environment.MEDIA_MOUNTED)) {
-		File dir = new File(MyApplication.getSDCardPath() + "/" + path);
-		if (!dir.exists())
-			dir.mkdirs();
+		File fileDir = new File(MyApplication.getSDCardPath() + "/" + imageDir);
+		if (!fileDir.exists())
+			fileDir.mkdirs();
 		try {
-			bitmapPath = dir.getAbsolutePath() + "/"
+			imageDir = fileDir.getAbsolutePath() + "/"
 					+ System.currentTimeMillis() + ".png";
-			Bitmap aBitmap = Bitmap.createScaledBitmap(bitmap, width, height,
-					false);
-			FileOutputStream fos = new FileOutputStream(bitmapPath);
-			aBitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+			FileOutputStream fos = new FileOutputStream(imageDir);
+			bitmap.compress(Bitmap.CompressFormat.PNG, 50, fos);
 			fos.close();
-			Log.i("Bitmap stored in:", bitmapPath);
+			Log.i("Bitmap stored in:", imageDir);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		// } else {
 		// Toast.makeText(context, "SD卡不可用", Toast.LENGTH_SHORT).show();
 		// }
-		return bitmapPath;
+		return imageDir;
 	}
 
 	// 读取图片

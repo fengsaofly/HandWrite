@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
 import scu.android.activity.ReplyQuestionActivity;
 import scu.android.application.MyApplication;
 import scu.android.db.QuestionDao;
@@ -15,7 +16,6 @@ import scu.android.ui.MGridView;
 import scu.android.ui.PhotosAdapter;
 import scu.android.util.AppUtils;
 import scu.android.util.Constants;
-import scu.android.util.DownloadUtils;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;

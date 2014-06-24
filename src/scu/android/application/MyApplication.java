@@ -8,11 +8,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -51,25 +51,18 @@ import scu.android.entity.Question;
 import scu.android.entity.User;
 import scu.android.util.DownloadUtils;
 import scu.android.util.UploadUtils;
-import scu.android.util.XmppTool;
-
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
-
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.NinePatchDrawable;
-
-import android.os.Build;
-
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
-import android.os.StrictMode;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -80,11 +73,11 @@ import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 
 public class MyApplication extends Application {
 
-	// public static String hostIp = "218.244.144.212";
-	// public String hostName = "handwriteserver";
+//	 public static String hostIp = "218.244.144.212";
+//	 public String hostName = "handwriteserver";
 
-	public static String hostIp = "192.168.1.116";
-	public static String hostName = "dolphin0520-pc";
+	public static String hostIp = "192.168.1.148";
+	public static String hostName = "183.221.126.230";
 	public static final String IS_ONLINE = "is_online";
 	public String userName = "jalsary";
 
@@ -100,7 +93,7 @@ public class MyApplication extends Application {
 
 	public static VCard vCard = null;
 	public SharedPreferences sp = null;
-
+	private static User loginUser;
 	// LoginConfig loginConfig;
 	public  List<Map<String,Object>> allContactsVcard = new ArrayList<Map<String,Object>>();
 /**
@@ -811,6 +804,26 @@ public class MyApplication extends Application {
 		// vcard.setLastName(vcard.getLastName());
 		vcard.save(connection);
 
+	}
+	
+	
+	/**
+	 * @author YouMingyang
+	 * @param context
+	 * @return 当前登录用户
+	 */
+	public static User getLoginUser(Context context) {
+		if (loginUser == null) {
+			if (UserDao.getUsers(context).size() == 0) {
+				User user = new User(0l, "jalsary", null, 0, 0, "jalsary",
+						"assets://avatar.jpg", null, null, 'M', 0, 0, 0,
+						new Date());
+				long userId = UserDao.insertUser(context, user);
+				loginUser = UserDao.getUserById(context, userId);
+			}
+			loginUser = UserDao.getUsers(context).get(0);
+		}
+		return loginUser;
 	}
 
 	private static byte[] getFileBytes(File file) throws IOException {
