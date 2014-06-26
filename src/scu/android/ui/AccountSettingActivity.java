@@ -1,11 +1,15 @@
 package scu.android.ui;
 
+import java.io.IOException;
+
+import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.packet.VCard;
 
 import scu.android.application.MyApplication;
 import scu.android.util.XmppTool;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -25,7 +29,7 @@ public class AccountSettingActivity extends Activity{
 	RelativeLayout setting_modify_avatar,setting_modify_nickname,setting_modify_zone,setting_modify_gender,setting_modify_grade,setting_modify_sign;
 	TextView setting_value_nickname,setting_value_zone,setting_value_gender,setting_value_grade,setting_value_sign;
 	
-	
+	String mySexSelect = "男";
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -58,6 +62,7 @@ public class AccountSettingActivity extends Activity{
 			
 			setting_value_zone.setText(vcard.getAddressFieldHome("zone"));
 			setting_value_gender.setText(vcard.getFirstName());
+			mySexSelect = vcard.getFirstName();
 			setting_value_grade.setText(vcard.getMiddleName());
 			setting_value_sign.setText(vcard.getLastName());
 		}
@@ -95,7 +100,43 @@ public class AccountSettingActivity extends Activity{
 		case R.id.lay_sex:
 //			intent.setClass(AccountSettingActivity.this, ModifyNomalActivity.class);
 //			intent.putExtra("type", "gender");
-//			new AlertDialog.Builder(this).setTitle("系统提示").setMessage("请选择性别").setMultiChoiceItems(items, checkedItems, listener)
+			   AlertDialog.Builder  malertdialog =new AlertDialog.Builder(this);
+			      malertdialog.setTitle("请选择性别");
+			      if(mySexSelect.equals("男")){
+			    	  malertdialog.setSingleChoiceItems(R.array.alterdialog_items,0, malertdialoglistener);
+			      }
+			      else if(mySexSelect.equals("女")){
+			    	  malertdialog.setSingleChoiceItems(R.array.alterdialog_items,1, malertdialoglistener);
+			      }
+//			      malertdialog.setMultiChoiceItems(R.array.alterdialog_items,new boolean[] {false,false,false,false},  multialertlisten);
+			      malertdialog.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface arg0, int arg1) {
+						// TODO Auto-generated method stub
+						
+						setting_value_gender.setText(mySexSelect);
+						try {
+							((MyApplication)getApplication()).setUserVCard(XmppTool.getConnection(),3,mySexSelect);
+						} catch (XMPPException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+			      });
+			      malertdialog.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface arg0, int arg1) {
+						// TODO Auto-generated method stub
+						
+					}
+				});
+			      malertdialog.show();
+			
 			break;
 		case R.id.lay_career:
 			intent.setClass(AccountSettingActivity.this, ModifyNomalActivity.class);
@@ -111,31 +152,41 @@ public class AccountSettingActivity extends Activity{
 		
 		
 		
-//		switch(v.getId()){
-//		case R.id.top_left_back_btn:
-//			System.out.println("按了返回键");
-//			finish();
-//			break;
-//		case R.id.photo:
-//			
-//			intent.putExtra("type", 1);
-////			intent.setClass(this, SelectIconActivity.class);
-//			startActivityForResult(intent, 420);
-//			break;
-//		
-//		
-//		case R.id.login_btn:
-//			intent.setClass(this, LoginActivity.class);
-//			startActivity(intent);
-//			break;
-//		case R.id.regist_btn:
-//			intent.setClass(this, RegisterActivity.class);
-//			startActivity(intent);
-//			break;
-//		}
+
 	}
 	
 	
+	 private DialogInterface.OnClickListener malertdialoglistener=
+		     new DialogInterface.OnClickListener()
+		    {
+		     public void onClick(DialogInterface dialog, int whichButton) {
+
+		      String[] malertmeg=getResources().getStringArray(R.array.alterdialog_items);
+		      
+		      System.out.println("你选择了："+malertmeg[whichButton]);  
+		      mySexSelect = malertmeg[whichButton];
+		      /* User clicked OK so do some stuff */
+		        }
+		    };
+	
+//		    private DialogInterface.OnMultiChoiceClickListener multialertlisten=
+//		    		  
+//		    	     new DialogInterface.OnMultiChoiceClickListener()
+//		    	    {
+//		    	     public void onClick(DialogInterface dialog, int whichButton,boolean isChecked) {
+//		    	            String mchoice="";
+//		    	      String[] malertmeg=getResources().getStringArray(R.array.alterdialog_items);
+//		    	      if (isChecked)
+//		    	      {
+//		    	    	  if ( mchoice.indexOf(malertmeg[whichButton])<=0)
+//		    	    		  mchoice+=malertmeg[whichButton]+',';
+//		    	       }
+//		    	      System.out.println("mchoice:  "+mchoice);
+////		    	      setTitle("你选择了："+mchoice);  
+//		    	      
+//		    	      /* User clicked OK so do some stuff */
+//		    	        }
+//		    	    };
 	
 	
 //	 Handler handler = new Handler(){

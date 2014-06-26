@@ -107,9 +107,7 @@ public class LoginActivity extends Activity{
 				
 				handler.sendEmptyMessage(3);
 				
-				
-				
-				
+
 				
 				break;
 			case 2:
@@ -128,23 +126,23 @@ public class LoginActivity extends Activity{
 	
 	public void myOnclick(View v){
 		switch(v.getId()){
-		case R.id.buttonBack:
-			new AlertDialog.Builder(this).setTitle("确定要退出应用吗？").setPositiveButton("确定", new DialogInterface.OnClickListener() {
-				
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					// TODO Auto-generated method stub
-					System.exit(0);
-				}
-			}).setNegativeButton("取消", new DialogInterface.OnClickListener() {
-				
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					// TODO Auto-generated method stub
-					
-				}
-			}).create().show();
-			break;
+//		case R.id.buttonBack:
+//			new AlertDialog.Builder(this).setTitle("确定要退出应用吗？").setPositiveButton("确定", new DialogInterface.OnClickListener() {
+//				
+//				@Override
+//				public void onClick(DialogInterface dialog, int which) {
+//					// TODO Auto-generated method stub
+//					System.exit(0);
+//				}
+//			}).setNegativeButton("取消", new DialogInterface.OnClickListener() {
+//				
+//				@Override
+//				public void onClick(DialogInterface dialog, int which) {
+//					// TODO Auto-generated method stub
+//					
+//				}
+//			}).create().show();
+//			break;
 		case R.id.register_btn:  //注册
 			
 			startActivity(new Intent(this,RegisterActivity.class));
@@ -201,31 +199,31 @@ public class LoginActivity extends Activity{
 		sp = this.getSharedPreferences("bnj", MODE_PRIVATE);
 		String account = sp.getString("account", "");
 		String password = sp.getString("password", "");
-		back = (TextView)findViewById(R.id.buttonBack);
+//		back = (TextView)findViewById(R.id.buttonBack);
 		register = (TextView)findViewById(R.id.register_btn);
 		loginButton = (TextView)findViewById(R.id.loginButton);
 		userName = (AutoCompleteTextView)findViewById(R.id.loginUserNameValue);
 		userName.setText(account);
 		passWord = (EditText)findViewById(R.id.userPassValue);
 		passWord.setText(password);
-		login_show_password = (CheckBox)findViewById(R.id.login_show_password);
+//		login_show_password = (CheckBox)findViewById(R.id.login_show_password);
 		pd = new ProgressDialog(this);
 		pd.setTitle("正在登陆");
 		pd.setMessage("请耐心等候");
 		pd.setCancelable(false);
 		final int type = passWord.getInputType();
-		login_show_password.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-			
-			@Override
-			public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
-				// TODO Auto-generated method stub
-				if(arg1){
-					
-					passWord.setInputType(InputType.TYPE_CLASS_TEXT);
-				}
-				else passWord.setInputType(type);
-			}
-		});
+//		login_show_password.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+//			
+//			@Override
+//			public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
+//				// TODO Auto-generated method stub
+//				if(arg1){
+//					
+//					passWord.setInputType(InputType.TYPE_CLASS_TEXT);
+//				}
+//				else passWord.setInputType(type);
+//			}
+//		});
 		
 	}
 	

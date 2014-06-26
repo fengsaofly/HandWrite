@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/TextColorWhite"
+    android:background="@color/BackgroundGrayColor"
     android:orientation="vertical"
     tools:context=".MainActivity" >
 
-    <FrameLayout
+    <!-- <FrameLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
@@ -54,13 +54,16 @@
             android:onClick="myOnclick"
             android:text="注册"
             android:textColor="#ffffffff" />
-    </FrameLayout>
+    </FrameLayout> -->
 
-    <RelativeLayout android:gravity="center" android:layout_width="fill_parent" android:layout_height="wrap_content" >
-        <scu.android.ui.CircularImage  android:src="@drawable/default_avatar" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+    <FrameLayout android:gravity="center" android:layout_width="fill_parent" android:layout_height="wrap_content" >
+        <ImageView android:layout_gravity="center" android:src="@drawable/avatar_example" android:layout_centerInParent="true" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+        <ImageView android:id="@id/avatar_val" android:layout_gravity="center" android:src="@drawable/avatar_shade_big" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
         
-    </RelativeLayout>
+        
+    </FrameLayout>
     <RelativeLayout
+        android:layout_centerInParent="true"
         android:id="@+id/userLoginLay"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -76,8 +79,9 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10.0dip"
             android:layout_marginTop="10.0dip"
-            android:text="账号："
-            android:textColor="#ff000000"
+            android:text="账号"
+            style="@style/DefaultTextStyle"
+            android:textColor="@color/TextColorGray"
             android:textSize="@dimen/user_title_size" />
 
         <AutoCompleteTextView
@@ -93,7 +97,7 @@
             android:dropDownHorizontalOffset="-5.0dip"
             android:dropDownVerticalOffset="2.0dip"
             android:dropDownWidth="232.0dip"
-            android:hint="邮箱地址或用户名"
+            android:hint=""
             android:imeOptions="actionNext"
             android:inputType="textEmailAddress"
             android:maxLength="50"
@@ -117,8 +121,8 @@
             android:layout_below="@id/line"
             android:layout_marginLeft="10.0dip"
             android:layout_marginTop="10.0dip"
-            android:text="密码："
-            android:textColor="#ff000000"
+            android:text="密码"
+            android:textColor="@color/TextColorGray"
             android:textSize="@dimen/user_title_size" />
 
         <EditText
@@ -131,7 +135,7 @@
             android:layout_marginTop="10.0dip"
             android:layout_toRightOf="@id/userPass"
             android:background="#ffffffff"
-            android:hint="请输入密码"
+            android:hint=""
             android:imeOptions="actionNone"
             android:maxLength="50"
             android:password="true"
@@ -172,7 +176,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" >
 
-            <CheckBox
+            <!-- <CheckBox
                 android:id="@+id/login_show_password"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -181,9 +185,9 @@
                 android:button="@drawable/jumeicheckboxbutton"
                 android:text="显示密码"
                 android:textColor="#ff000000"
-                android:textSize="16.0sp" />
+                android:textSize="16.0sp" /> -->
 
-            <TextView
+            <!-- <TextView
                 android:id="@+id/tv_findpassword"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -191,7 +195,7 @@
                 android:layout_alignParentTop="true"
                 android:background="@drawable/forget_pwd_selector"
                 android:textColor="#ff999999"
-                android:textSize="16.0sp" />
+                android:textSize="16.0sp" /> -->
         </RelativeLayout>
 
         <TextView
@@ -201,13 +205,23 @@
             android:layout_below="@id/belowLoginlay"
             android:layout_marginLeft="10.0dip"
             android:layout_marginRight="10.0dip"
+            android:layout_marginTop="50dp"
             android:background="@drawable/button_long_green_bg"
             android:clickable="true"
             android:gravity="center"
             android:onClick="myOnclick"
-            android:text="立即登录"
+            android:text="登录"
             android:textColor="#ffffffff"
             android:textSize="20.0sp" />
     </RelativeLayout>
-   </LinearLayout>
+    
+    <FrameLayout android:layout_width="fill_parent" android:layout_alignParentBottom="true" android:layout_height="wrap_content" android:layout_gravity="bottom">
+	    <ImageView
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:src="@drawable/login_arrow_up" 
+	        android:layout_gravity="center_horizontal"/>
+	</FrameLayout>
+	
+</RelativeLayout>
 

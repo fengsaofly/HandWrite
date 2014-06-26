@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+    android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical" >
 
@@ -19,12 +19,22 @@
             android:layout_weight="0.15"
             android:gravity="bottom|center_horizontal" >
 
+
+
             <TextView
                 android:id="@+id/add_record"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/chat_input_voice_btn_style" 
                 android:layout_marginBottom="9dp"/>
+
+
+            <TextView
+                android:id="@+id/add_record"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="9dp"
+                android:background="@drawable/chat_input_voice_btn_style" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -37,26 +47,37 @@
                 android:id="@+id/add_extras"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="9dp"
                 android:background="@drawable/chat_input_add_btn_style"
-                android:clickable="true"
-                android:layout_marginBottom="9dp" />
+                android:clickable="true" />
+
         </RelativeLayout>
+
+        
 
         <RelativeLayout
             android:layout_width="0dp"
             android:layout_height="fill_parent"
+         
+
             android:layout_weight="0.55"
+
             android:gravity="bottom|center_horizontal" >
 
             <EditText
                 android:id="@+id/input_field"
-                android:layout_width="200dp"
+                android:layout_width="230dp"
                 android:layout_height="wrap_content"
+				android:textCursorDrawable="@null"
+				android:cursorVisible="true"
                 android:maxHeight="90dp"
                 android:background="@drawable/chat_textview_bg"
                 android:inputType="textMultiLine|text"
                 android:textColor="#000000" 
+                android:paddingLeft="2dp"
                 android:layout_marginBottom="10dp"/>
+
+
         </RelativeLayout>
 
         <RelativeLayout
@@ -69,12 +90,15 @@
                 android:id="@+id/chat_send"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+
                 android:clickable="true"
                 android:text="发送" 
                 android:padding="6dp"
                 android:gravity="center"
                 android:background="@drawable/button_small_white_style"
                 android:layout_marginBottom="11dp"/>
+
+
         </RelativeLayout>
         <!--
                  <TextView

@@ -59,6 +59,7 @@ public class ActionBarActivity extends FragmentActivity {
 	public final static int TAB_INDEX_TAB_3 = 2;
 	public final static int TAB_INDEX_TAB_4 = 3;
 	public final static int TAB_COUNT = 4;
+	public final static String[] tabNames = {"消息","破题","通讯录","发现"};
 	DbManager2 db;
 	private ViewPager mViewPager;
 	MediaPlayer mp;
@@ -74,16 +75,17 @@ public class ActionBarActivity extends FragmentActivity {
 		// pd.setTitle("温馨提示");
 		// pd.setMessage("正在登陆");
 //		handler.sendEmptyMessage(5);
-		initialListener();
+//		initialListener();
 		searchGroupPd = new ProgressDialog(this);
 		searchGroupPd.setTitle("温馨提示");
 		searchGroupPd.setMessage("正在搜索");
-
+		
+		initList();
 		// 创建Tab
-		setupTest1();
-		setupTest2();
-		setupTest3();
-		setupTest4();
+//		setupTest1();
+//		setupTest2();
+//		setupTest3();
+//		setupTest4();
 		getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 		// getActionBar().setDisplayShowTitleEnabled(false);
 		// getActionBar().setDisplayShowHomeEnabled(false);
@@ -345,36 +347,36 @@ public class ActionBarActivity extends FragmentActivity {
 				break;
 			case 5:
 				// pd.show();
-				new Thread(new Runnable() {
-					public void run() {
-
-						try {
-
-							XmppTool.getConnection()
-									.login(((MyApplication) getApplication()).userName,
-											((MyApplication) getApplication()).passWord);
-							// 新建presence对象״̬
-							Presence presence = new Presence(
-									Presence.Type.available);
-							XmppTool.getConnection().sendPacket(presence);
-
-							System.out.println("正在登陆");
-							handler.sendEmptyMessage(2);
-							((MyApplication) getApplication()).roster = XmppTool.getConnection()
-									.getRoster();
-
-							((MyApplication) getApplication()).entries = ((MyApplication) getApplication())
-									.getAllEntries();
-
-							initialListener();
-
-						} catch (XMPPException e) {
-							XmppTool.closeConnection();
-
-							// handler.sendEmptyMessage(2);
-						}
-					}
-				}).start();
+//				new Thread(new Runnable() {
+//					public void run() {
+//
+//						try {
+//
+//							XmppTool.getConnection()
+//									.login(((MyApplication) getApplication()).userName,
+//											((MyApplication) getApplication()).passWord);
+//							// 新建presence对象״̬
+//							Presence presence = new Presence(
+//									Presence.Type.available);
+//							XmppTool.getConnection().sendPacket(presence);
+//
+//							System.out.println("正在登陆");
+//							handler.sendEmptyMessage(2);
+//							((MyApplication) getApplication()).roster = XmppTool.getConnection()
+//									.getRoster();
+//
+//							((MyApplication) getApplication()).entries = ((MyApplication) getApplication())
+//									.getAllEntries();
+//
+//							initialListener();
+//
+//						} catch (XMPPException e) {
+//							XmppTool.closeConnection();
+//
+//							// handler.sendEmptyMessage(2);
+//						}
+//					}
+//				}).start();
 				break;
 			case 6:
 				// pd.show();
@@ -402,28 +404,31 @@ public class ActionBarActivity extends FragmentActivity {
 	};
 
 	public void initList() {
+		for(int i=0; i<TAB_COUNT;i++)
+		{
+			Tab tab = this.getActionBar().newTab();
+			// tab.setContentDescription("Tab 1");
 
+			// tab.setCustomView(R.id.);
+
+//			tab.setText("消息");
+			tab.setTabListener(mTabListener);
+			
+			tab.setCustomView(R.layout.actionbar_tab_lay);
+			
+			
+			TextView tabView = (TextView)tab.getCustomView().findViewById(R.id.activity_actionbar_tab_val);
+			tabView.setText(tabNames[i]);
+
+//			
+			
+			getActionBar().addTab(tab);
+		}
 	}
 
 	private void setupTest1() {
 
-		Tab tab = this.getActionBar().newTab();
-		// tab.setContentDescription("Tab 1");
 
-		// tab.setCustomView(R.id.);
-
-//		tab.setText("消息");
-		tab.setTabListener(mTabListener);
-		
-		tab.setCustomView(R.layout.actionbar_tab_lay);
-		
-		
-		TextView tabView = (TextView)tab.getCustomView().findViewById(R.id.activity_actionbar_tab_val);
-		tabView.setText("消息");
-
-//		
-		
-		getActionBar().addTab(tab);
 	}
 
 	@Override
@@ -529,11 +534,11 @@ public class ActionBarActivity extends FragmentActivity {
 	protected void onDestroy() {
 		// TODO Auto-generated method stub
 		super.onDestroy();
-		XmppTool.closeConnection();
+//		XmppTool.closeConnection();
 		
 			if(db!=null)
 			db.close();
-		System.exit(0);
+//		System.exit(0);
 	}
 
 	public void addRecordToDb(String[] args) {
@@ -593,10 +598,12 @@ public class ActionBarActivity extends FragmentActivity {
 		super.onResume();
 
 //		Intent intent = getIntent();
+//		if(intent!=null){
 //		if (intent.getAction().equals(
 //				"scu.android.activity.IssueQuestionActivity")) {
-//			handler.removeMessages(5);
+////			handler.removeMessages(5);
 //			mViewPager.setCurrentItem(TAB_INDEX_TAB_2);
+//		}
 //		}
 	}
 }

@@ -53,8 +53,8 @@ public class RegisterActivity extends Activity{
 		pd.setTitle("正在注册");
 		pd.setMessage("请等候");
 		pd.setCancelable(true);
-		back = (TextView)findViewById(R.id.buttonBack);
-		registerButton = (TextView)findViewById(R.id.registerButton);
+//		back = (TextView)findViewById(R.id.buttonBack);
+		registerButton = (TextView)findViewById(R.id.register_btn);
 //		iconImage = (ImageView)findViewById(R.id.iconImage);
 //		selectIconButton = (Button)findViewById(R.id.selectIconButton);
 		emailValue = (AutoCompleteTextView)findViewById(R.id.emailValue);
@@ -64,10 +64,10 @@ public class RegisterActivity extends Activity{
 	
 	public void myOnclick(View v){
 		switch(v.getId()){
-		case R.id.buttonBack:
-			finish();
-			break;
-		case R.id.registerButton:
+//		case R.id.buttonBack:
+//			finish();
+//			break;
+		case R.id.register_btn:
 			if(emailValue.getText().toString().equals("")||userNameValue.getText().toString().equals("")||userNameValue.getText().toString().equals("")){
 				Toast.makeText(this, "请将信息填写完整", 3).show();
 			}
