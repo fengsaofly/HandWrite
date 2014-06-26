@@ -7,6 +7,7 @@ import scu.android.util.AppUtils;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -29,6 +30,7 @@ public class PhotosAdapter extends BaseAdapter {
 	private Activity activity;
 	private ArrayList<String> bitmaps;
 	private int columnNum;
+	private String action;
 	private String imgSaveDir;
 
 	private ImageLoader loader;
@@ -56,6 +58,10 @@ public class PhotosAdapter extends BaseAdapter {
 				.cacheOnDisk(true).considerExifParams(true)
 				.bitmapConfig(Bitmap.Config.RGB_565).build();
 		this.columnNum = 3;
+	}
+
+	public void setAction(String action) {
+		this.action = action;
 	}
 
 	public void setColumnNum(int columnNum) {
@@ -87,8 +93,13 @@ public class PhotosAdapter extends BaseAdapter {
 			@Override
 			public void onClick(View v) {
 				Intent intent = new Intent(activity, ScanPhotosActivity.class);
-				intent.putStringArrayListExtra("photos", bitmaps);
-				intent.putExtra("index", index + 1);
+				Bundle bundle = new Bundle();
+				bundle.putStringArrayList("photos", bitmaps);
+				bundle.putInt("index", index + 1);
+				if(action!=null){
+				bundle.putString("action",action);
+				}
+				intent.putExtras(bundle);
 				activity.startActivity(intent);
 			}
 		});

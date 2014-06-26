@@ -569,6 +569,7 @@ public class ActionBarActivity extends FragmentActivity {
 		if (intent.getAction().equals(
 				"scu.android.activity.IssueQuestionActivity")) {
 			handler.removeMessages(5);
+			
 			mViewPager.setCurrentItem(TAB_INDEX_TAB_2);
 		}
 	}

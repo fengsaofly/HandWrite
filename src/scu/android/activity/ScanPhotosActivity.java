@@ -38,7 +38,7 @@ public class ScanPhotosActivity extends Activity {
 	private PhotosViewPager viewPager;
 	private ScanPageAdater adapter;
 	private ArrayList<String> photos;
-	private Intent intent;
+	private String action;
 	private TextView pageIndex;
 	private ImageLoader imageLoader;
 	private DisplayImageOptions options;
@@ -52,7 +52,6 @@ public class ScanPhotosActivity extends Activity {
 
 	// 初始化
 	public void init() {
-		intent = getIntent();
 		options = new DisplayImageOptions.Builder()
 				.showImageOnLoading(R.drawable.default_photo)
 				.showImageForEmptyUri(R.drawable.default_photo)
@@ -60,9 +59,12 @@ public class ScanPhotosActivity extends Activity {
 				.cacheOnDisk(true).considerExifParams(true)
 				.bitmapConfig(Bitmap.Config.RGB_565).build();
 		imageLoader = ImageLoader.getInstance();
-
-		photos = intent.getStringArrayListExtra("photos");
-		int index = intent.getIntExtra("index", 1);
+		final Intent intent = getIntent();
+		final Bundle bundle = intent.getExtras();
+		photos = bundle.getStringArrayList("photos");
+		int index = bundle.getInt("index", 1);
+		action = bundle.getString("action");
+		toggleDel();
 
 		DisplayMetrics outMetrics = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(outMetrics);
@@ -78,7 +80,6 @@ public class ScanPhotosActivity extends Activity {
 		pageIndex.setText(index + "/" + photos.size());
 
 		viewPager.setCurrentItem(index - 1);
-		toggleDel();
 	}
 
 	private class ScanPageAdater extends PagerAdapter {
@@ -183,10 +184,7 @@ public class ScanPhotosActivity extends Activity {
 	}
 
 	public void toggleDel() {
-		String action = intent.getAction();
-		if (action != null
-				&& (action.equals("scu.android.activity.IssueQuestionActivity") || action
-						.equals("scu.android.activiy.RelpyQuestionActivity"))) {
+		if (action != null) {
 			findViewById(R.id.delete_photo).setVisibility(View.VISIBLE);
 		}
 	}
@@ -201,7 +199,6 @@ public class ScanPhotosActivity extends Activity {
 
 	public void deletePhoto() {
 		final int index = viewPager.getCurrentItem();
-		final String action = intent.getAction();
 		Dialog alert = new AlertDialog.Builder(this).setTitle("破题")
 				.setMessage("删除这张照片?")
 				.setPositiveButton("确定", new Dialog.OnClickListener() {

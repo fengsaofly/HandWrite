@@ -1,11 +1,15 @@
 package scu.android.activity;
 
 import java.util.ArrayList;
+import java.util.Date;
+
 import scu.android.application.MyApplication;
 import scu.android.base.CommonEditor;
 import scu.android.db.ReplyDao;
+import scu.android.db.ResourceDao;
 import scu.android.entity.Question;
 import scu.android.entity.Reply;
+import scu.android.entity.Resource;
 import scu.android.entity.User;
 import scu.android.ui.PhotosAdapter;
 import scu.android.util.AppUtils;
@@ -63,24 +67,26 @@ public class ReplyQuestionActivity extends Activity {
 
 		question = (Question) getIntent().getSerializableExtra("question");
 		user = (User) getIntent().getSerializableExtra("user");
-		getActionBar().setTitle(question.getTitle());
+		getActionBar().setTitle(question.getqTitle());
 		((TextView) findViewById(R.id.nickname)).setText(user.getNickname());
 		((TextView) findViewById(R.id.publish_time)).setText(AppUtils
-				.timeToNow(question.getPublishTime()));
-		((TextView) findViewById(R.id.title)).setText(question.getTitle());
-		((TextView) findViewById(R.id.grade)).setText(question.getGrade());
-		((TextView) findViewById(R.id.subject)).setText(question.getSubject());
-		((TextView) findViewById(R.id.content)).setText(question.getContent());
+				.timeToNow(question.getCreatedTime()));
+		((TextView) findViewById(R.id.title)).setText(question.getqTitle());
+		((TextView) findViewById(R.id.grade)).setText(question.getqGrade());
+		((TextView) findViewById(R.id.subject)).setText(question.getqSubject());
+		((TextView) findViewById(R.id.content)).setText(question
+				.getqTextContent());
 		((TextView) findViewById(R.id.reply_number)).setText("获取中...");
 		GridView view = ((GridView) findViewById(R.id.photos_view));
-		view.setAdapter(new PhotosAdapter(this, question.getImages()));
+		view.setAdapter(new PhotosAdapter(this, Resource.getImages(question
+				.getResouces())));
 		ImageView avatar = (ImageView) findViewById(R.id.avatar);
 		// final int width = AppUtils.getDefaultPhotoWidth(this, 9);
 		// AppUtils.setViewSize(avatar, width, width);
 		loader.displayImage(user.getAvatar(), avatar, options);
 		editor = (CommonEditor) findViewById(R.id.common_editor);
-		editor.setActivity(this);
 		editor.setAction(action);
+		editor.setActivity(this);
 
 		receiver = new PhotoReceiver();
 		registerReceiver(receiver, new IntentFilter(action));
@@ -190,13 +196,23 @@ public class ReplyQuestionActivity extends Activity {
 	// 回复问题
 	public void doReply() {
 		editor.hideSoft();
-		String content = editor.getContent();
+		String rTextContent = editor.getContent();
 		ArrayList<String> thumbnails = editor.getThumbnails();
-		if ((content != null && content.length() > 0) || thumbnails.size() > 0) {
-			Reply reply = new Reply(0, content, null, thumbnails, null,
-					question.getQuesId(), MyApplication.getLoginUser(this)
-							.getUserId(), 0);
-			ReplyDao.insertReply(this, reply);
+		if ((rTextContent != null && rTextContent.length() > 0)
+				|| thumbnails.size() > 0) {
+			ArrayList<Resource> resources = new ArrayList<Resource>();
+			for (String resourcePath : thumbnails) {
+				resources.add(new Resource(resourcePath));
+			}
+			// if (path != null)
+			// resources.add(new Resource(path));
+			final long rUser = MyApplication.getLoginUser(this).getUserId();
+			final long qId = question.getqId();
+			final long rResource = ResourceDao.insertResouce(this, resources);
+			Reply reply = new Reply(0, rTextContent, rResource, new Date(),
+					qId, rUser, 0);
+			reply.setResources(resources);
+			final long rId = ReplyDao.insertReply(this, reply);
 			editor.getThumbnailsParentView().setVisibility(View.INVISIBLE);
 			editor.getExtrasView().setVisibility(View.GONE);
 			editor.getThumbnails().clear();
@@ -212,7 +228,7 @@ public class ReplyQuestionActivity extends Activity {
 	public void goReply() {
 		Intent intent = new Intent(ReplyQuestionActivity.this,
 				ReplysActiviy.class);
-		intent.putExtra("quesId", question.getQuesId());
+		intent.putExtra("quesId", question.getqId());
 		startActivity(intent);
 	}
 
@@ -243,7 +259,7 @@ public class ReplyQuestionActivity extends Activity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		new GetReplysTask().execute(question.getQuesId());// 重新设置问题回复数目
+		new GetReplysTask().execute(question.getqId());// 重新设置问题回复数目
 	}
 
 	@Override

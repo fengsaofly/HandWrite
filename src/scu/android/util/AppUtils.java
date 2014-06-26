@@ -3,6 +3,8 @@ package scu.android.util;
 import java.io.File;
 import java.util.Date;
 
+import org.jivesoftware.smack.util.Base64;
+
 import scu.android.activity.DoodleBoardActivity;
 import scu.android.activity.ImageCropperActivity;
 import scu.android.activity.NativePhotosActivity;
@@ -133,6 +135,12 @@ public class AppUtils {
 				/ columnNum;
 	}
 
+	/**
+	 * 手机截图
+	 * 
+	 * @param activity
+	 * @param imgPath
+	 */
 	public static void sysCrop(Activity activity, String imgPath) {
 		Intent intent = new Intent(activity, ImageCropperActivity.class);
 		intent.putExtra("imgPath", imgPath);
@@ -157,8 +165,11 @@ public class AppUtils {
 		return true;
 	}
 
-	/*
-	 * 获取手机当前网络连接
+	/**
+	 * 获取当前网络连接
+	 * 
+	 * @param activity
+	 * @return
 	 */
 	public static boolean isNetworkConnect(Activity activity) {
 		ConnectivityManager connectivityManager = (ConnectivityManager) activity
@@ -176,8 +187,28 @@ public class AppUtils {
 		return false;
 	}
 
+	/**
+	 * 跳转到网络设置
+	 * 
+	 * @param activity
+	 */
 	public static void networkSet(Activity activity) {
 		Intent intent = new Intent("android.settings.WIRELESS_SETTINGS");
 		activity.startActivity(intent);
 	}
+
+	/**
+	 * 解码加密的字符串
+	 * 
+	 * @param content
+	 * @return
+	 */
+	public static String decodeString(String content) {
+		if (content != null) {
+			return new String(Base64.decode(content,
+					android.util.Base64.DEFAULT));
+		}
+		return null;
+	}
+
 }

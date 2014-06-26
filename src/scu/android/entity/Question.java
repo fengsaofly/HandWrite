@@ -11,111 +11,118 @@ public class Question implements Serializable {
 	 */
 	private static final long serialVersionUID = 2752572348702656784L;
 
-	private long quesId;// 问题ID
-	private String title;// 标题
-	private String content;// 问题内容
-	private String audio;// 问题录音路径
-	private ArrayList<String> images;// 问题描述图片
-	private Date publishTime;// 发布问题时间
-	private boolean status;// 问题状态（是否解决）
-	private String grade;// 所属年级
-	private String subject;// 所属科目
+	private long qId;// 问题ID
+	private String qTitle;// 标题
+	private long qUser;// 发布问题的用户ID
+	private String qTextContent;// 问题内容
+	private long qResource;
+	private Date createdTime;// 发布问题时间
+	private int qState;// 问题状态（是否解决）
+	private String qGrade;// 所属年级
+	private String qSubject;// 所属科目
 
-	private long userId;// 发布问题的用户ID
+	private ArrayList<Resource> resources;
 
-	public Question(long quesId, String title, String content, String audio,
-			ArrayList<String> images, Date publishTime, boolean status,
-			String grade, String subject, long userId) {
+	
+	public Question(long qId, String qTitle, long qUser, String qTextContent,
+			long qResource, Date createdTime, int qState, String qGrade,
+			String qSubject) {
 		super();
-		this.quesId = quesId;
-		this.title = title;
-		this.content = content;
-		this.audio = audio;
-		this.images = images;
-		this.publishTime = publishTime;
-		this.status = status;
-		this.grade = grade;
-		this.subject = subject;
-		this.userId = userId;
+		this.qId = qId;
+		this.qTitle = qTitle;
+		this.qUser = qUser;
+		this.qTextContent = qTextContent;
+		this.qResource = qResource;
+		this.createdTime = createdTime;
+		this.qState = qState;
+		this.qGrade = qGrade;
+		this.qSubject = qSubject;
 	}
 
-	public long getQuesId() {
-		return quesId;
+	public long getqId() {
+		return qId;
 	}
 
-	public void setQuesId(long quesId) {
-		this.quesId = quesId;
+	public void setqId(long qId) {
+		this.qId = qId;
 	}
 
-	public String getTitle() {
-		return title;
+	public String getqTitle() {
+		return qTitle;
 	}
 
-	public void setTitle(String title) {
-		this.title = title;
+	public void setqTitle(String qTitle) {
+		this.qTitle = qTitle;
 	}
 
-	public String getContent() {
-		return content;
+	public long getqUser() {
+		return qUser;
 	}
 
-	public void setContent(String content) {
-		this.content = content;
+	public void setqUser(long qUser) {
+		this.qUser = qUser;
 	}
 
-	public String getAudio() {
-		return audio;
+	public String getqTextContent() {
+		return qTextContent;
 	}
 
-	public void setAudio(String audio) {
-		this.audio = audio;
+	public void setqTextContent(String qTextContent) {
+		this.qTextContent = qTextContent;
 	}
 
-	public ArrayList<String> getImages() {
-		return images;
+	public long getqResource() {
+		return qResource;
 	}
 
-	public void setImages(ArrayList<String> images) {
-		this.images = images;
+	public void setqResource(long qResource) {
+		this.qResource = qResource;
 	}
 
-	public Date getPublishTime() {
-		return publishTime;
+	public Date getCreatedTime() {
+		return createdTime;
 	}
 
-	public void setPublishTime(Date publishTime) {
-		this.publishTime = publishTime;
+	public void setCreatedTime(Date createdTime) {
+		this.createdTime = createdTime;
 	}
 
-	public boolean isStatus() {
-		return status;
+	public int getqState() {
+		return qState;
 	}
 
-	public void setStatus(boolean status) {
-		this.status = status;
+	public void setqState(int qState) {
+		this.qState = qState;
 	}
 
-	public String getGrade() {
-		return grade;
+	public String getqGrade() {
+		return qGrade;
 	}
 
-	public void setGrade(String grade) {
-		this.grade = grade;
+	public void setqGrade(String qGrade) {
+		this.qGrade = qGrade;
 	}
 
-	public String getSubject() {
-		return subject;
+	public String getqSubject() {
+		return qSubject;
 	}
 
-	public void setSubject(String subject) {
-		this.subject = subject;
+	public void setqSubject(String qSubject) {
+		this.qSubject = qSubject;
 	}
 
-	public long getUserId() {
-		return userId;
+	public ArrayList<Resource> getResouces() {
+		return resources;
 	}
 
-	public void setUserId(long userId) {
-		this.userId = userId;
+	public void setResouces(ArrayList<Resource> resources) {
+		this.resources = resources;
 	}
+
+	public String toString() {
+		return qId + "," + qTitle + "," + qUser + "," + qTextContent + ","
+				+ qResource + "," + createdTime.toString() + "," + qState + ","
+				+ qSubject;
+	}
+
 }

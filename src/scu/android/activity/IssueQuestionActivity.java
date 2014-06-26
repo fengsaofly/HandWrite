@@ -7,7 +7,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import scu.android.application.MyApplication;
 import scu.android.db.QuestionDao;
+import scu.android.db.ResourceDao;
 import scu.android.entity.Question;
+import scu.android.entity.Resource;
 import scu.android.note.ActionBarActivity;
 import scu.android.ui.PhotosAdapter;
 import scu.android.util.AppUtils;
@@ -447,7 +449,6 @@ public class IssueQuestionActivity extends Activity {
 	private ArrayList<String> paths;// 图片路径
 	private GridView thumbnails;
 	private PhotosAdapter adapter;
-	// private final int MAX_NUMBER = 6;
 	private int curPhotosNum;// 选择图库图片数目
 
 	private TextView grade, subject;
@@ -466,9 +467,9 @@ public class IssueQuestionActivity extends Activity {
 		paths = new ArrayList<String>();
 		adapter = new PhotosAdapter(this, paths);
 		adapter.setColumnNum(4);
+		adapter.setAction(action);
 		thumbnails = (GridView) findViewById(R.id.thumbnails);
 		thumbnails.setAdapter(adapter);
-		thumbnails.setOnItemClickListener(new ThumbnailListener());
 		curPhotosNum = 0;
 		// ///////////////////////////////////////////////
 		grade = (TextView) findViewById(R.id.select_grade_btn);
@@ -493,23 +494,8 @@ public class IssueQuestionActivity extends Activity {
 
 	}
 
-	// 缩略图监听器
-	private class ThumbnailListener implements OnItemClickListener {
-
-		@Override
-		public void onItemClick(AdapterView<?> parent, View v, int position,
-				long id) {
-			Intent intent = new Intent(IssueQuestionActivity.this,
-					ScanPhotosActivity.class);
-			intent.setAction(action);
-			intent.putStringArrayListExtra("photos", paths);
-			intent.putExtra("index", position + 1);
-			startActivity(intent);
-		}
-	}
-
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		final String prefix="file:///";
+		final String prefix = "file:///";
 		switch (requestCode) {
 		case Constants.SYS_CAMEAR:// 相机
 			if (resultCode == Activity.RESULT_OK) {
@@ -523,7 +509,7 @@ public class IssueQuestionActivity extends Activity {
 				ArrayList<String> photos = data
 						.getStringArrayListExtra("photos");
 				for (String imgPath : photos) {
-					paths.add(prefix+imgPath);
+					paths.add(prefix + imgPath);
 					++curPhotosNum;
 				}
 			}
@@ -531,21 +517,21 @@ public class IssueQuestionActivity extends Activity {
 		case Constants.DOODLE_BOARD:// 涂鸦
 			if (resultCode == Activity.RESULT_OK) {
 				String imgPath = data.getStringExtra("doodlePath");
-				paths.add(prefix+imgPath);
+				paths.add(prefix + imgPath);
 				++curPhotosNum;
 			}
 			break;
 		case Constants.HANDWRITE_BOARD:// 手写
 			if (resultCode == Activity.RESULT_OK) {
 				String imgPath = data.getStringExtra("handwritePath");
-				paths.add(prefix+imgPath);
+				paths.add(prefix + imgPath);
 				++curPhotosNum;
 			}
 			break;
 		case Constants.SYS_CROP:
 			if (resultCode == Activity.RESULT_OK) {
 				String imgPath = data.getStringExtra("cropPath");
-				paths.add(prefix+imgPath);
+				paths.add(prefix + imgPath);
 				++curPhotosNum;
 			}
 			break;
@@ -635,17 +621,30 @@ public class IssueQuestionActivity extends Activity {
 		});
 	}
 
-	// 发布问题
+	/**
+	 * 发布问题
+	 */
 	public void publishQuestion() {
-		String sTitle = title.getText().toString().trim();
-		if (sTitle.length() != 0 && !sTitle.equals("标题...")) {
-			Question question = new Question(0, sTitle, content.getText()
-					.toString(), path, paths, new Date(), false, grade
-					.getText().toString(), subject.getText().toString(),
-					MyApplication.getLoginUser(this).getUserId());
-			QuestionDao.insertQuestion(this, question);
-			MyApplication.uploadQuestion(question);
-			
+		final String qTitle = title.getText().toString().trim();
+		if (qTitle.length() != 0 && !qTitle.equals("标题...")) {
+			final String qTextContent = content.getText().toString();
+			final String qGrade = grade.getText().toString();
+			final String qSubject = subject.getText().toString();
+			ArrayList<Resource> resources = new ArrayList<Resource>();
+			for (String resourcePath : paths) {
+				resources.add(new Resource(resourcePath));
+			}
+			if (path != null)
+				resources.add(new Resource(path));
+			final long qUser = MyApplication.getLoginUser(this).getUserId();
+			final long qResource = ResourceDao.insertResouce(this, resources);
+			Question question = new Question(0, qTitle, qUser, qTextContent,
+					qResource, new Date(), 2, qGrade, qSubject);
+			question.setResouces(resources);
+			final long qId = QuestionDao.insertQuestion(this, question);
+			MyApplication.oldId = qId;
+			MyApplication.oldResourceId = qResource;
+			MyApplication.uploadQuestion(this, question);
 			Intent intent = new Intent(IssueQuestionActivity.this,
 					ActionBarActivity.class);
 			intent.setAction("scu.android.activity.IssueQuestionActivity");

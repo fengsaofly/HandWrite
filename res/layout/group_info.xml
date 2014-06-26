@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#EFEFF4" >
+    <RelativeLayout android:layout_margin="10dp" android:layout_width="fill_parent" android:layout_height="wrap_content" android:background="@color/TextColorWhite">
+
+
+     
+        
+        <GridView  android:horizontalSpacing="10dp"  android:id="@id/grid_view" android:layout_width="fill_parent" android:minHeight="120dp" android:layout_height="50dp" android:columnWidth="50dp" android:numColumns="5" >
+	    	   
+			</GridView>
+
+    </RelativeLayout>
+	
+    <LinearLayout android:orientation="vertical" android:layout_marginTop="20dp" android:layout_width="fill_parent" android:layout_height="wrap_content"  android:background="@color/TextColorWhite">
+        <RelativeLayout  android:gravity="center_vertical" android:padding="20dp" android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
+
+	        <TextView android:id="@id/group_name" android:gravity="left" style="@style/text_style_large" android:textColor="@color/TextColorBlack" android:layout_width="100dp" android:layout_height="wrap_content" android:text="群名称"    android:layout_centerVertical="true" />
+	        <TextView android:paddingRight="20dp" android:gravity="right" android:id="@id/group_name_val"  android:text="13544412"  android:layout_alignParentRight="true" style="@style/text_style_large_gray"  android:layout_toRightOf="@id/group_name" android:layout_width="wrap_content"  android:layout_height="wrap_content" />
+	        
+	    </RelativeLayout>
+	    <ImageView android:background="@drawable/line" android:layout_width="fill_parent" android:layout_height="wrap_content"/>
+	 
+	    <RelativeLayout  android:padding="20dp" android:layout_width="fill_parent" android:layout_height="wrap_content">
+
+	        <TextView  android:id="@id/group_members" style="@style/text_style_large" android:gravity="left" android:layout_width="100dp" android:layout_height="wrap_content" android:text="人数上限"        />
+	        <TextView  android:id="@id/tag_group_maxmember_val" android:singleLine="true"  android:text="30" style="@style/text_style_large_gray" android:layout_alignParentRight="true" android:layout_width="wrap_content"  android:layout_height="wrap_content" android:drawablePadding="10dp" android:drawableRight="@drawable/triangle"/>
+
+	    	
+			<ImageView  android:layout_width="wrap_content" android:layout_height="wrap_content"  android:src="@drawable/triangle" android:layout_alignParentRight="true" android:layout_centerVertical="true" />
+	  
+	    </RelativeLayout>
+	     <ImageView android:background="@drawable/line" android:layout_width="fill_parent" android:layout_height="wrap_content"/>
+	 
+	   
+	      </LinearLayout>
+    
+      <LinearLayout android:orientation="vertical" android:layout_marginTop="0dp" android:layout_width="fill_parent" android:layout_height="wrap_content"  android:background="@color/TextColorWhite">
+        <RelativeLayout  android:gravity="center_vertical" android:padding="20dp" android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
+
+	        <TextView android:id="@id/group_name" android:gravity="left" style="@style/text_style_large" android:textColor="@color/TextColorBlack" android:layout_width="100dp" android:layout_height="wrap_content" android:text="群类别"    android:layout_centerVertical="true" />
+	        <TextView  android:gravity="center" android:id="@id/group_name_val"  android:text="IT"   style="@style/text_style_large_gray"  android:layout_toRightOf="@id/group_name" android:layout_width="fill_parent"  android:layout_height="wrap_content" />
+	        
+	    </RelativeLayout>
+	    <ImageView android:background="@drawable/line" android:layout_width="fill_parent" android:layout_height="wrap_content"/>
+
+	    
+	    <RelativeLayout  android:gravity="center_vertical" android:padding="20dp" android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
+
+	        <TextView android:id="@id/tag_sign" style="@style/text_style_large" android:gravity="left" android:layout_width="100dp" android:layout_height="wrap_content" android:text="群公告"    android:layout_centerVertical="true"      />
+	        <TextView android:gravity="right" android:id="@id/tag_group_notice_val" android:singleLine="true"  android:text="今天dota开黑" style="@style/text_style_large_gray" android:layout_alignParentRight="true" android:layout_toRightOf="@id/tag_sign" android:layout_width="wrap_content"  android:layout_height="wrap_content" android:drawablePadding="10dp" android:drawableRight="@drawable/triangle"/>
+	    </RelativeLayout>
+	  </LinearLayout>
+    
+    
+    
+    
+    <TextView android:visibility="visible" android:id="@id/submit" android:onClick="true" android:layout_marginTop="10dp" android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="退出该群" style="@style/text_style_big" android:textColor="@color/TextColorWhite" android:background="@drawable/button_long_red_bg" />
+	<!-- <TextView android:visibility="gone" android:id="@+id/joinInTheRoom" android:onClick="true" android:layout_marginTop="10dp" android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="解散该群" style="@style/text_style_big" android:textColor="@color/TextColorWhite" android:background="@drawable/button_long_red_bg" />
+	 -->
+	<TextView android:layout_marginTop="10dp" android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="投诉" style="@style/text_style_big" android:background="@drawable/button_long_white_bg"/>
+    
+</LinearLayout>

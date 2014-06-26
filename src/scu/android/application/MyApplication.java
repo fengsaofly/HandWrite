@@ -3,16 +3,11 @@ package scu.android.application;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
-import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -20,18 +15,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
 import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.RosterEntry;
 import org.jivesoftware.smack.RosterGroup;
@@ -48,21 +31,31 @@ import org.jivesoftware.smackx.filetransfer.FileTransferManager;
 import org.jivesoftware.smackx.filetransfer.OutgoingFileTransfer;
 import org.jivesoftware.smackx.packet.VCard;
 import org.jivesoftware.smackx.search.UserSearchManager;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import scu.android.db.UserDao;
+import scu.android.entity.AsyncHttpParams;
 import scu.android.entity.Question;
+import scu.android.entity.Resource;
 import scu.android.entity.User;
+import scu.android.util.AsyncUploadTask;
+import scu.android.util.Constants;
 import scu.android.util.DownloadUtils;
+import scu.android.util.HttpTools;
 import scu.android.util.UploadUtils;
 import scu.android.util.XmppTool;
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -72,6 +65,8 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 
 public class MyApplication extends Application {
+	private static final String TAG = "MyApplication";
+
 	public static String hostIp = "218.244.144.212";
 	public String hostName = "handwriteserver";
 
@@ -92,6 +87,8 @@ public class MyApplication extends Application {
 	public SharedPreferences sp = null;
 
 	private static User loginUser;
+	public static long oldId = 0;
+	public static long oldResourceId = 0;
 
 	@Override
 	public void onCreate() {
@@ -633,111 +630,106 @@ public class MyApplication extends Application {
 		System.out.println("添加成功");
 	}
 
-	public static void uploadQuestion(final Question question) {
-		final String uploadUrl = "http://192.168.1.148:8000/question/add";
+	/**
+	 * 上传问题
+	 * 
+	 * @param context
+	 * @param question
+	 */
+	public static void uploadQuestion(final Context context,
+			final Question question) {
+		final String url = "http://192.168.1.148:8000/question/add";
 		final String filePrefix = "file:///";
-		new Thread() {
-			public void run() {
-				Map<String, String> params = new HashMap<String, String>();
-
-				params.put("q_title", question.getTitle());
-				params.put("q_grade", question.getGrade());
-				params.put("q_subject", question.getSubject());
-				params.put("q_text_content", question.getContent());
-				params.put("q_user", Long.toString(question.getUserId()));
-
-				Map<String, File> files = new HashMap<String, File>();
-				ArrayList<String> images = question.getImages();
-				for (String imagePath : images) {
-					String name = imagePath.substring(imagePath
-							.lastIndexOf("/") + 1);
-					String imgPath = imagePath
-							.substring(filePrefix.length() + 1);
-					File file = new File(imgPath);
-					files.put(name, file);
-				}
-				final String audioPath = question.getAudio();
-				if (audioPath != null) {
-					final String audioName = audioPath.substring(audioPath
-							.lastIndexOf("/") + 1);
-					final String audioDir = audioPath.substring(filePrefix
-							.length() + 1);
-					files.put(audioName, new File(audioDir));
-				}
-				try {
-					UploadUtils.post(uploadUrl, params, files);
-					Log.i("--------上传提示信息！----------", "上传成功！");
-				} catch (IOException e) {
-					e.printStackTrace();
-					Log.i("有没有错误看这里：", e.toString());
-				}
-			}
-		}.run();
+		// new Thread() {
+		// public void run() {
+		HashMap<String, String> params = new HashMap<String, String>();
+		params.put("q_title", question.getqTitle());
+		params.put("q_grade", question.getqGrade());
+		params.put("q_subject", question.getqSubject());
+		params.put("q_text_content", question.getqTextContent());
+		params.put("q_user", Long.toString(question.getqId()));
+		HashMap<String, File> files = new HashMap<String, File>();
+		ArrayList<String> images = Resource.getImages(question.getResouces());
+		for (String imagePath : images) {
+			String name = imagePath.substring(imagePath.lastIndexOf("/") + 1);
+			String imgPath = imagePath.substring(filePrefix.length() + 1);
+			File file = new File(imgPath);
+			files.put(name, file);
+		}
+		final String audioPath = Resource.getAudio(question.getResouces());
+		if (audioPath != null) {
+			final String audioName = audioPath.substring(audioPath
+					.lastIndexOf("/") + 1);
+			files.put(audioName, new File(audioPath));
+		}
+		// try {
+		// final JSONObject result = UploadUtils.post(url,
+		// params, files);
+		final AsyncHttpParams asyncHttpParams = new AsyncHttpParams(url,
+				params, files);
+		AsyncUploadTask.context = context;
+		HttpTools.asyncUpload(asyncHttpParams);
+		// if (result != null) {
+		// final long qId = Long.parseLong(result
+		// .getString("q_id"));
+		// final long qResource = Long.parseLong(result
+		// .getString("resource_id"));
+		// final Intent intent = new Intent(
+		// Constants.UPLOAD_QUESTION_SUCCESS);
+		// intent.putExtra("qId", qId);
+		// intent.putExtra("qResource", qResource);
+		// context.sendBroadcast(intent);
+		// Log.d(TAG, "[uploadQuestion] qId=" + qId
+		// + ",qResource=" + qResource);
+		// }
+		// } catch (IOException e) {
+		// Log.e(TAG, "[uploadQuestion] " + e.toString());
+		// } catch (NumberFormatException e) {
+		// e.printStackTrace();
+		// } catch (JSONException e) {
+		// e.printStackTrace();
+		// }
+		// }
+		// }.run();
 	}
+
+	/**
+	 * 下载问题
+	 * 
+	 * @param params
+	 * @return
+	 */
 
 	public static ArrayList<Question> downloadAllQuestion(
 			HashMap<String, String> params) {
 		final String downUrl = "http://192.168.1.148:8000/question/getAll?ak=7244d82a2ef54bfa015a0d7d6f85f372";
-		// for(Map.Entry<String, String> params.)
 		ArrayList<Question> questions = new ArrayList<Question>();
-		DownloadUtils.get(downUrl);
+		final JSONArray results = DownloadUtils.get(downUrl);
+		if (results != null) {
+			try {
+				for (int i = 0; i < results.length(); i++) {
+					JSONObject result = results.optJSONObject(i);
+					String qTitle = result.getString("q_title");
+					long qUser = Long.parseLong(result.getString("q_user"));
+					String qTextContent = result.getString("q_text_content");
+					long qResource = Long.parseLong(result
+							.getString("q_resource"));
+					Date createdTime = new Date(
+							result.getLong("created_time") * 1000);
+					int qState = Integer.parseInt(result.getString("q_state"));
+					String qGrade = result.getString("q_grade");
+					String qSubject = result.getString("q_subject");
+					Question question = new Question(0, qTitle, qUser,
+							qTextContent, qResource, createdTime, qState,
+							qGrade, qSubject);
+					questions.add(question);
+					Log.d(TAG, "[downloadAllQuestion] " + question.toString());
+				}
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
 		return questions;
 	}
-
-	// public static void uploadFile(String uploadUrl, String srcPath) {
-	// String end = "\r\n";
-	// String twoHyphens = "--";
-	// String boundary = "******";
-	// try {
-	// URL url = new URL(uploadUrl);
-	// HttpURLConnection httpURLConnection = (HttpURLConnection) url
-	// .openConnection();
-	// // 设置每次传输的流大小，可以有效防止手机因为内存不足崩溃
-	// // 此方法用于在预先不知道内容长度时启用没有进行内部缓冲的 HTTP 请求正文的流。
-	// httpURLConnection.setChunkedStreamingMode(128 * 1024);// 128K
-	// // 允许输入输出流
-	// httpURLConnection.setDoInput(true);
-	// httpURLConnection.setDoOutput(true);
-	// httpURLConnection.setUseCaches(false);
-	// // 使用POST方法
-	// httpURLConnection.setRequestMethod("POST");
-	// httpURLConnection.setRequestProperty("Connection", "Keep-Alive");
-	// httpURLConnection.setRequestProperty("Charset", "UTF-8");
-	// httpURLConnection.setRequestProperty("Content-Type",
-	// "multipart/form-data;boundary=" + boundary);
-	//
-	// DataOutputStream dos = new DataOutputStream(
-	// httpURLConnection.getOutputStream());
-	// dos.writeBytes(twoHyphens + boundary + end);
-	// dos.writeBytes("Content-Disposition: form-data; name=\"q_resources\"; filename=\""
-	// + srcPath.substring(srcPath.lastIndexOf("/") + 1)
-	// + "\""
-	// + end);
-	// dos.writeBytes(end);
-	//
-	// FileInputStream fis = new FileInputStream(srcPath);
-	// byte[] buffer = new byte[8192]; // 8k
-	// int count = 0;
-	// // 读取文件
-	// while ((count = fis.read(buffer)) != -1) {
-	// dos.write(buffer, 0, count);
-	// }
-	// fis.close();
-	//
-	// dos.writeBytes(end);
-	// dos.writeBytes(twoHyphens + boundary + twoHyphens + end);
-	// dos.flush();
-	//
-	// InputStream is = httpURLConnection.getInputStream();
-	// InputStreamReader isr = new InputStreamReader(is, "utf-8");
-	// BufferedReader br = new BufferedReader(isr);
-	// String result = br.readLine();
-	// Log.i("uploadQuestion", result);
-	// dos.close();
-	// is.close();
-	// } catch (Exception e) {
-	// e.printStackTrace();
-	// }
-	// }
 
 }

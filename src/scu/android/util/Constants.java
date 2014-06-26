@@ -23,4 +23,6 @@ public class Constants {
 
 	public final static int ERR_LOCAL_NO_DATA = 0;
 	public final static int ERR_LOCAL_NO_NEW_DATA = 1;
+
+	public static final String UPLOAD_QUESTION_SUCCESS = "scu.android.util.uploadQuestionSuccess";
 }

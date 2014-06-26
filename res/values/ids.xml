@@ -74,6 +74,9 @@
     <item name="tag_group_owner_val" type="id"/>
     <item name="tag_group_name_val" type="id"/>
     <item name="tag_group_occupant_val" type="id"/>
+    <item name="tag_group_maxmember_val" type="id"/>
+    <item name="tag_group_tag_val" type="id"/>
+    <item name="tag_group_notice_val" type="id"/>
 
     <!-- 应用基本 -->
     <item name="activity_title" type="id"/>

@@ -11,87 +11,76 @@ public class Reply implements Serializable {
 	 */
 	private static final long serialVersionUID = -2468416367228166111L;
 
-	private long repId;// 回复Id
-
-	private String content;
-	private String audio;
-	private ArrayList<String> images;
-	private Date replyTime;
-
-	private ArrayList<Reply> replys;
-	private long quesId;
-	private long userId;
-
+	private long rId;// 回复Id
+	private String rTextContent;
+	private long rResource;
+	private Date createdTime;
+	private long qId;
+	private long rUser;
 	private int type;
 
-	public Reply(long repId, String content, String audio,
-			ArrayList<String> images, Date replyTime, long quesId, long userId,
-			int type) {
+	private ArrayList<Reply> replys;
+	private ArrayList<Resource> resources;
+
+
+	public Reply(long rId, String rTextContent, long rResource,
+			Date createdTime, long qId, long rUser, int type) {
 		super();
-		this.repId = repId;
-		this.content = content;
-		this.audio = audio;
-		this.images = images;
-		this.replyTime = replyTime;
-		this.quesId = quesId;
-		this.userId = userId;
+		this.rId = rId;
+		this.rTextContent = rTextContent;
+		this.rResource = rResource;
+		this.createdTime = createdTime;
+		this.qId = qId;
+		this.rUser = rUser;
 		this.type = type;
 	}
 
-	public long getRepId() {
-		return repId;
+	public long getrId() {
+		return rId;
 	}
 
-	public void setRepId(long repId) {
-		this.repId = repId;
+	public void setrId(long rId) {
+		this.rId = rId;
 	}
 
-	public String getContent() {
-		return content;
+	public String getrTextContent() {
+		return rTextContent;
 	}
 
-	public void setContent(String content) {
-		this.content = content;
+	public void setrTextContent(String rTextContent) {
+		this.rTextContent = rTextContent;
 	}
 
-	public String getAudio() {
-		return audio;
+	public long getrResource() {
+		return rResource;
 	}
 
-	public void setAudio(String audio) {
-		this.audio = audio;
+	public void setrResource(long rResource) {
+		this.rResource = rResource;
 	}
 
-	public ArrayList<String> getImages() {
-		return images;
+	public Date getCreatedTime() {
+		return createdTime;
 	}
 
-	public void setImages(ArrayList<String> images) {
-		this.images = images;
+	public void setCreatedTime(Date createdTime) {
+		this.createdTime = createdTime;
 	}
 
-	public Date getReplyTime() {
-		return replyTime;
+	public long getqId() {
+		return qId;
 	}
 
-	public void setReplyTime(Date replyTime) {
-		this.replyTime = replyTime;
+	public void setqId(long qId) {
+		this.qId = qId;
 	}
 
-	public long getQuesId() {
-		return quesId;
+	public long getrUser() {
+		return rUser;
 	}
 
-	public void setQuesId(long quesId) {
-		this.quesId = quesId;
-	}
-
-	public long getUserId() {
-		return userId;
-	}
-
-	public void setUserId(long userId) {
-		this.userId = userId;
+	public void setrUser(long rUser) {
+		this.rUser = rUser;
 	}
 
 	public int getType() {
@@ -110,6 +99,12 @@ public class Reply implements Serializable {
 		this.replys = replys;
 	}
 
+	public ArrayList<Resource> getResources() {
+		return resources;
+	}
 
+	public void setResources(ArrayList<Resource> resources) {
+		this.resources = resources;
+	}
 
 }

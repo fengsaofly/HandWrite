@@ -7,21 +7,22 @@ import java.util.List;
 import scu.android.activity.ReplyQuestionActivity;
 import scu.android.application.MyApplication;
 import scu.android.db.QuestionDao;
-import scu.android.db.ReplyDao;
-import scu.android.db.UserDao;
+import scu.android.db.ResourceDao;
 import scu.android.entity.Question;
+import scu.android.entity.Resource;
 import scu.android.entity.User;
 import scu.android.ui.MGridView;
 import scu.android.ui.PhotosAdapter;
 import scu.android.util.AppUtils;
 import scu.android.util.Constants;
-import scu.android.util.DownloadUtils;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.drawable.ColorDrawable;
 import android.media.MediaPlayer;
@@ -83,6 +84,8 @@ public class QuestionsFragment extends Fragment implements OnClickListener,
 	private PopupWindow classifyWindow;
 	private Context context;
 
+	private User loginUser;
+	private BroadcastReceiver receiver;
 	private ImageLoader loader;
 	private DisplayImageOptions options;
 
@@ -95,6 +98,7 @@ public class QuestionsFragment extends Fragment implements OnClickListener,
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		context = getActivity().getApplicationContext();
+		loginUser = MyApplication.getLoginUser(context);
 
 		view = inflater.inflate(com.demo.note.R.layout.fragment_questions,
 				container, false);
@@ -118,7 +122,11 @@ public class QuestionsFragment extends Fragment implements OnClickListener,
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				startReply(position - 1);
+				final Question question = questions.get(position - 1);
+				if (question.getqState() != 2)
+					startReply(position - 1);
+				else
+					showToast("正在上传中...", Toast.LENGTH_SHORT);
 			}
 		});
 		/*
@@ -129,6 +137,9 @@ public class QuestionsFragment extends Fragment implements OnClickListener,
 			@Override
 			public boolean onItemLongClick(AdapterView<?> parent, View view,
 					int position, long id) {
+				// final Question question = questions.get(position - 1);
+				// System.out.println("longlonsd" + question.getqState());
+				// if (question.getqState() != 2)
 				deleteQuestion(position - 1);
 				return true;
 			}
@@ -141,6 +152,26 @@ public class QuestionsFragment extends Fragment implements OnClickListener,
 		disMore = (TextView) view.findViewById(R.id.dis_more);
 		disMore.setOnClickListener(this);
 
+		receiver = new BroadcastReceiver() {
+
+			@Override
+			public void onReceive(Context context, Intent intent) {
+				if (intent.getAction()
+						.equals(Constants.UPLOAD_QUESTION_SUCCESS)) {
+					final long qId = intent.getLongExtra("qId", 0l);
+					final long qResource = intent.getLongExtra("qResource", 0l);
+					final long oldId = MyApplication.oldId;
+					final long oldResourceId = MyApplication.oldResourceId;
+					QuestionDao.updateUploadQuestion(context, qId, qResource,
+							oldId);
+					ResourceDao.updateUploadResource(context, qResource,
+							oldResourceId);
+				}
+			}
+
+		};
+		context.registerReceiver(receiver, new IntentFilter(
+				Constants.UPLOAD_QUESTION_SUCCESS));
 		loader = ImageLoader.getInstance();
 		options = new DisplayImageOptions.Builder()
 				.displayer(new RoundedBitmapDisplayer(5))
@@ -188,8 +219,7 @@ public class QuestionsFragment extends Fragment implements OnClickListener,
 					}
 					break;
 				case Constants.DATA_AFTER:
-//					resultCode = -1;
-					MyApplication.downloadAllQuestion(null);
+					resultCode = 2;
 					break;
 
 				}
@@ -247,6 +277,9 @@ public class QuestionsFragment extends Fragment implements OnClickListener,
 				case Constants.ERR_LOCAL_NO_NEW_DATA:
 					showToast("请打开网络连接,加载新数据...", Toast.LENGTH_SHORT);
 					break;
+				case 2:
+					questions.addAll(MyApplication.downloadAllQuestion(null));
+					break;
 				}
 			}
 			questionsAdapter.notifyDataSetChanged();
@@ -296,45 +329,53 @@ public class QuestionsFragment extends Fragment implements OnClickListener,
 						R.layout.question_item, null);
 			}
 			final Question question = (Question) getItem(position);
-			final User user = UserDao
-					.getUserById(context, question.getUserId());
+			User user = loginUser;
+			// if (question.getqState() != 2) {
+			// user = UserDao.getUserById(context, question.getqUser());
+			// } else {
+			// user = loginUser;
+			// }
 			maps.put(question, user);
 			ImageView avatar = (ImageView) convertView
 					.findViewById(R.id.avatar);
 			final int width = AppUtils.getDefaultPhotoWidth(getActivity(), 9);
 			AppUtils.setViewSize(avatar, width, width);
+
 			loader.displayImage(user.getAvatar(), avatar, options);
 			((TextView) convertView.findViewById(R.id.nickname)).setText(user
 					.getNickname());
 			final TextView distance = (TextView) convertView
 					.findViewById(R.id.location);
-			if (user.getUserId() == MyApplication.getLoginUser(context)
-					.getUserId())
+			if (user.getUserId() == loginUser.getUserId())
 				distance.setText("附近");
 			else
 				distance.setText("1.2千米");
-			// final View
-			// uploadStatus=convertView.findViewById(R.id.upload_status);
-			// uploadStatus.setVisibility(View.GONE);
-			((TextView) convertView.findViewById(R.id.status)).setText(question
-					.isStatus() ? "已解决" : "未解决");
+			final int qState = question.getqState();
+			if (qState != 2) {
+				((TextView) convertView.findViewById(R.id.status))
+						.setText(qState == 0 ? "未解决" : "已解决");
+			} else {
+				((TextView) convertView.findViewById(R.id.status))
+						.setText("上传中...");
+			}
 			((TextView) convertView.findViewById(R.id.publishTime))
-					.setText(AppUtils.timeToNow(question.getPublishTime()));
+					.setText(AppUtils.timeToNow(question.getCreatedTime()));
 			TextView title = (TextView) convertView.findViewById(R.id.title);
 			MGridView photosView = (MGridView) convertView
 					.findViewById(R.id.photosView);
-			ArrayList<String> images = question.getImages();
-			if (images.size() != 0) {
+			ArrayList<String> images = Resource.getImages(question
+					.getResouces());
+			if (images != null && images.size() != 0) {
 				final String imgSaveDir = "";
 				photosView.setAdapter(new PhotosAdapter(getActivity(), images,
 						imgSaveDir));
-				title.setText(question.getTitle());
+				title.setText(question.getqTitle());
 			} else {
 				title.setVisibility(View.GONE);
 				photosView.setVisibility(View.GONE);
 				TextView fakeTitle = (TextView) convertView
 						.findViewById(R.id.fake_title);
-				fakeTitle.setText(question.getTitle());
+				fakeTitle.setText(question.getqTitle());
 				fakeTitle.setVisibility(View.VISIBLE);
 			}
 			ImageButton reply = (ImageButton) convertView
@@ -349,7 +390,7 @@ public class QuestionsFragment extends Fragment implements OnClickListener,
 			});
 			ImageButton audio = (ImageButton) convertView
 					.findViewById(R.id.audio);
-			final String sAudio = question.getAudio();
+			final String sAudio = Resource.getAudio(question.getResouces());
 			if (sAudio != null && sAudio.length() > 0) {
 				audio.setVisibility(View.VISIBLE);
 				audio.setOnClickListener(new OnClickListener() {
@@ -492,7 +533,7 @@ public class QuestionsFragment extends Fragment implements OnClickListener,
 	// 删除问题
 	public void deleteQuestion(final int index) {
 		final Question question = (Question) questions.get(index);
-		if (question.getUserId() == MyApplication.getLoginUser(context)
+		if (question.getqUser() == MyApplication.getLoginUser(context)
 				.getUserId()) {
 			Dialog alert = new AlertDialog.Builder(getActivity())
 					.setTitle("破题").setMessage("确定删除这个问题?")
@@ -500,12 +541,10 @@ public class QuestionsFragment extends Fragment implements OnClickListener,
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
 							if (!QuestionDao.deleteQuestion(context,
-									question.getQuesId(), 0)) {
+									question.getqId())) {
 								Toast.makeText(
 										getActivity().getApplicationContext(),
 										"删除失败。。.", Toast.LENGTH_SHORT).show();
-								System.out.println(ReplyDao
-										.getTotalReplyNum(context));
 							} else {
 								questions.remove(index);
 								questionsAdapter.notifyDataSetChanged();

@@ -9,29 +9,64 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Map;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
+import scu.android.entity.AsyncHttpParams;
+import android.content.Context;
+import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.StrictMode;
 import android.util.Log;
 
-/**
- * 文件和参数上传
- * 
- * @author YouMingyang
- * 
- */
-public class UploadUtils {
+public class AsyncUploadTask extends
+		AsyncTask<AsyncHttpParams, Integer, JSONObject> {
+	public static final String TAG = "AsyncUploadTask";
+	public static Context context;
 
-	public static final String TAG = "UploadUtils";
+	@Override
+	protected JSONObject doInBackground(AsyncHttpParams... asyncHttpParams) {
+		final String url = asyncHttpParams[0].getUrl();
+		final HashMap<String, String> params = asyncHttpParams[0].getParams();
+		final HashMap<String, File> files = asyncHttpParams[0].getFiles();
+		JSONObject result = null;
+		try {
+			result = upload(url, params, files);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
 
-	/**
-	 * 通过拼接的方式构造请求内容，实现参数传输以及文件传输
-	 * 
-	 */
-	public static JSONObject post(final String actionUrl,
+	@Override
+	protected void onPostExecute(JSONObject result) {
+		if (result != null) {
+			try {
+				final long qId = Long.parseLong(result.getString("q_id"));
+				final long qResource = Long.parseLong(result
+						.getString("resource_id"));
+				final Intent intent = new Intent(
+						Constants.UPLOAD_QUESTION_SUCCESS);
+				intent.putExtra("qId", qId);
+				intent.putExtra("qResource", qResource);
+				context.sendBroadcast(intent);
+				Log.d(TAG, "[uploadQuestion] success");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} else {
+			Log.d(TAG, "[uploadQuestion] failed");
+		}
+	}
+
+	@Override
+	protected void onProgressUpdate(Integer... values) {
+		super.onProgressUpdate(values);
+	}
+
+	public JSONObject upload(final String url,
 			final Map<String, String> params, final Map<String, File> files)
 			throws IOException {
 		if (android.os.Build.VERSION.SDK_INT > 9) {
@@ -47,7 +82,7 @@ public class UploadUtils {
 		HttpURLConnection conn = null;
 		DataOutputStream outStream = null;
 		try {
-			URL uri = new URL(actionUrl);
+			URL uri = new URL(url);
 			conn = (HttpURLConnection) uri.openConnection();
 			conn.setReadTimeout(5 * 1000); // 缓存的最长时间
 			conn.setDoInput(true);// 允许输入
@@ -125,7 +160,7 @@ public class UploadUtils {
 				}
 			}
 		} catch (Exception e) {
-
+			e.printStackTrace();
 		} finally {
 			if (outStream != null)
 				try {
@@ -138,4 +173,5 @@ public class UploadUtils {
 		}
 		return null;
 	}
+
 }
