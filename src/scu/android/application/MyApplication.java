@@ -1,6 +1,5 @@
 package scu.android.application;
 
-
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -9,28 +8,20 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
+import java.io.OutputStream;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.http.Header;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicHeader;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.params.HttpParams;
-import org.apache.http.protocol.HTTP;
-import org.apache.http.util.EntityUtils;
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.RosterEntry;
 import org.jivesoftware.smack.RosterGroup;
@@ -41,16 +32,32 @@ import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.Form;
 import org.jivesoftware.smackx.ReportedData;
 import org.jivesoftware.smackx.ReportedData.Row;
+import org.jivesoftware.smackx.ServiceDiscoveryManager;
+import org.jivesoftware.smackx.filetransfer.FileTransfer;
+import org.jivesoftware.smackx.filetransfer.FileTransferManager;
+import org.jivesoftware.smackx.filetransfer.OutgoingFileTransfer;
+import org.jivesoftware.smackx.muc.HostedRoom;
+import org.jivesoftware.smackx.muc.MultiUserChat;
+import org.jivesoftware.smackx.muc.RoomInfo;
+import org.jivesoftware.smackx.packet.DiscoverInfo;
+import org.jivesoftware.smackx.packet.DiscoverItems;
 import org.jivesoftware.smackx.packet.VCard;
 import org.jivesoftware.smackx.search.UserSearchManager;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import scu.android.db.UserDao;
 import scu.android.entity.Question;
+import scu.android.entity.Reply;
+import scu.android.entity.Resource;
 import scu.android.entity.User;
+import scu.android.http.AsyncDownloadTask;
+import scu.android.http.AsyncHttpParams;
+import scu.android.http.HttpTools;
+import scu.android.util.Constants;
 import scu.android.util.DownloadUtils;
-import scu.android.util.UploadUtils;
+import scu.android.util.XmppTool;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -61,10 +68,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.NinePatchDrawable;
 import android.os.Environment;
-import android.os.Handler;
-import android.os.Message;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.demo.note.R;
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
@@ -73,477 +77,109 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 
 public class MyApplication extends Application {
+	private static final String TAG = "MyApplication";
 
-//	 public static String hostIp = "218.244.144.212";
-	 public String hostName = "handwriteserver";
+//	public static String hostIp = "218.244.144.212";
+//	public String hostName = "handwriteserver";
 
-	public static String hostIp = "192.168.1.148";
-//	public static String hostName = "dolphin0520-pc";
-	public static final String IS_ONLINE = "is_online";
+	 public static String hostIp = "192.168.1.116";
+	 public String hostName = "dolphin0520-pc";
+	 
+//	 public static String hostIp = "192.168.1.148";
+//	 public String hostName = "handwriteserver";
+	public static List<Map<String,Object>> allContactsVcard = new ArrayList<Map<String,Object>>();
+	public static Map<String,Object> myVcard = new HashMap<String,Object>();
+//	public Map<String, Drawable> DrawableOfNameMap;
+//	public Map<String, Drawable> DrawableOfNickNameMap;
+	public static Drawable myIconDrawable = null;
+	public static String nickName = "";
 	public String userName = "jalsary";
-
 	public String passWord = "123456";
-	public String nickName = "";
 
 	public List<RosterGroup> groups = new ArrayList<RosterGroup>();
 	public Roster roster;
 	public List<RosterEntry> entries;
 	public XMPPConnection mConnection;
+	
+	public int firstIn = 1; 
 	public static boolean loginFlag = false;
-	public int firstIn = 1;
+	public static final String IS_ONLINE = "is_online";
 
-	public static VCard vCard = null;
+//	public static VCard myVcard = null;
 	public SharedPreferences sp = null;
+
 	private static User loginUser;
-	// LoginConfig loginConfig;
-	public  List<Map<String,Object>> allContactsVcard = new ArrayList<Map<String,Object>>();
-/**
- * 
- * 下面的代码是跟服务器交互相关的接口
- */
-	public List<Map<String, Object>> cmds = new ArrayList<Map<String, Object>>();
-	public boolean threadRunFlag = false;
-	public static boolean threadFlag = true;
-	public String tkn = "";
-	public int uid = 0;
-	public final String preURI = "http://" + hostIp
-			+ "/dblockerF/mapi/userservice/";
-	public Thread communicateWithServerThread = new Thread(new Runnable() {
-
-		@Override
-		public void run() {
-			// TODO Auto-generated method stub
-			String url = "";
-			Handler handler = null;
-			JSONObject job = new JSONObject();
-			HttpParams params = new BasicHttpParams();
-			// 设置连接超时和 Socket 超时，以及 Socket 缓存大小
-			HttpConnectionParams.setConnectionTimeout(params, 20 * 1000);
-			HttpConnectionParams.setSoTimeout(params, 20000);
-			HttpClient client = new DefaultHttpClient();
-			// client.getParams().setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT,
-			// 10000);
-			// client.getParams().setParameter(CoreConnectionPNames.SO_TIMEOUT,
-			// 10000);
-			// Socket超时设置60s
-			client.getParams().setIntParameter(HttpConnectionParams.SO_TIMEOUT,
-					10000);
-			// 连接超时60s
-			client.getParams().setIntParameter(
-					HttpConnectionParams.CONNECTION_TIMEOUT, 10000);
-			while (threadFlag) {
-
-				if (cmds.size() != 0) {
-					System.out.println("cmds: ");
-					for (Map<String, Object> item : cmds) {
-						System.out.println("item: " + item);
-					}
-					Map<String, Object> item = cmds.get(0); // 发送请求
-					handler = (Handler) item.get("handler");
-					job = (JSONObject) item.get("json");
-					threadRunFlag = true;
-					try {
-						switch (Integer.parseInt(item.get("type").toString())) {
-						case 0:
-							/*
-							 * 
-							 * 
-							 * /login case0
-							 * 
-							 * @param json_in {phonenumber,password}
-							 * 
-							 * @parm json_out {tkn,msg,credits,uid} (msg还是之前的定义)
-							 * 
-							 * /register case1
-							 * 
-							 * @param json_in
-							 * {phonenumber,name,password,jobtitle}
-							 * 
-							 * @param json_out {msg}
-							 * 
-							 * 后面的请求都得带上 tkn+uid
-							 * 
-							 * /correct case2
-							 * 
-							 * @param json_in {phonenumber password} (新密码)
-							 * 
-							 * @param json_out {msg}
-							 * 
-							 * /imageDownload case3
-							 * 
-							 * /creditCalc case4
-							 * 
-							 * /creditLookup case5
-							 * 
-							 * /downloadLookup case6
-							 * 
-							 * /images case7
-							 * 
-							 * /feedback case 8
-							 */
-
-							url = preURI + "login";
-
-							break;
-						case 1:
-							url = preURI + "register";
-							break;
-						case 2:
-							url = preURI + "correct";
-							break;
-						case 3:
-							url = preURI + "imageDownload";
-							break;
-
-						case 4:
-							url = preURI + "creditCalc";
-							break;
-						case 5:
-
-							url = preURI + "creditLookup";
-
-							break;
-						case 6:
-							url = preURI + "downloadLookup";
-							break;
-
-						case 7:
-							url = preURI + "images";
-							break;
-
-						case 8:
-							url = preURI + "feedback";
-							break;
-
-						case 9:
-							url = preURI + "resetpasswd";
-							break;
-
-						default:
-							break;
-						}
-
-						HttpPost httpPost = new HttpPost(url);
-						Header[] header = { new BasicHeader("tkn", tkn),
-								new BasicHeader("uid", "" + uid) };
-						httpPost.setHeaders(header);
-
-						httpPost.setParams(params);
-						httpPost.addHeader("Content-Type", "application/json");
-						// StringEntity s = new StringEntity(job.toString(),
-						// HTTP.UTF_8);
-
-						httpPost.setEntity(new StringEntity(job.toString(),
-								HTTP.UTF_8));
-						// httpPost.setEntity(new
-						// UrlEncodedFormEntity(job.toString(),HTTP.UTF_8));
-
-						HttpResponse response = client.execute(httpPost);
-						if (response.getStatusLine().getStatusCode() == 200) { // 处理结果
-							// 获取返回的数据
-							String resultStr = EntityUtils.toString(
-									response.getEntity(), "UTF-8");
-							System.out.println("结果：" + resultStr);
-							JSONObject jo = new JSONObject(resultStr);
-							String msg = jo.getString("msg");
-							switch (Integer.parseInt(item.get("type")
-									.toString())) {
-
-							case 0: // 处理登陆返回的结果
-
-								if ("error".equals(msg)) {
-									Message message = handler.obtainMessage();
-									message.what = 2;
-									message.obj = "服务器认证失败!";
-									handler.sendMessage(message);
-								} else {
-									String tkn2 = jo.getString("tkn");
-									int credit = jo.getInt("credits");
-									int uid2 = Integer.parseInt(jo
-											.getString("uid"));
-									int rank2 = jo.getInt("rank");
-									String name = jo.getString("name");
-//									nickName = name;
-									// balance = balance2;
-									tkn = tkn2;
-									uid = uid2;
-//									credits = credit;
-//									rank = rank2;
-
-									Message message = handler.obtainMessage();
-									message.what = 1;
-
-									handler.sendMessage(message);
-								}
-								break;
-							case 1:// 注册
-								if (!"error".equals(msg)) {
-									handler.sendEmptyMessage(1);
-								}
-
-								else {
-									handler.sendEmptyMessage(2);
-								}
-
-								break;
-							case 2: // 修改密码
-								if (!"error".equals(msg)) {
-									handler.sendEmptyMessage(1);
-								}
-
-								else {
-									handler.sendEmptyMessage(2);
-								}
-								break;
-							// case 3: // 充值
-							// if (!"error".equals(msg)) {
-							// handler.sendEmptyMessage(1);
-							// }
-							//
-							// else {
-							// handler.sendEmptyMessage(2);
-							// }
-							// break;
-							case 4: // 查询
-								if (!"error".equals(msg)) {
-//									int credit = jo.getInt("credits");
-//									credits = credit;
-									handler.sendEmptyMessage(1);
-
-								} else {
-
-									handler.sendEmptyMessage(2);
-								}
-								//
-								break;
-							// case 5:
-							// if ("error".equals(msg)) {
-							// Message message = handler
-							// .obtainMessage();
-							// message.what = 2;
-							// message.obj = "访问服务器失败!";
-							// handler.sendMessage(message);
-							// } else {
-							//
-							// String records = jo
-							// .getString("records");
-							// rechargeRecords.clear();
-							// JSONArray ja = new JSONArray(records);
-							// for (int i = 0; i < ja.length(); i++) {
-							// RechargeRecord rr = new RechargeRecord();
-							// rr.setR_amount(ja.getJSONObject(i)
-							// .getDouble("r_amount"));
-							// rr.setR_id(ja.getJSONObject(i)
-							// .getInt("r_id"));
-							// rr.setR_time(ja.getJSONObject(i)
-							// .getString("r_time"));
-							// rr.setC_runnum(ja.getJSONObject(i)
-							// .getString("c_runnum"));
-							// rr.setC_state(ja.getJSONObject(i)
-							// .getString("c_state"));
-							// rr.setShop_name(ja.getJSONObject(i)
-							// .getString("shop_name"));
-							// rr.setShop_addr(ja.getJSONObject(i)
-							// .getString("shop_addr"));
-							// rr.setCustom(ja.getJSONObject(i)
-							// .getString("custom"));
-							// rechargeRecords.add(rr);
-							// }
-							//
-							// Message message = handler
-							// .obtainMessage();
-							// message.what = 3;
-							//
-							// handler.sendMessage(message);
-							// }
-							// break;
-							// case 6:
-							// break;
-
-							case 7:// 查看所有图片
-								if (!"error".equals(msg)) {
-									Message msg2 = handler.obtainMessage();
-									msg2.what = 1;
-									// downLoadInfo.clear();
-									// downLoadInfo = null;
-//									downLoadInfo = new ArrayList<Map<String, Object>>();
-//									String images = jo.getString("images");
-//									JSONArray ja = new JSONArray(images);
-//									for (int i = 0; i < ja.length(); i++) {
-//										String image = ja.getJSONObject(i)
-//												.getString("name");
-//										String ads = ja.getJSONObject(i)
-//												.getString("ads");
-//										String shop_url = ja.getJSONObject(i)
-//												.getString("shop_url");
-//										String disp_prefer = ja
-//												.getJSONObject(i).getString(
-//														"disp_prefer");
-//										int cnt_left = ja.getJSONObject(i)
-//												.getInt("cnt_left");
-//										int keep_hour = ja.getJSONObject(i)
-//												.getInt("keep_hours");
-//										int reward = ja.getJSONObject(i)
-//												.getInt("reward");
-//										String dead_date = ja.getJSONObject(i)
-//												.getString("dead_date");
-//										Map<String, Object> info = new HashMap<String, Object>();
-//
-//										info.put("imagePath", image);
-//										info.put("image", image);// 图片url
-//										info.put("cnt_left", cnt_left);// 图片剩余数
-//										info.put("dead_date", dead_date);// 图片截止时间
-//										info.put("reward", reward);// 赚多少钱
-//										info.put("keep_hour", keep_hour);// 需要使用多少时间
-//										info.put("image_flag", 0);// 是否是图片
-//										info.put("ads", ads);// 商家信息
-//										info.put("url", shop_url);// 链接
-//										info.put("disp_prefer", disp_prefer);// 日期显示位置
-//										System.out.println("left: " + cnt_left);
-//										System.out.println("image: " + image);
-//										downLoadInfo.add(info);
-
-//									}
-//									msg2.obj = downLoadInfo;
-									handler.sendMessage(msg2);
-
-								}
-
-								else {
-									handler.sendEmptyMessage(2);
-								}
-								break;
-							case 8:// 反馈
-								if (!"error".equals(msg)) {
-									handler.sendEmptyMessage(1);
-								}
-
-								else {
-									handler.sendEmptyMessage(2);
-								}
-
-								break;
-
-							case 9:
-								if (!"error".equals(msg)) {
-									handler.sendEmptyMessage(1);
-								}
-
-								else {
-									handler.sendEmptyMessage(2);
-								}
-								break;
-							default:
-								break;
-
-							}
-						} else { // 返回值不等于200
-							Message msg = handler.obtainMessage();
-							msg.what = 2;
-
-							handler.sendMessage(msg);
-						}
-					} catch (UnsupportedEncodingException e) {
-						// TODO Auto-generated catch block
-						Message msg = handler.obtainMessage();
-						msg.what = 2;
-						msg.obj = e.getMessage().toString();
-						handler.sendMessage(msg);
-						e.printStackTrace();
-					} catch (ClientProtocolException e) {
-						// TODO Auto-generated catch block
-						Message msg = handler.obtainMessage();
-						msg.what = 2;
-						msg.obj = e.getMessage().toString();
-						handler.sendMessage(msg);
-						e.printStackTrace();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						Message msg = handler.obtainMessage();
-						msg.what = 2;
-						msg.obj = e.getMessage().toString();
-						handler.sendMessage(msg);
-						e.printStackTrace();
-					} catch (JSONException e) {
-						// TODO Auto-generated catch block
-						Message msg = handler.obtainMessage();
-						msg.what = 2;
-						msg.obj = e.getMessage().toString();
-						handler.sendMessage(msg);
-						e.printStackTrace();
-					}
-					cmds.remove(0);
-					threadRunFlag = false;
-				}
-
-				// cmds.clear();
-
-				else {
-					try {
-						Thread.sleep(1000);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						Message msg = handler.obtainMessage();
-						msg.what = 2;
-						msg.obj = e.getMessage().toString();
-						handler.sendMessage(msg);
-
-						e.printStackTrace();
-					}
-				}
-			}
-		}
-	});
+	public static long oldId = 0;
+	public static long oldResourceId = 0;
+//	public static Handler actionBarHandler = null;
 
 	@Override
 	public void onCreate() {
 		// TODO Auto-generated method stub
 		super.onCreate();
 		// initial();
-//<<<<<<< HEAD
-//		communicateWithServerThread.start();
-//		initImageLoader();
-//		
-//		// XmppConnectionManager.getInstance().init();
-//		System.out.println("oncreate   ");
-//=======
-
+//		myIconDrawable = getResources().getDrawable(R.drawable.default_avatar);
 		initImageLoader(getApplicationContext());
 		// System.out.println("oncreate   ");
-
 		sp = getSharedPreferences("poti", MODE_PRIVATE);
-
+		
+		
 	}
 
-	@Override
-	public void onTerminate() { // 在真机中永远不会被调用
-		// TODO Auto-generated method stub
-		threadFlag = false;
-		super.onTerminate();
-	}
 
-	Handler handler = new Handler() {
-		public void handleMessage(Message msg) {
-
-			switch (msg.what) {
-			case 1:
-
-				Toast.makeText(MyApplication.this, "登陆成功", Toast.LENGTH_SHORT)
-						.show();
-				System.out.println("登陆成功   ");
-				loginFlag = true;
-
-				break;
-			case 2:
-				System.out.println("登陆失败   ");
-				Toast.makeText(MyApplication.this, "登陆失败", Toast.LENGTH_SHORT)
-						.show();
-				break;
-			}
-			super.handleMessage(msg);
-		}
-	};
 	
+
+//	public void initial() {
+//		// mConnection = XmppTool.getConnection();
+//		new Thread(new Runnable() {
+//			public void run() {
+//
+//				try {
+//
+//					XmppTool.getConnection().login(userName, passWord);
+//					// 新建presence对象״̬
+//					Presence presence = new Presence(Presence.Type.available);
+//					XmppTool.getConnection().sendPacket(presence);
+//
+//					System.out.println("正在登陆");
+//					handler.sendEmptyMessage(1);
+//					roster = XmppTool.getConnection().getRoster();
+//
+//					entries = getAllEntries();
+//
+//				} catch (XMPPException e) {
+//					XmppTool.closeConnection();
+//
+//					handler.sendEmptyMessage(2);
+//				}
+//			}
+//		}).start();
+//	}
+//
+//	Handler handler = new Handler() {
+//		public void handleMessage(Message msg) {
+//
+//			switch (msg.what) {
+//			case 1:
+//
+//				Toast.makeText(MyApplication.this, "登陆成功", Toast.LENGTH_SHORT)
+//						.show();
+//				System.out.println("登陆成功   ");
+//				loginFlag = true;
+//
+//				break;
+//			case 2:
+//				System.out.println("登陆失败   ");
+//				Toast.makeText(MyApplication.this, "登陆失败", Toast.LENGTH_SHORT)
+//						.show();
+//				break;
+//			}
+//			super.handleMessage(msg);
+//		}
+//	};
+//	public Map<String, String> iconMap;
+//	public Map<String, String> cityMap;
+//	public Map<String, String> signMap;
 
 	public boolean addUser(String userName, String name) {
 		try {
@@ -739,6 +375,28 @@ public class MyApplication extends Application {
 		return Environment.getExternalStorageDirectory().getPath();
 	}
 
+	public static void changeImage(XMPPConnection connection, File f)
+			throws XMPPException, IOException {
+
+		VCard vcard = new VCard();
+		vcard.load(connection);
+
+		byte[] bytes;
+
+		bytes = getFileBytes(f);
+		String encodedImage = StringUtils.encodeBase64(bytes);
+		vcard.setAvatar(bytes);
+		vcard.setEncodedImage(encodedImage);
+		vcard.setField("PHOTO", "<TYPE>image/jpg</TYPE><BINVAL>" + encodedImage
+				+ "</BINVAL>", true);
+
+		// ByteArrayInputStream bais = new
+		// ByteArrayInputStream(vcard.getAvatar());
+		// FormatTools.getInstance().InputStream2Bitmap(bais);
+
+		vcard.save(connection);
+	}
+
 	public static ByteArrayInputStream getUserImage(XMPPConnection connection,
 			String user) {
 		ByteArrayInputStream bais = null;
@@ -763,88 +421,6 @@ public class MyApplication extends Application {
 		return bais;
 	}
 
-	/**
-	 * 修改用户头像
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 */
-	public void changeImage(XMPPConnection connection, File f)
-			throws XMPPException, IOException {
-
-		VCard vcard = new VCard();
-		vcard.load(connection, userName + "@" + connection.getServiceName());
-
-		byte[] bytes;
-
-		bytes = getFileBytes(f);
-		String encodedImage = StringUtils.encodeBase64(bytes);
-		vcard.setAvatar(bytes, encodedImage);
-		vcard.setEncodedImage(encodedImage);
-		vcard.setField("PHOTO", "<TYPE>image/jpg</TYPE><BINVAL>" + encodedImage
-				+ "</BINVAL>", true);
-
-		// ByteArrayInputStream bais = new ByteArrayInputStream(
-		// vcard.getAvatar());
-		// Image image = ImageIO.read(bais);
-		// ImageIcon ic = new ImageIcon(image);
-
-		// vcard.setMiddleName(vcard.getMiddleName());
-		// System.out.println("vcard.getMiddleName(): "+vcard.getMiddleName());
-		//
-		// vcard.setNickName(vcard.getNickName());
-		// System.out.println("vcard.getNickName(): "+vcard.getNickName());
-		//
-		// vcard.setFirstName(vcard.getFirstName());
-		//
-		// vcard.setAddressFieldHome("zone", vcard.getAddressFieldHome("zone"));
-		//
-		//
-		// vcard.setLastName(vcard.getLastName());
-		vcard.save(connection);
-
-	}
-	
-	
-	/**
-	 * @author YouMingyang
-	 * @param context
-	 * @return 当前登录用户
-	 */
-	public static User getLoginUser(Context context) {
-		if (loginUser == null) {
-			if (UserDao.getUsers(context).size() == 0) {
-				User user = new User(0l, "jalsary", null, 0, 0, "jalsary",
-						"assets://avatar.jpg", null, null, 'M', 0, 0, 0,
-						new Date());
-				long userId = UserDao.insertUser(context, user);
-				loginUser = UserDao.getUserById(context, userId);
-			}
-			loginUser = UserDao.getUsers(context).get(0);
-		}
-		return loginUser;
-	}
-
-	private static byte[] getFileBytes(File file) throws IOException {
-		BufferedInputStream bis = null;
-		try {
-			bis = new BufferedInputStream(new FileInputStream(file));
-			int bytes = (int) file.length();
-			byte[] buffer = new byte[bytes];
-			int readBytes = bis.read(buffer);
-			if (readBytes != buffer.length) {
-				throw new IOException("Entire file not read");
-			}
-			return buffer;
-		} finally {
-			if (bis != null) {
-				bis.close();
-			}
-		}
-	}
-
 	public static VCard getUserVcard(XMPPConnection connection, String user) {
 		VCard vcard = new VCard();
 		try {
@@ -852,8 +428,9 @@ public class MyApplication extends Application {
 			// 加入这句代码，解决No VCard for
 			ProviderManager.getInstance().addIQProvider("vCard", "vcard-temp",
 					new org.jivesoftware.smackx.provider.VCardProvider());
-
+			System.out.println( "load..."+ user + "@" + connection.getServiceName());
 			vcard.load(connection, user + "@" + connection.getServiceName());
+			
 
 			if (vcard == null)
 				return null;
@@ -922,22 +499,219 @@ public class MyApplication extends Application {
 
 		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
 		// loadArray(list);
+
 	}
 
+	public  void sendFile(String user,
+			File file) {
+		try {
+			XMPPConnection connection = XmppTool.getConnection();
+			System.out.println("发送文件开始" + file.getName());
+			FileTransferManager transfer = new FileTransferManager(connection);
+			String destination = user +"@"+hostName +"/Smack";
+			System.out.println("发送给： "+destination);
+			final OutgoingFileTransfer out = transfer
+					.createOutgoingFileTransfer(destination);
+			System.out.println(connection.getPort());
+			if (file.exists()) {
+				System.out.println("文件存在");
+			}
+			long timeOut = 100000;
+			long sleepMin = 3000;
+			long spTime = 0;
+			int rs = 0;
+			try {
+				byte[] fileData = getFileBytes(file);
+				OutputStream os = out.sendFile(file.getName(), fileData.length,
+						"you won't like it");
+				os.write(fileData);
+				os.flush();
+				rs = out.getStatus().compareTo(FileTransfer.Status.complete);
+				while (rs != 0) {
+					System.out
+							.println("getStatus" + out.getStatus().toString());
+					rs = out.getStatus()
+							.compareTo(FileTransfer.Status.complete);
+					System.out.println(rs);
+					spTime = spTime + sleepMin;
+					if (spTime > timeOut) {
+						System.out.println("fail" + "文件发送失败");
+						return;
+					}
+					Thread.sleep(sleepMin);
+				}
+				System.out.println("end send file");
+			} catch (XMPPException e) {
+				e.printStackTrace();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * @author YouMingyang
+	 * @param context
+	 *            初始化图片加载器
+	 */
 	public static void initImageLoader(Context context) {
 		ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(
-
 				context).threadPriority(Thread.NORM_PRIORITY - 2)
 				.denyCacheImageMultipleSizesInMemory()
 				.diskCacheFileNameGenerator(new Md5FileNameGenerator())
 				.tasksProcessingOrder(QueueProcessingType.LIFO)
-
-				.writeDebugLogs() // Remove for release app
-
+				// .writeDebugLogs() // Remove for release app
 				.build();
 		ImageLoader.getInstance().init(config);
-
 	}
+
+	/**
+	 * @author YouMingyang
+	 * @param context
+	 * @return 当前登录用户
+	 */
+	public static User getLoginUser(Context context) {
+		if (loginUser == null) {
+			if (UserDao.getUsers(context).size() == 0) {
+				User user = new User(0l, "jalsary", null, 0, 0, "jalsary",
+						"assets://avatar.jpg", null, null, 'M', 0, 0, 0,
+						new Date());
+				long userId = UserDao.insertUser(context, user);
+				loginUser = UserDao.getUserById(context, userId);
+			}
+			loginUser = UserDao.getUsers(context).get(0);
+		}
+		return loginUser;
+	}
+	
+	/**
+	 * 上传问题
+	 * 
+	 * @param context
+	 *            activity context
+	 * @param question
+	 *            上传问题
+	 */
+	public static void uploadQuestion(final Context context,
+			final Question question) {
+		final String baseUrl = "http://192.168.1.148:8000/question/add";
+		final String action = Constants.QUESTIONS;
+		final String filePrefix = "file:///";
+		LinkedList<NameValuePair> textParams = new LinkedList<NameValuePair>();
+		textParams.add(new BasicNameValuePair("q_title", question.getqTitle()));
+		textParams.add(new BasicNameValuePair("q_grade", question.getqGrade()));
+		textParams.add(new BasicNameValuePair("q_subject", question
+				.getqSubject()));
+		textParams.add(new BasicNameValuePair("q_text_content", question
+				.getqTextContent()));
+		textParams.add(new BasicNameValuePair("q_user", String.valueOf(question
+				.getqUser())));
+		LinkedList<NameValuePair> fileParams = new LinkedList<NameValuePair>();
+		for (Resource resource : question.getResources()) {
+			String filePath = resource.getResourceLPath();
+			String name = filePath.substring(filePath.lastIndexOf("/") + 1);
+			String value = filePath;
+			if (value.startsWith(filePrefix)) {
+				value = value.substring(filePrefix.length() + 1);
+			}
+			fileParams.add(new BasicNameValuePair(name, value));
+		}
+		final AsyncHttpParams asyncHttpParams = new AsyncHttpParams(baseUrl,
+				textParams, fileParams, action);
+		HttpTools.asyncUpload(context, asyncHttpParams);
+	}
+
+	/**
+	 * 下载问题
+	 * 
+	 * @return
+	 */
+	public static void downloadAllQuestion(final Context context,
+			final LinkedList<NameValuePair> params) {
+		final String baseUrl = "http://192.168.1.148:8000/question/get";
+		final String action = Constants.QUESTIONS;
+		LinkedList<NameValuePair> textParams = new LinkedList<NameValuePair>();
+		textParams.add(new BasicNameValuePair("ak",
+				"7244d82a2ef54bfa015a0d7d6f85f372"));
+		textParams.addAll(params);
+		final AsyncHttpParams asyncHttpParams = new AsyncHttpParams(baseUrl,
+				textParams, null, action);
+		AsyncDownloadTask.context = context;
+		HttpTools.asyncDownload(asyncHttpParams);
+	}
+
+	public static void uploadReply(final Context context, final Reply reply) {
+		final String baseUrl = "http://192.168.1.148:8000/questionReply/add";
+		final String action = Constants.REPLYS;
+		final String filePrefix = "file:///";
+		System.out.println("qid:" + reply.getqId());
+		final String url = baseUrl + "/" + reply.getqId();
+		LinkedList<NameValuePair> textParams = new LinkedList<NameValuePair>();
+		textParams.add(new BasicNameValuePair("qr_text", reply
+				.getrTextContent()));
+		textParams.add(new BasicNameValuePair("qr_user", String.valueOf(reply
+				.getrUser())));
+		LinkedList<NameValuePair> fileParams = new LinkedList<NameValuePair>();
+		for (String imgPath : Resource.getLImages(reply.getResources())) {
+			String name = imgPath.substring(imgPath.lastIndexOf("/") + 1);
+			String value = imgPath.substring(filePrefix.length() + 1);
+			fileParams.add(new BasicNameValuePair(name, value));
+		}
+		final AsyncHttpParams asyncHttpParams = new AsyncHttpParams(url,
+				textParams, fileParams, action);
+		HttpTools.asyncUpload(context, asyncHttpParams);
+	}
+
+
+
+	private static byte[] getFileBytes(File file) throws IOException {
+		BufferedInputStream bis = null;
+		try {
+			bis = new BufferedInputStream(new FileInputStream(file));
+			int bytes = (int) file.length();
+			byte[] buffer = new byte[bytes];
+			int readBytes = bis.read(buffer);
+			if (readBytes != buffer.length) {
+				throw new IOException("Entire file not read");
+			}
+			return buffer;
+		} finally {
+			if (bis != null) {
+				bis.close();
+			}
+		}
+	}
+
+//	public static VCard getUserVCard(XMPPConnection connection)
+//			throws XMPPException {
+//		VCard vcard = new VCard();
+//		vcard.load(connection);
+//		System.out.println(vcard.getField("sex"));
+//		System.out.println(vcard.getField("DESC"));
+//		System.out.println(vcard.getEmailHome());
+//		System.out.println(vcard.getOrganization());
+//		System.out.println(vcard.getNickName());
+//		System.out.println(vcard.getPhoneWork("PHONE"));
+//		System.out.println(vcard.getProperty("DESC"));
+//		System.out.println(vcard.getAvatar());
+//		return vcard;
+//	}
+
+//	public static VCard getUserVCard(XMPPConnection connection, String userJid)
+//			throws XMPPException {
+//		VCard vcard = new VCard();
+//		vcard.load(connection, userJid);
+//		System.out.println(vcard.getOrganization());
+//		System.out.println(vcard.getField("sex"));
+//		System.out.println(vcard.getNickName());
+//		System.out.println(vcard.getAvatar());
+//		System.out.println(vcard.getField("DESC"));
+//		return vcard;
+//	}
 
 	public void setUserVCard(XMPPConnection con, int tag,
 			String modifyNomal_value) throws XMPPException, IOException {
@@ -1079,112 +853,173 @@ public class MyApplication extends Application {
 		}
 		return null;
 	}
-	public static void uploadQuestion(final Question question) {
-		final String uploadUrl = "http://192.168.1.148:8000/question/add";
-		final String filePrefix = "file:///";
-		new Thread() {
-			public void run() {
-				Map<String, String> params = new HashMap<String, String>();
 
-				params.put("q_title", question.getTitle());
-				params.put("q_grade", question.getGrade());
-				params.put("q_subject", question.getSubject());
-				params.put("q_text_content", question.getContent());
-				params.put("q_user", Long.toString(question.getUserId()));
+	/**
+	 * 上传问题
+	 * 
+	 * @param context
+	 * @param question
+	 */
+	
 
-				Map<String, File> files = new HashMap<String, File>();
-				ArrayList<String> images = question.getImages();
-				for (String imagePath : images) {
-					String name = imagePath.substring(imagePath
-							.lastIndexOf("/") + 1);
-					String imgPath = imagePath
-							.substring(filePrefix.length() + 1);
-					File file = new File(imgPath);
-					files.put(name, file);
-				}
-				final String audioPath = question.getAudio();
-				if (audioPath != null) {
-					final String audioName = audioPath.substring(audioPath
-							.lastIndexOf("/") + 1);
-					final String audioDir = audioPath.substring(filePrefix
-							.length() + 1);
-					files.put(audioName, new File(audioDir));
-				}
-				try {
-					UploadUtils.post(uploadUrl, params, files);
-					Log.i("--------上传提示信息！----------", "上传成功！");
-				} catch (IOException e) {
-					e.printStackTrace();
-					Log.i("有没有错误看这里：", e.toString());
-				}
-			}
-		}.run();
-	}
+	/**
+	 * 下载问题
+	 * 
+	 * @param params
+	 * @return
+	 */
 
 	public static ArrayList<Question> downloadAllQuestion(
 			HashMap<String, String> params) {
 		final String downUrl = "http://192.168.1.148:8000/question/getAll?ak=7244d82a2ef54bfa015a0d7d6f85f372";
-		// for(Map.Entry<String, String> params.)
 		ArrayList<Question> questions = new ArrayList<Question>();
-		DownloadUtils.get(downUrl);
+		final JSONArray results = DownloadUtils.get(downUrl);
+		if (results != null) {
+			try {
+				for (int i = 0; i < results.length(); i++) {
+					JSONObject result = results.optJSONObject(i);
+					String qTitle = result.getString("q_title");
+					long qUser = Long.parseLong(result.getString("q_user"));
+					String qTextContent = result.getString("q_text_content");
+					long qResource = Long.parseLong(result
+							.getString("q_resource"));
+					Date createdTime = new Date(
+							result.getLong("created_time") * 1000);
+					int qState = Integer.parseInt(result.getString("q_state"));
+					String qGrade = result.getString("q_grade");
+					String qSubject = result.getString("q_subject");
+					Question question = new Question(0, qTitle, qUser,
+							qTextContent, qResource, createdTime, qState,
+							qGrade, qSubject);
+					questions.add(question);
+					Log.d(TAG, "[downloadAllQuestion] " + question.toString());
+				}
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
 		return questions;
-
 	}
-
-	// public static void uploadFile(String uploadUrl, String srcPath) {
-	// String end = "\r\n";
-	// String twoHyphens = "--";
-	// String boundary = "******";
-	// try {
-	// URL url = new URL(uploadUrl);
-	// HttpURLConnection httpURLConnection = (HttpURLConnection) url
-	// .openConnection();
-	// // 设置每次传输的流大小，可以有效防止手机因为内存不足崩溃
-	// // 此方法用于在预先不知道内容长度时启用没有进行内部缓冲的 HTTP 请求正文的流。
-	// httpURLConnection.setChunkedStreamingMode(128 * 1024);// 128K
-	// // 允许输入输出流
-	// httpURLConnection.setDoInput(true);
-	// httpURLConnection.setDoOutput(true);
-	// httpURLConnection.setUseCaches(false);
-	// // 使用POST方法
-	// httpURLConnection.setRequestMethod("POST");
-	// httpURLConnection.setRequestProperty("Connection", "Keep-Alive");
-	// httpURLConnection.setRequestProperty("Charset", "UTF-8");
-	// httpURLConnection.setRequestProperty("Content-Type",
-	// "multipart/form-data;boundary=" + boundary);
-	//
-	// DataOutputStream dos = new DataOutputStream(
-	// httpURLConnection.getOutputStream());
-	// dos.writeBytes(twoHyphens + boundary + end);
-	// dos.writeBytes("Content-Disposition: form-data; name=\"q_resources\"; filename=\""
-	// + srcPath.substring(srcPath.lastIndexOf("/") + 1)
-	// + "\""
-	// + end);
-	// dos.writeBytes(end);
-	//
-	// FileInputStream fis = new FileInputStream(srcPath);
-	// byte[] buffer = new byte[8192]; // 8k
-	// int count = 0;
-	// // 读取文件
-	// while ((count = fis.read(buffer)) != -1) {
-	// dos.write(buffer, 0, count);
-	// }
-	// fis.close();
-	//
-	// dos.writeBytes(end);
-	// dos.writeBytes(twoHyphens + boundary + twoHyphens + end);
-	// dos.flush();
-	//
-	// InputStream is = httpURLConnection.getInputStream();
-	// InputStreamReader isr = new InputStreamReader(is, "utf-8");
-	// BufferedReader br = new BufferedReader(isr);
-	// String result = br.readLine();
-	// Log.i("uploadQuestion", result);
-	// dos.close();
-	// is.close();
-	// } catch (Exception e) {
-	// e.printStackTrace();
-	// }
-	// }
-
+	
+	public static void getRoomInfo(List<RoomInfo> result){
+		List<String> col = new ArrayList<String>();
+		try {
+			col = getConferenceServices(XmppTool.getConnection().getServiceName(), XmppTool.getConnection());
+			 for (Object aCol : col) {
+				 String service = (String) aCol;
+				 Collection<HostedRoom> rooms = MultiUserChat.getHostedRooms(XmppTool.getConnection(),service);
+				 for(HostedRoom aroom : rooms) {
+					 System.out.println(aroom.getName() + " - " +aroom.getJid());
+					 RoomInfo roomInfo = MultiUserChat.getRoomInfo(XmppTool.getConnection(),aroom.getJid());
+					 if(roomInfo != null) {
+						 result.add(roomInfo);
+						 System.out.println("roomInfo.getOccupantsCount(): "+roomInfo.getOccupantsCount() + " \nroomInfo.getSubject() : " +roomInfo.getSubject()+"\nroomInfo.getDescription(): "+roomInfo.getDescription()+roomInfo.getRoom());
+					 }
+				 }
+			 }
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+//		return result;
+	}
+	
+	public static List<String> getConferenceServices(String server,XMPPConnection connection) throws Exception{
+		List<String> answer = new ArrayList<String>();
+		ServiceDiscoveryManager discoManager = ServiceDiscoveryManager.getInstanceFor(connection);
+		DiscoverItems items = discoManager.discoverItems(server);
+		for(Iterator<DiscoverItems.Item> it = items.getItems();it.hasNext();){
+			DiscoverItems.Item item = (DiscoverItems.Item)it.next();
+			if(item.getEntityID().startsWith("conference")||item.getEntityID().startsWith("private")){
+				answer.add(item.getEntityID());
+			}
+			else{
+				try{
+					
+					DiscoverInfo info = discoManager.discoverInfo(item.getEntityID());
+					if(info.containsFeature("http://jabber.org/protocol/muc")){
+						answer.add(item.getEntityID());
+					}
+				}catch(XMPPException e){
+					e.printStackTrace();
+				}
+			}
+		}
+		return answer;
+		
+	}
+	
+	public static List<String> getAllMembersInGroup(MultiUserChat muc ){
+		List<String> members = new ArrayList<String>();
+		Iterator<String> it = muc.getOccupants();
+		while(it.hasNext()){
+			String name = it.next();
+			name = name.substring(name.indexOf("/")+1);
+			members.add(name);
+		}
+		
+		return (null!=members&&members.size()!=0)?members:null;
+		
+		
+	}
+	
+	
+	 public int IsUserOnLine(String user) {    //判断用户是否在线
+	        String url = "http://"+hostIp+":9090/plugins/presence/status?" +  
+	                "jid="+ user +"@"+ hostName +"&type=xml";  
+	        int shOnLineState = 0; // 不存在  
+	        try {  
+	            URL oUrl = new URL(url);  
+	            URLConnection oConn = oUrl.openConnection();  
+	            if (oConn != null) {  
+	                BufferedReader oIn = new BufferedReader(new InputStreamReader(  
+	                        oConn.getInputStream()));  
+	                if (null != oIn) {  
+	                    String strFlag = oIn.readLine();  
+	                    oIn.close();  
+	                    System.out.println("strFlag"+strFlag);  
+	                    if (strFlag.indexOf("type=\"unavailable\"") >= 0) {  
+	                        shOnLineState = 2;  
+	                    }  
+	                    if (strFlag.indexOf("type=\"error\"") >= 0) {  
+	                        shOnLineState = 0;  
+	                    } else if (strFlag.indexOf("priority") >= 0  
+	                            || strFlag.indexOf("id=\"") >= 0) {  
+	                        shOnLineState = 1;  
+	                    }  
+	                }  
+	            }  
+	        } catch (Exception e) {  
+	        	 shOnLineState = 3;  
+	            e.printStackTrace();  
+	        }  
+	  
+	        return shOnLineState;  
+	    }  
+	 
+	 
+//	 public  void sendFile(XMPPConnection connection,  
+//	            String user, File file) throws XMPPException, InterruptedException {  
+//	          
+//	        System.out.println("发送文件开始"+file.getName());  
+//	        FileTransferManager transfer = new FileTransferManager(connection);  
+//	        System.out.println("发送文件给: "+user+"@"+hostName);  
+//	        OutgoingFileTransfer out = transfer.createOutgoingFileTransfer(user+hostName);//  
+//	          
+//	        out.sendFile(file, file.getName());  
+//	          
+//	        System.out.println("//////////");  
+//	        System.out.println(out.getStatus());  
+//	        System.out.println(out.getProgress());  
+//	        System.out.println(out.isDone());  
+//	          
+//	        System.out.println("//////////");  
+//	          
+//	        System.out.println("发送文件结束");  
+//	    }
+	 
+	 
+	 
+	 
+	
 }

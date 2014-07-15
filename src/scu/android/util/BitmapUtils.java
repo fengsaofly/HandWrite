@@ -94,6 +94,33 @@ public class BitmapUtils {
 		return imageDir;
 	}
 
+	public static String getNewPath(Context context, String imageDir,
+			String imgName) {
+		String newPath = MyApplication.getSDCardPath() + "/" + imageDir + "/"
+				+ imgName.substring(imgName.lastIndexOf("/") + 1);
+		Log.d("newPath=", newPath);
+		return newPath;
+	}
+
+	// 保存图片到SD卡
+	public static String saveDownloadBitmap(Context context, Bitmap bitmap,
+			String imageDir, String imgName) {
+		File fileDir = new File(MyApplication.getSDCardPath() + "/" + imageDir);
+		if (!fileDir.exists())
+			fileDir.mkdirs();
+		try {
+			imgName = imgName.substring(imgName.lastIndexOf("/") + 1);
+			imageDir = fileDir.getAbsolutePath() + "/" + imgName;
+			FileOutputStream fos = new FileOutputStream(imageDir);
+			bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+			fos.close();
+			Log.i("Bitmap stored in:", imageDir);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return imageDir;
+	}
+
 	// 读取图片
 	public static Bitmap readFileFromAssets(String pathName, boolean scale,
 			Activity activity) {

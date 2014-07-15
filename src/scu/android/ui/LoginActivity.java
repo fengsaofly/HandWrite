@@ -2,40 +2,37 @@ package scu.android.ui;
 
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
+import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.RosterEntry;
+import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.provider.ProviderManager;
-import org.jivesoftware.smackx.OfflineMessageManager;
 import org.jivesoftware.smackx.packet.VCard;
 
 import scu.android.application.MyApplication;
 import scu.android.note.ActionBarActivity;
+import scu.android.util.GetAllContactVcardThread;
 import scu.android.util.GetOffLineMessageThread;
 import scu.android.util.XmppTool;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.text.InputType;
 import android.view.View;
 import android.view.Window;
 import android.widget.AutoCompleteTextView;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -49,6 +46,11 @@ public class LoginActivity extends Activity{
 	EditText passWord = null;
 	CheckBox login_show_password = null;
 	SharedPreferences sp = null;
+	public static XMPPConnection mConnection;
+	public static Roster mRoster;
+
+	private ArrayList<RosterEntry> mEntries;
+	List<RosterEntry> EntriesList;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -62,62 +64,133 @@ public class LoginActivity extends Activity{
 	
 	Handler handler = new Handler(){
 		public void handleMessage(Message msg){
-			if(pd.isShowing())
-				pd.dismiss();
+			
 			switch(msg.what){
 			case 1:
-				
+				if(pd.isShowing())
+					pd.dismiss();
 //				getOffLineMessage();
 				
-				Toast.makeText(LoginActivity.this, "登陆成功", Toast.LENGTH_SHORT).show();
-				((MyApplication)getApplication()).loginFlag = true;
+				
+//				((MyApplication)getApplication()).loginFlag = true;
+//				Intent intent = new Intent();
+//				intent.setAction("cn.abel.action.loginBroadcast");
+//
+//				// 要发送的内容
+//				intent.putExtra("loginFlag", true);
+//
+//				// 发送 一个无序广播
+//				sendBroadcast(intent);
+				
+				
 				((MyApplication) getApplication()).roster = XmppTool.getConnection().getRoster();
 
 				((MyApplication) getApplication()).entries = ((MyApplication) getApplication())
 						.getAllEntries();
-				System.out.println("所有好友：  ");
+				System.out.println("输出所有的entry： ");
 				for(RosterEntry entry:((MyApplication) getApplication()).entries){
-					System.out.println(entry.getName()+"\n");
+					System.out.println("entry："+entry.getName()+"\n");
 				}
+				((MyApplication)getApplication()).loginFlag=true;
 				
-				VCard vCard = new VCard();
+				
+//				 mConnection = XmppTool.getConnection();
+//				 
+//				 mEntries = new ArrayList<RosterEntry>();
+//				 mRoster = mConnection.getRoster();
+//				 ((MyApplication)getApplication()).entries = mEntries;
+//				
+//				 ((MyApplication)getApplication()).roster = mRoster;
+//				
+//				 Collection<RosterEntry> entries = mRoster.getEntries();
+//				 Iterator<RosterEntry> i = entries.iterator();
+//				 EntriesList = new ArrayList<RosterEntry>();
+//					while (i.hasNext())
+//						EntriesList.add(i.next());
+				
+				
+//				new Thread(new Runnable() {  //获取自己的vcard
+//				
+//				@Override
+//				public void run() {
+//					// TODO Auto-generated method stub
+//					VCard vCard = new VCard();
+//					ProviderManager.getInstance().addIQProvider("vCard", "vcard-temp",
+//							new org.jivesoftware.smackx.provider.VCardProvider());
+//					try {
+//						vCard.load(XmppTool.getConnection(), userName.getText().toString() + "@" + XmppTool.getConnection().getServiceName());
+////						myIconDrawable
+//						if (vCard == null || vCard.getAvatar() == null)
+//						((MyApplication)getApplication()).myIconDrawable =  getResources().getDrawable(R.drawable.default_avatar);
+//						else{
+//							ByteArrayInputStream bais = new ByteArrayInputStream(vCard.getAvatar());
+//							((MyApplication)getApplication()).myIconDrawable = ((MyApplication)getApplication()).bitmap2Drawable(BitmapFactory.decodeStream(bais)) ; 
+//						}
+//						if ("".equals(vCard.getNickName())
+//								|| null == vCard.getNickName()) {
+//							System.out.println("昵称是空的");
+//							vCard.setNickName("快乐的汤姆猫");
+//						}
+//						((MyApplication) getApplication()).vCard = vCard;
+//					} catch (Exception e) {
+//						// TODO Auto-generated catch block
+//						e.printStackTrace();
+//					}
+//					
+//				}
+//			}).start();
+					
+			
+				GetAllContactVcardThread gacvt = new GetAllContactVcardThread(LoginActivity.this, LoginActivity.this,((MyApplication) getApplication()).entries,handler);
+				gacvt.execute();
+				
+//				GetOffLineMessageThread golmt = new GetOffLineMessageThread(LoginActivity.this, LoginActivity.this);
+//				golmt.execute();
+				
 				try {
-					vCard.load(XmppTool.getConnection());
-				} catch (XMPPException e) {
+					Thread.sleep(2000);
+				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				if ("".equals(vCard.getNickName())
-						|| null == vCard.getNickName()) {
-					System.out.println("昵称是空的");
-					vCard.setNickName("快乐的汤姆猫");
-				}
-				((MyApplication) getApplication()).vCard = vCard;
+
+				Toast.makeText(LoginActivity.this, "登陆成功", Toast.LENGTH_SHORT).show();
+				Intent intent = new Intent();
+				intent.setClass(LoginActivity.this, ActionBarActivity.class);
+				intent.putExtra("USERID", "");
+				startActivity(intent);
+				
+				finish();
 				
 				
-				new Thread(new Runnable() {
-					
-					@Override
-					public void run() {
-						// TODO Auto-generated method stub
-						getAllContactsVcard(((MyApplication) getApplication()).entries);
-					}
-				}).start();
+//				new Thread(new Runnable() {
+//					
+//					@Override
+//					public void run() {
+//						// TODO Auto-generated method stub
+//						getAllContactsVcard(EntriesList);
+//					}
+//				}).start();
 				
 				
-				handler.sendEmptyMessage(3);
 				
+
 
 				
 				break;
 			case 2:
-				
+				if(pd.isShowing())
+					pd.dismiss();
 				Toast.makeText(LoginActivity.this, "登陆失败", Toast.LENGTH_SHORT).show();
 				break;
 			case 3:
-				System.out.println("进入异步线程。。。");
-				GetOffLineMessageThread golmt = new GetOffLineMessageThread(LoginActivity.this, LoginActivity.this);
-				golmt.execute();
+//				if(pd.isShowing())
+//					pd.dismiss();
+//				Toast.makeText(LoginActivity.this, "登陆成功", Toast.LENGTH_SHORT).show();
+//				
+//				System.out.println("进入异步线程。。。");
+//				GetOffLineMessageThread golmt = new GetOffLineMessageThread(LoginActivity.this, LoginActivity.this);
+//				golmt.execute();
 				break;
 			}
 			super.handleMessage(msg);
@@ -148,7 +221,7 @@ public class LoginActivity extends Activity{
 			startActivity(new Intent(this,RegisterActivity.class));
 			break;
 		case R.id.loginButton:
-			
+			System.out.println("请再给我出错");
 			final String USERID =userName.getText().toString();
 			
 			final String PWD = passWord.getText().toString();
@@ -160,23 +233,31 @@ public class LoginActivity extends Activity{
 					
 					try {
 						
-						Presence presence = new Presence(Presence.Type.unavailable);
-						XmppTool.getConnection().sendPacket(presence);
+						
 						XmppTool.getConnection().login(USERID, PWD);
-						System.out.println("离线登陆：成功。。。");
+						Presence presence = new Presence(Presence.Type.available);
+						XmppTool.getConnection().sendPacket(presence);
+						System.out.println("在线登陆：成功。。。");
 //						getOffLineMessage();
 //					             新建presence对象  ״̬
 //						GetOffLineMessageThread golmt = new GetOffLineMessageThread(LoginActivity.this, LoginActivity.this);
 //						golmt.execute();
 						
-						handler.sendEmptyMessage(1);
+						
 						SharedPreferences.Editor editor = sp.edit();
 						editor.putString("account", USERID);
 						editor.putString("password", PWD);
 						editor.commit();
 						((MyApplication)getApplication()).userName = USERID;
 						((MyApplication)getApplication()).passWord = PWD;
-						((MyApplication)getApplication()).loginFlag=true;
+						VCard vcard = ((MyApplication)getApplication()).getUserVcard(XmppTool.getConnection(),USERID);
+						if(vcard.getNickName()!=null&&(!vcard.getNickName().equals(""))){
+							((MyApplication)getApplication()).nickName = vcard.getNickName();
+						}
+						else ((MyApplication)getApplication()).nickName = USERID;
+						
+						
+						handler.sendEmptyMessage(1);
 //						finish();
 					}
 					catch (XMPPException e) 
@@ -227,149 +308,81 @@ public class LoginActivity extends Activity{
 		
 	}
 	
-	public void getOffLineMessage(){
-		new Thread(new Runnable() {
-			
-			@Override
-			public void run() {
-				// TODO Auto-generated method stub
-				OfflineMessageManager offlineManager = new OfflineMessageManager(XmppTool.getConnection());  
-			    try {  
-			        Iterator<org.jivesoftware.smack.packet.Message> it = offlineManager  
-			                .getMessages();  
 
-//			        System.out.println(offlineManager.supportsFlexibleRetrieval());  
-			        System.out.println("离线消息数量: " + offlineManager.getMessageCount());  
-
-			          
-			        Map<String,ArrayList<org.jivesoftware.smack.packet.Message>> offlineMsgs = new HashMap<String,ArrayList<org.jivesoftware.smack.packet.Message>>();  
-			          
-			        while (it.hasNext()) {  
-			          org.jivesoftware.smack.packet.Message message = it.next();  
-			            System.out  
-			                    .println("收到离线消息, Received from 【" + message.getFrom()  
-			                            + "】 message: " + message.getBody());  
-			            String fromUser = message.getFrom().split("/")[0];  
-
-			            if(offlineMsgs.containsKey(fromUser))  
-			            {  
-			                offlineMsgs.get(fromUser).add(message);  
-			            }else{  
-			                ArrayList<org.jivesoftware.smack.packet.Message> temp = new ArrayList<org.jivesoftware.smack.packet.Message>();  
-			                temp.add(message);  
-			                offlineMsgs.put(fromUser, temp);  
-			            }  
-			        }  
-
-			        //在这里进行处理离线消息集合......  
-			        Set<String> keys = offlineMsgs.keySet();  
-			        Iterator<String> offIt = keys.iterator();  
-			        while(offIt.hasNext())  
-			        {  
-			            String key = offIt.next();  
-			            ArrayList<org.jivesoftware.smack.packet.Message> ms = offlineMsgs.get(key);  
-//			            TelFrame tel = new TelFrame(key);  
-//			            ChatFrameThread cft = new ChatFrameThread(key, null);  
-//			            cft.setTel(tel);  
-//			            cft.start();  
-//			            for (int i = 0; i < ms.size(); i++) {  
-//			                tel.messageReceiveHandler(ms.get(i));  
-//			            }  
-			            
-			            for(org.jivesoftware.smack.packet.Message msg : ms){
-			            	System.out.println("消息：   "+msg.toString());
-			            }
-			        } 
-			        
-			  
-			          
-			          
-			        offlineManager.deleteMessages();  
-			        
-			        System.out.println("获取到了离线消息。。。");
-					
-			  					Presence presence2 = new Presence(Presence.Type.available);
-			  					XmppTool.getConnection().sendPacket(presence2);
-			  					
-			  					System.out.println("切换为正常登陆状态。。。");
-			    } catch (Exception e) {  
-			        e.printStackTrace();  
-			    } 
-			}
-		}).start();
-		
-	}
 	
 	
-	public void getAllContactsVcard(List<RosterEntry> entries){
-		ByteArrayInputStream bais = null;
-		List<Map<String,Object>> allContactsVcard = new ArrayList<Map<String,Object>>();
-		for(RosterEntry item : entries){
-			Map<String,Object> map = new HashMap<String, Object>();
-			if(item.getName()!=null&&(!item.getName().equals(""))&&(!item.getName().equals("null"))){
-				try {
-					VCard vcard = new VCard();
-					// 加入这句代码，解决No VCard for
-					ProviderManager.getInstance().addIQProvider("vCard", "vcard-temp",
-							new org.jivesoftware.smackx.provider.VCardProvider());
-
-					vcard.load(XmppTool.getConnection(), item.getName() + "@" + XmppTool.getConnection().getServiceName());
-
-					if (vcard == null || vcard.getAvatar() == null)
-						map.put("friend_avatar", getResources().getDrawable(R.drawable.default_avatar));
-					else{
-					bais = new ByteArrayInputStream(vcard.getAvatar());
-						map.put("friend_avatar",((MyApplication)getApplication()).bitmap2Drawable(BitmapFactory.decodeStream(bais)) ); 
-					}
-					map.put("friend_name", item.getName());
-					if(vcard.getNickName()==null||vcard.getNickName().equals("")){
-						map.put("friend_nickName", "");
-					}
-					else map.put("friend_nickName", vcard.getNickName());
-					
-					if(vcard.getMiddleName()==null||vcard.getMiddleName().equals("")){
-						map.put("friend_carrer", "");
-					}
-					else map.put("friend_carrer", vcard.getMiddleName());
-					
-					if(vcard.getFirstName()==null||vcard.getFirstName().equals("")){
-						map.put("friend_gender", "");
-					}
-					else map.put("friend_gender", vcard.getFirstName());
-					
-					if(vcard.getAddressFieldHome("zone")==null||vcard.getAddressFieldHome("zone").equals("")){
-						map.put("friend_zone", "");
-					}
-					else map.put("friend_zone", vcard.getAddressFieldHome("zone"));
-					
-					if(vcard.getLastName()==null||vcard.getLastName().equals("")){
-						map.put("friend_sign", "");
-					}
-					else map.put("friend_sign",vcard.getLastName());
-//					map.put("friend_nickName", vcard.getNickName());
-//					map.put("friend_carrer", vcard.getMiddleName());
-//					map.put("friend_gender", vcard.getFirstName());
-//					map.put("friend_zone", vcard.getAddressFieldHome("zone"));
-//					map.put("friend_sign", vcard.getLastName());
-					
-					allContactsVcard.add(map);
-	
-
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		
-		((MyApplication)getApplication()).allContactsVcard = allContactsVcard;
-		Intent intent = new Intent();
-		intent.setClass(LoginActivity.this, ActionBarActivity.class);
-		intent.putExtra("USERID", "");
-		startActivity(intent);
-		finish();
-		
-		
-	}
+//	public void getAllContactsVcard(List<RosterEntry> entries){
+//		ByteArrayInputStream bais = null;
+//		List<Map<String,Object>> allContactsVcard = new ArrayList<Map<String,Object>>();
+//		for(RosterEntry item : entries){
+//			Map<String,Object> map = new HashMap<String, Object>();
+//			if(item.getName()!=null&&(!item.getName().equals(""))&&(!item.getName().equals("null"))){
+//				try {
+//					VCard vcard = new VCard();
+//					// 加入这句代码，解决No VCard for
+////					ProviderManager.getInstance().addIQProvider("vCard", "vcard-temp",
+////							new org.jivesoftware.smackx.provider.VCardProvider());
+//
+////					vcard.load(XmppTool.getConnection(), item.getName() + "@" + ((MyApplication)getApplication()).hostName);
+//					vcard = ((MyApplication)getApplication()).getUserVcard(XmppTool.getConnection(),item.getName());
+//
+//					if (vcard == null || vcard.getAvatar() == null)
+//						map.put("friend_avatar", getResources().getDrawable(R.drawable.default_avatar));
+//					else{
+//					bais = new ByteArrayInputStream(vcard.getAvatar());
+//						map.put("friend_avatar",((MyApplication)getApplication()).bitmap2Drawable(BitmapFactory.decodeStream(bais)) ); 
+//					}
+//					map.put("friend_name", item.getName());
+//					if(vcard.getNickName()==null||vcard.getNickName().equals("")){
+//						map.put("friend_nickName", "");
+//					}
+//					else map.put("friend_nickName", vcard.getNickName());
+//					
+//					if(vcard.getMiddleName()==null||vcard.getMiddleName().equals("")){
+//						map.put("friend_carrer", "");
+//					}
+//					else map.put("friend_carrer", vcard.getMiddleName());
+//					
+//					if(vcard.getFirstName()==null||vcard.getFirstName().equals("")){
+//						map.put("friend_gender", "");
+//					}
+//					else map.put("friend_gender", vcard.getFirstName());
+//					
+//					if(vcard.getAddressFieldHome("zone")==null||vcard.getAddressFieldHome("zone").equals("")){
+//						map.put("friend_zone", "");
+//					}
+//					else map.put("friend_zone", vcard.getAddressFieldHome("zone"));
+//					
+//					if(vcard.getLastName()==null||vcard.getLastName().equals("")){
+//						map.put("friend_sign", "");
+//					}
+//					else map.put("friend_sign",vcard.getLastName());
+////					map.put("friend_nickName", vcard.getNickName());
+////					map.put("friend_carrer", vcard.getMiddleName());
+////					map.put("friend_gender", vcard.getFirstName());
+////					map.put("friend_zone", vcard.getAddressFieldHome("zone"));
+////					map.put("friend_sign", vcard.getLastName());
+//					
+//					allContactsVcard.add(map);
+//	
+//
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		}
+//		
+//		handler.sendEmptyMessage(3);
+//		((MyApplication)getApplication()).allContactsVcard = allContactsVcard;
+//		Intent intent = new Intent();
+//		intent.setClass(LoginActivity.this, ActionBarActivity.class);
+//		intent.putExtra("USERID", "");
+//		startActivity(intent);
+//		
+//		finish();
+//		
+//		
+//	}
 	
 	@Override
 	protected void onDestroy() {

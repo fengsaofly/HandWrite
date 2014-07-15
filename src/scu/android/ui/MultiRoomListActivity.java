@@ -27,6 +27,7 @@ import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
@@ -40,7 +41,7 @@ public class MultiRoomListActivity extends Activity{
 	SharedPreferences sp = null;
 	private MultiUserChat muc;
 	
-	
+	ImageButton right_btn = null;
 	boolean existFlag = false;
 	int existPosition = -1;
 	int tagFlag=-1;
@@ -82,6 +83,15 @@ public class MultiRoomListActivity extends Activity{
 	public void initial(){
 		
 		multiListView = (ListView)findViewById(R.id.multiListView);
+//		right_btn = (ImageButton)findViewById(R.id.right_btn);
+//		right_btn.setOnClickListener(new View.OnClickListener() {
+//			
+//			@Override
+//			public void onClick(View arg0) {
+//				// TODO Auto-generated method stub
+////				startActivity(new Intent(ActivityMultiRoom.this,GroupDetailActivity.class));
+//			}
+//		});
 		data = new ArrayList<Map<String,Object>>();
 		sp = ((MyApplication)getApplication()).sp;
 		
@@ -104,18 +114,18 @@ public class MultiRoomListActivity extends Activity{
 			}
 		}).start();
 		
-		muc = new MultiUserChat(XmppTool.getConnection(), "爱我" + "@conference"+"."+((MyApplication)getApplication()).hostName);
-		Form fo;
-		try {
-			fo = muc.getConfigurationForm();
-			 for(Iterator<FormField> it =   fo.getFields(); it.hasNext(); ) {
-				  FormField o = (FormField) it.next();
-				   System.out.println("formfield为："+o.toXML()); 
-				}
-		} catch (XMPPException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+//		muc = new MultiUserChat(XmppTool.getConnection(), "爱我" + "@conference"+"."+((MyApplication)getApplication()).hostName);
+//		Form fo;
+//		try {
+//			fo = muc.getConfigurationForm();
+//			 for(Iterator<FormField> it =   fo.getFields(); it.hasNext(); ) {
+//				  FormField o = (FormField) it.next();
+//				   System.out.println("formfield为："+o.toXML()); 
+//				}
+//		} catch (XMPPException e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		}
 		
 		 
 		
@@ -230,5 +240,8 @@ public class MultiRoomListActivity extends Activity{
 		((MyApplication)getApplication()).loadArray(data);
 		
 	}
+	
+	
+	
 
 }

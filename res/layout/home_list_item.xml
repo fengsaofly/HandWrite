@@ -3,13 +3,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="5dp"
+    android:background="@color/BackgroundGrayColor"
     android:gravity="center_vertical|top">
 
-    <scu.android.ui.CircularImage
+    <ImageView
         android:id="@id/list_item_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/default_avatar"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:src="@drawable/friend_icon_sample"
         android:scaleType="fitCenter" />
 
     <LinearLayout
@@ -35,6 +36,7 @@
             <TextView
                
                 style="@style/list_item_time"
+                
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="1小时前" 

@@ -6,17 +6,22 @@
     android:layout_height="wrap_content"
     android:background="@anim/list_bg_selector" >
 
-
-<TextView  android:id="@+id/contactitem_catalog" android:paddingRight="4.0dip" android:layout_height="wrap_content" style="@style/MMListCatalog" />
-
+		<TextView
+		    android:id="@+id/contactitem_catalog"
+		    style="@style/MMListCatalog"
+		    android:gravity="center_vertical"
+		    android:layout_width="fill_parent"
+		    android:layout_height="wrap_content"
+		    android:paddingRight="4.0dip" />
 
         <RelativeLayout
             android:layout_below="@id/contactitem_catalog"
             android:id="@+id/friendlink_lay"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true" 
+
+
+			
             android:padding="5dp">
 
             <FrameLayout
@@ -49,9 +54,11 @@
                 android:text="用户名"
                 android:textColor="#ff333333"
                 android:textSize="16.0sp"
+
                 android:textStyle="bold"
-                android:drawableRight="@drawable/male_icon"
+               
 	    		android:drawablePadding="2dp" />
+
             <TextView 
 			    android:layout_below="@id/friend_name" 
 			    android:id="@id/distance_textview"
@@ -62,7 +69,7 @@
 			    android:layout_marginTop="10dp"
 			    android:layout_alignBottom="@id/list_item_icon"
 			    android:layout_toRightOf="@id/image"
-			    style="@style/list_item_time"
+			    style="@style/text_style_micro_gray"
 			    android:layout_marginLeft="10dp"/>
             
         </RelativeLayout>

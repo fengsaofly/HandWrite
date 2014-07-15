@@ -9,8 +9,9 @@ import scu.android.note.ActionBarActivity;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 
-public class TabViewPagerAdapter extends FragmentPagerAdapter {
+public class TabViewPagerAdapter extends FragmentStatePagerAdapter  {
 
 	public TabViewPagerAdapter(FragmentManager fm) {
 		super(fm);

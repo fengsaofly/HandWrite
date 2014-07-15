@@ -23,4 +23,8 @@ public class Constants {
 
 	public final static int ERR_LOCAL_NO_DATA = 0;
 	public final static int ERR_LOCAL_NO_NEW_DATA = 1;
+
+	public static final String QUESTIONS="scu.android.util.questions";
+	public static final String REPLYS="scu.android.util.replys";
+	public static final String RESOURCES="scu.android.util.resources";
 }

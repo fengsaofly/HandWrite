@@ -52,7 +52,7 @@ public class AccountFragment extends Fragment{
 	     
 	     
 		
-	     
+	  
 	 
 	}
 	@Override
@@ -67,8 +67,8 @@ public class AccountFragment extends Fragment{
 		laySet = (RelativeLayout)view.findViewById(R.id.laySet);
 		photo = (ImageView)view.findViewById(R.id.photo);
 		
-		Bitmap bm = BitmapFactory.decodeStream(((MyApplication)getActivity().getApplication()).getUserImage(XmppTool.getConnection(), ((MyApplication)getActivity().getApplication()).userName));
-		photo.setImageBitmap(bm);
+//		Bitmap bm = BitmapFactory.decodeStream(((MyApplication)getActivity().getApplication()).getUserImage(XmppTool.getConnection(), ((MyApplication)getActivity().getApplication()).userName));
+//		photo.setImageBitmap(bm);
 		
 		regist_btn = (Button)view.findViewById(R.id.regist_btn);
 		login_btn = (Button)view.findViewById(R.id.login_btn);
@@ -77,9 +77,10 @@ public class AccountFragment extends Fragment{
 		
 //		sp = getActivity().getSharedPreferences("bnj", getActivity().MODE_PRIVATE);
 //		String sign = sp.getString("sign", "");
-		VCard vcard = ((MyApplication)getActivity().getApplication()).getUserVcard(XmppTool.getConnection(),((MyApplication)getActivity().getApplication()).userName);
-		 
-		member.setText("个性签名: "+vcard.getLastName());
+		
+//		VCard vcard = ((MyApplication)getActivity().getApplication()).getUserVcard(XmppTool.getConnection(),((MyApplication)getActivity().getApplication()).userName);
+//		 
+//		member.setText("个性签名: "+vcard.getLastName());
 		
 		if(((MyApplication)getActivity().getApplication()).loginFlag==false){
 			accountSetting.setVisibility(View.GONE);

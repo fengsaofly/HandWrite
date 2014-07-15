@@ -25,17 +25,29 @@ public class ChatRecord implements Serializable {
 	private String account;
 	private String time;
 	private String content;
-	private String flag;
+	private String flag; //判断是自己发的消息还是获取的消息
 	private String date;
 	private String type;   //数据类型   0为消息数据，1为通知数据，2为破题数据，3为动态数据
-	private String isGroupChat;
+	private String isGroupChat;  //是否是分组聊天（群聊），如果是则取jid判断是哪个房间的
 	private String jid;
+	private String content_type; //文本类型，nomal:普通文本，unnomal富文本
+	
 	
 	
 	
 
 	
 	
+	public String getContent_type() {
+		return content_type;
+	}
+
+
+	public void setContent_type(String content_type) {
+		this.content_type = content_type;
+	}
+
+
 	public String getJid() {
 		return jid;
 	}

@@ -1,6 +1,12 @@
 package scu.android.note;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.jivesoftware.smack.Chat;
 import org.jivesoftware.smack.ChatManager;
@@ -8,8 +14,12 @@ import org.jivesoftware.smack.ChatManagerListener;
 import org.jivesoftware.smack.MessageListener;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
+import org.jivesoftware.smackx.filetransfer.FileTransfer;
+import org.jivesoftware.smackx.filetransfer.FileTransferListener;
+import org.jivesoftware.smackx.filetransfer.FileTransferManager;
+import org.jivesoftware.smackx.filetransfer.FileTransferRequest;
+import org.jivesoftware.smackx.filetransfer.IncomingFileTransfer;
 import org.jivesoftware.smackx.packet.DiscoverItems;
 import org.jivesoftware.smackx.packet.VCard;
 
@@ -19,6 +29,7 @@ import scu.android.db.ChatRecord;
 import scu.android.db.DbManager2;
 import scu.android.ui.AccountSettingActivity;
 import scu.android.ui.ActivityMultiRoom;
+import scu.android.ui.LoginActivity;
 import scu.android.ui.SearchFriendActivity;
 import scu.android.ui.SearchGroupResultActivity;
 import scu.android.ui.TabViewPagerAdapter;
@@ -29,9 +40,13 @@ import android.app.ActionBar.Tab;
 import android.app.ActionBar.TabListener;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.os.Bundle;
@@ -46,6 +61,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.PopupMenu;
+import android.widget.ProgressBar;
 import android.widget.PopupMenu.OnMenuItemClickListener;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -63,19 +79,36 @@ public class ActionBarActivity extends FragmentActivity {
 	DbManager2 db;
 	private ViewPager mViewPager;
 	MediaPlayer mp;
-
+//	MyBroadcastReciver myBroadcastReciver;
 	ProgressDialog pd, searchGroupPd;
-
+//	MenuItem tempItem;
+	PopupMenu popup;
+	Menu menu = null;
+	private ProgressBar pb;
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.home);
-
+//		
+//		IntentFilter intentFilter = new IntentFilter();
+//		intentFilter.addAction("cn.abel.action.loginBroadcast");
+//		myBroadcastReciver = new MyBroadcastReciver();
+//		this.registerReceiver(myBroadcastReciver, intentFilter);
+		
 		// pd = new ProgressDialog(this);
 		// pd.setTitle("温馨提示");
 		// pd.setMessage("正在登陆");
 //		handler.sendEmptyMessage(5);
-//		initialListener();
+		
+		
+//		getMyVcard();
+		
+		if(((MyApplication)getApplication()).loginFlag){
+			initialListener();
+		}
+		pb = new ProgressBar(this);
+		pb.setVisibility(View.GONE);
+		
 		searchGroupPd = new ProgressDialog(this);
 		searchGroupPd.setTitle("温馨提示");
 		searchGroupPd.setMessage("正在搜索");
@@ -98,8 +131,54 @@ public class ActionBarActivity extends FragmentActivity {
 
 		mViewPager.setAdapter(new TabViewPagerAdapter(
 				getSupportFragmentManager()));
+		mViewPager.setOffscreenPageLimit(2);
 		mViewPager.setOnPageChangeListener(new TestPagerListener());
 		mViewPager.setCurrentItem(TAB_INDEX_TAB_2);
+	}
+	
+	public void getMyVcard(){
+		 Map<String,Object> map = new HashMap<String,Object>();
+		VCard vcard = ((MyApplication)getApplication()).getUserVcard(XmppTool.getConnection(),((MyApplication)getApplication()).userName);
+		ByteArrayInputStream bais = null;
+		 bais = ((MyApplication)getApplication()).getUserImage(XmppTool.getConnection(), ((MyApplication)getApplication()).userName);
+		 if(bais!=null){
+			 map.put("my_avatar",((MyApplication)getApplication()).bitmap2Drawable(BitmapFactory.decodeStream(bais)) );
+		 }
+		 else map.put("my_avatar", ActionBarActivity.this.getResources().getDrawable(R.drawable.default_avatar));
+		
+		
+		if(vcard.getNickName()==null||vcard.getNickName().equals("")){
+			map.put("my_nickName", "");
+		}
+		else map.put("my_nickName", vcard.getNickName());
+		System.out.println("vcard.getNickName():  "+vcard.getNickName());
+		if(vcard.getMiddleName()==null||vcard.getMiddleName().equals("")){
+			map.put("my_carrer", "");
+		}
+		else map.put("my_carrer", vcard.getMiddleName());
+		System.out.println(" vcard.getMiddleName()"+ vcard.getMiddleName());
+		if(vcard.getFirstName()==null||vcard.getFirstName().equals("")){
+			map.put("my_gender", "");
+		}
+		else map.put("my_gender", vcard.getFirstName());
+		System.out.println("vcard.getFirstName():"+vcard.getFirstName());
+		if(vcard.getAddressFieldHome("zone")==null||vcard.getAddressFieldHome("zone").equals("")){
+			map.put("my_zone", "");
+		}
+		else map.put("my_zone", vcard.getAddressFieldHome("zone"));
+		System.out.println("vcard.getAddressFieldHome():"+vcard.getAddressFieldHome("zone"));
+		if(vcard.getLastName()==null||vcard.getLastName().equals("")){
+			map.put("my_sign", "");
+		}
+		else map.put("my_sign",vcard.getLastName());
+		System.out.println("vcard.getLastName():"+vcard.getLastName());
+//		map.put("friend_nickName", vcard.getNickName());
+//		map.put("friend_carrer", vcard.getMiddleName());
+//		map.put("friend_gender", vcard.getFirstName());
+//		map.put("friend_zone", vcard.getAddressFieldHome("zone"));
+//		map.put("friend_sign", vcard.getLastName());
+		((MyApplication)getApplication()).myVcard = map;
+		
 	}
 //	public void initTabStyle{
 //		int count = getActionBar().getChildCount();//TabHost中有一个getTabWidget()的方法
@@ -174,15 +253,86 @@ public class ActionBarActivity extends FragmentActivity {
 				});
 			}
 		});
+		
+		
+		
+		/**
+		 * 
+		 * 
+		 * 文件监听
+		 */
+		
+		FileTransferManager transfer = new FileTransferManager(XmppTool.getConnection());
+		transfer.addFileTransferListener(new RecFileTransferListener());
+
+		
+
+
+	}
+	
+	private FileTransferRequest request;
+	private File file;
+	class RecFileTransferListener implements FileTransferListener 
+	{
+		@Override
+		public void fileTransferRequest(FileTransferRequest prequest)
+		{
+			
+
+			File file2 = new File(((MyApplication)getApplication()).getSDCardPath()+"/ConquerQustion"+"/voice/");
+			if (!file2.exists())
+				file2.mkdirs();
+			file = new File(file2.getAbsolutePath() +"/" + prequest.getFileName());
+			
+//			file = new File(((MyApplication)getApplication()).getSDCardPath()+"/ConquerQustion"+"/voice/" + prequest.getFileName());
+			request = prequest;
+			System.out.println("接收到的文件描述：   "+"request.getDescription():"+request.getDescription()+"request.getRequestor(): "+request.getRequestor());
+			handler.sendEmptyMessage(5);
+		}
 	}
 
-	public void showPopup(View v) {
-		PopupMenu popup = new PopupMenu(this, v);
+public void showPopup(View v) {
+		
+	     popup = new PopupMenu(this, v);
 		popup.setOnMenuItemClickListener(new PopupItemClickListener());
 		MenuInflater inflater = popup.getMenuInflater();
-		inflater.inflate(R.menu.add_popup_menu, popup.getMenu());
+		
+		switch (v.getId()) {
+		case R.id.home_add_btn:
+			inflater.inflate(R.menu.add_popup_menu, popup.getMenu());
+			break;
+		case R.id.home_settings_btn:
+			inflater.inflate(R.menu.settings_popup_menu, popup.getMenu());
+			if(((MyApplication)getApplication()).loginFlag){
+				popup.getMenu().getItem(0).setTitle(((MyApplication)getApplication()).userName);
+//				popup.getMenu().add("退出");
+				popup.getMenu().getItem(0).setVisible(true);
+			}
+			else {
+				popup.getMenu().getItem(0).setTitle("登陆");
+				popup.getMenu().getItem(1).setVisible(false);
+			}
+//				popup.getMenu().
+//				popup.getMenu().add("登陆");
+			
+			
+			break;
+				
+		default:
+			break;
+		}
+		
+		
 		popup.show();
 	}
+
+    public void  changeTologin(){
+    	Intent intent = new Intent();
+    	intent.setClass(ActionBarActivity.this,LoginActivity.class);
+    	startActivity(intent);
+    	finish();
+    }
+
 
 	private class PopupItemClickListener implements OnMenuItemClickListener {
 
@@ -190,98 +340,163 @@ public class ActionBarActivity extends FragmentActivity {
 		public boolean onMenuItemClick(MenuItem item) {
 			switch (item.getItemId()) {
 			case R.id.popup_menu_option_issue_question:
-				startActivity(new Intent(ActionBarActivity.this,
-						IssueQuestionActivity.class));
+				if(((MyApplication)getApplication()).loginFlag==false){
+					changeTologin();
+//					Toast.makeText(ActionBarActivity.this, "请先登录", Toast.LENGTH_SHORT).show();
+				}
+				else{
+					startActivity(new Intent(ActionBarActivity.this,
+							IssueQuestionActivity.class));
+				}
+				
 				return true;
 			case R.id.popup_menu_option_add_friend:
 				// archive(item);
+				if(((MyApplication)getApplication()).loginFlag==false){
+					changeTologin();
+//					Toast.makeText(ActionBarActivity.this, "请先登录", Toast.LENGTH_SHORT).show();
+				}
+				else{
+					startActivity(new Intent(ActionBarActivity.this,
+							SearchFriendActivity.class));
+				}
 				System.out.println("popup_menu_option_add_friend");
-				startActivity(new Intent(ActionBarActivity.this,
-						SearchFriendActivity.class));
+				
 				return true;
 
 			case R.id.popup_menu_option_add_group:
+				if(((MyApplication)getApplication()).loginFlag==false){
+					changeTologin();
+//					Toast.makeText(ActionBarActivity.this, "请先登录", Toast.LENGTH_SHORT).show();
+				}
+				else{
+					final EditText et2 = new EditText(ActionBarActivity.this);
+					new AlertDialog.Builder(ActionBarActivity.this)
+							.setTitle("添加群")
+							.setMessage("请输入群名称")
+							.setView(et2)
+							.setPositiveButton("确定", new OnClickListener() {
 
-				final EditText et2 = new EditText(ActionBarActivity.this);
-				new AlertDialog.Builder(ActionBarActivity.this)
-						.setTitle("添加群")
-						.setMessage("请输入群名称")
-						.setView(et2)
-						.setPositiveButton("确定", new OnClickListener() {
+								@Override
+								public void onClick(DialogInterface arg0, int arg1) {
+									// TODO Auto-generated method stub
+									if (et2.getText().toString().equals("")) {
+										Toast.makeText(ActionBarActivity.this,
+												"群名称不能为空", Toast.LENGTH_SHORT)
+												.show();
 
-							@Override
-							public void onClick(DialogInterface arg0, int arg1) {
-								// TODO Auto-generated method stub
-								if (et2.getText().toString().equals("")) {
-									Toast.makeText(ActionBarActivity.this,
-											"群名称不能为空", Toast.LENGTH_SHORT)
-											.show();
-
-								} else {
-									android.os.Message msg = handler
-											.obtainMessage();
-									msg.what = 6;
-									msg.obj = et2.getText().toString();
-									handler.sendMessage(msg);
-								}
-							}
-						})
-						.setNegativeButton("取消",
-								new DialogInterface.OnClickListener() {
-
-									@Override
-									public void onClick(DialogInterface dialog,
-											int which) {
-										// TODO Auto-generated method stub
-
+									} else {
+										android.os.Message msg = handler
+												.obtainMessage();
+										msg.what = 6;
+										msg.obj = et2.getText().toString();
+										handler.sendMessage(msg);
 									}
-								}).create().show();
+								}
+							})
+							.setNegativeButton("取消",
+									new DialogInterface.OnClickListener() {
+
+										@Override
+										public void onClick(DialogInterface dialog,
+												int which) {
+											// TODO Auto-generated method stub
+
+										}
+									}).create().show();
+				}
+				
 				return true;
 
 			case R.id.popup_menu_option_create_group:
-				Toast.makeText(getApplicationContext(), "add",
-						Toast.LENGTH_SHORT).show();
-				final EditText et = new EditText(ActionBarActivity.this);
-				new AlertDialog.Builder(ActionBarActivity.this)
-						.setTitle("创建群")
-						.setMessage("请输入房间名")
-						.setView(et)
-						.setPositiveButton("创建", new OnClickListener() {
+				if(((MyApplication)getApplication()).loginFlag==false){
+//					Toast.makeText(ActionBarActivity.this, "请先登录", Toast.LENGTH_SHORT).show();
+					changeTologin();
+				}
+				else{
+					final EditText et = new EditText(ActionBarActivity.this);
+					new AlertDialog.Builder(ActionBarActivity.this)
+							.setTitle("创建群")
+							.setMessage("请输入房间名")
+							.setView(et)
+							.setPositiveButton("创建", new OnClickListener() {
 
-							@Override
-							public void onClick(DialogInterface arg0, int arg1) {
-								// TODO Auto-generated method stub
-								if (et.getText().toString().equals("")) {
-									Toast.makeText(ActionBarActivity.this,
-											"房间名不能为空", Toast.LENGTH_SHORT)
-											.show();
+								@Override
+								public void onClick(DialogInterface arg0, int arg1) {
+									// TODO Auto-generated method stub
+									if (et.getText().toString().equals("")) {
+										Toast.makeText(ActionBarActivity.this,
+												"房间名不能为空", Toast.LENGTH_SHORT)
+												.show();
 
-								} else {
-									Intent intent = new Intent(
-											ActionBarActivity.this,
-											ActivityMultiRoom.class);
-									intent.putExtra(
-											"jid",
-											et.getText().toString()
-													+ "@conference"
-													+ "."
-													+ ((MyApplication) getApplication()).hostName);
-									intent.putExtra("action", "create");
-									startActivity(intent);
-								}
-							}
-						})
-						.setNegativeButton("取消",
-								new DialogInterface.OnClickListener() {
-
-									@Override
-									public void onClick(DialogInterface dialog,
-											int which) {
-										// TODO Auto-generated method stub
-
+									} else {
+										Intent intent = new Intent(
+												ActionBarActivity.this,
+												ActivityMultiRoom.class);
+										intent.putExtra(
+												"jid",
+												et.getText().toString()
+														+ "@conference"
+														+ "."
+														+ ((MyApplication) getApplication()).hostName);
+										intent.putExtra("action", "create");
+										startActivity(intent);
 									}
-								}).create().show();
+								}
+							})
+							.setNegativeButton("取消",
+									new DialogInterface.OnClickListener() {
 
+										@Override
+										public void onClick(DialogInterface dialog,
+												int which) {
+											// TODO Auto-generated method stub
+
+										}
+									}).create().show();
+				}
+//				Toast.makeText(getApplicationContext(), "add",
+//						Toast.LENGTH_SHORT).show();
+				
+				
+
+				return true;
+			case R.id.popup_menu_option_login:
+				
+				if(((MyApplication)getApplication()).loginFlag==true){
+					
+//					item.setTitle(((MyApplication)getApplication()).userName);
+					startActivity(new Intent(ActionBarActivity.this,AccountSettingActivity.class));
+				}
+				else{
+//					item.setTitle("登陆");
+					
+					startActivity(new Intent(ActionBarActivity.this,LoginActivity.class));
+					finish();
+				}
+				return true;
+			case R.id.popup_menu_option_logout:
+				new AlertDialog.Builder(ActionBarActivity.this).setTitle("系统提示").setMessage("确定要退出吗").setPositiveButton("确定", new DialogInterface.OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface arg0, int arg1) {
+						// TODO Auto-generated method stub
+						((MyApplication)getApplication()).userName="";
+						((MyApplication)getApplication()).allContactsVcard = null;
+						((MyApplication)getApplication()).loginFlag = false;
+						XmppTool.closeConnection();
+						
+						System.exit(0);
+						
+					}
+				}).setNegativeButton("取消", new DialogInterface.OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface arg0, int arg1) {
+						// TODO Auto-generated method stub
+						
+					}
+				}).create().show();
 				return true;
 			default:
 				return false;
@@ -317,66 +532,168 @@ public class ActionBarActivity extends FragmentActivity {
 
 				break;
 
-			case 2: // 登陆成功
-				// if(pd.isShowing()){
-				// pd.dismiss();
-				// }
-				VCard vCard = new VCard();
-				try {
-					vCard.load(XmppTool.getConnection());
-				} catch (XMPPException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+			case 2: 
+				//附件进度条
+				if(pb.getVisibility()==View.GONE){
+					pb.setMax(100);
+					pb.setProgress(1);
+					pb.setVisibility(View.VISIBLE);
 				}
-				if ("".equals(vCard.getNickName())
-						|| null == vCard.getNickName()) {
-					System.out.println("昵称是空的");
-					vCard.setNickName("快乐的汤姆猫");
-				}
-				((MyApplication) getApplication()).vCard = vCard;
-				System.out.println("登陆成功");
 				break;
 			case 3:
-				if (pd.isShowing()) {
-					pd.dismiss();
-				}
-				// System.out.println("获取头像失败");
+				pb.setProgress(msg.arg1);
 				break;
 			case 4:
+//				Toast.makeText(ActionBarActivity.this,"接收完成",Toast.LENGTH_SHORT).show();
+				pb.setVisibility(View.GONE);
+				mp = MediaPlayer.create(ActionBarActivity.this,
+						R.raw.messagewarn);
+				mp.setLooping(false);
 
+				mp.start();
+				mp.setOnCompletionListener(new OnCompletionListener() {
+
+					@Override
+					public void onCompletion(MediaPlayer arg0) {
+						// TODO Auto-generated method stub
+
+						mp.release();
+
+					}
+				});
+				Intent fileintent = new Intent();
+				fileintent.setAction("cn.abel.action.filebroadcast");
+
+				// 要发送的内容
+				
+				
+				String[] fileDesc = new String[] { request.getRequestor().toString().split("@")[0],
+						file.getAbsolutePath(), TimeRender.getDate(),
+						"IN" };
+				// 发送 一个无序广播
+				
+				fileintent.putExtra("fileName", fileDesc[0] + "|" + fileDesc[1]
+						+ "|" + fileDesc[2] + "|" + fileDesc[3]);
+				sendBroadcast(fileintent);
+				addFileRecordToDb(fileDesc);
+				
 				break;
-			case 5:
-				// pd.show();
-//				new Thread(new Runnable() {
-//					public void run() {
-//
-//						try {
-//
-//							XmppTool.getConnection()
-//									.login(((MyApplication) getApplication()).userName,
-//											((MyApplication) getApplication()).passWord);
-//							// 新建presence对象״̬
-//							Presence presence = new Presence(
-//									Presence.Type.available);
-//							XmppTool.getConnection().sendPacket(presence);
-//
-//							System.out.println("正在登陆");
-//							handler.sendEmptyMessage(2);
-//							((MyApplication) getApplication()).roster = XmppTool.getConnection()
-//									.getRoster();
-//
-//							((MyApplication) getApplication()).entries = ((MyApplication) getApplication())
-//									.getAllEntries();
-//
-//							initialListener();
-//
-//						} catch (XMPPException e) {
-//							XmppTool.closeConnection();
-//
-//							// handler.sendEmptyMessage(2);
-//						}
-//					}
-//				}).start();
+			
+			case 5://接收附件
+				final IncomingFileTransfer infiletransfer = request.accept();
+				try 
+				{
+					infiletransfer.recieveFile(file);
+				} 
+				catch (XMPPException e)
+				{
+					Toast.makeText(ActionBarActivity.this,"接收失败!",Toast.LENGTH_SHORT).show();
+					e.printStackTrace();
+				}
+				
+				handler.sendEmptyMessage(2);
+				
+				Timer timer = new Timer();
+				TimerTask updateProgessBar = new TimerTask() {
+					public void run() {
+						if ( (infiletransfer.getStatus() == FileTransfer.Status.error)
+								|| (infiletransfer.getStatus() == FileTransfer.Status.refused)
+								|| (infiletransfer.getStatus() == FileTransfer.Status.cancelled)
+								) 
+						{
+							System.out
+							.println("接收文件出错");
+							handler.sendEmptyMessage(7);
+						
+							
+						}
+						else if((infiletransfer.getAmountWritten() >= request.getFileSize())
+								||(infiletransfer.getStatus() == FileTransfer.Status.complete)){
+							System.out
+									.println("接收文件完成");
+							handler.sendEmptyMessage(4);
+							cancel();
+						}
+						else
+						{
+							long p = infiletransfer.getAmountWritten() * 100L / infiletransfer.getFileSize();													
+							
+							android.os.Message message = handler.obtainMessage();
+							message.arg1 = Math.round((float) p);
+							message.what = 3;
+							message.sendToTarget();
+//							Toast.makeText(ActionBarActivity.this,"接收完成!",Toast.LENGTH_SHORT).show();
+						}
+					}
+				};
+				timer.scheduleAtFixedRate(updateProgessBar, 10L, 10L);
+//				//提示框
+//				AlertDialog.Builder builder = new AlertDialog.Builder(ActionBarActivity.this);
+//				
+//				builder.setTitle("附件：")
+//						.setCancelable(false)
+//						.setMessage("是否接收文件："+file.getName()+"?")
+//						.setPositiveButton("接受",
+//								new DialogInterface.OnClickListener() {
+//									public void onClick(DialogInterface dialog, int id) {
+//										try 
+//										{
+//											infiletransfer.recieveFile(file);
+//										} 
+//										catch (XMPPException e)
+//										{
+//											Toast.makeText(ActionBarActivity.this,"接收失败!",Toast.LENGTH_SHORT).show();
+//											e.printStackTrace();
+//										}
+//										
+//										handler.sendEmptyMessage(2);
+//										
+//										Timer timer = new Timer();
+//										TimerTask updateProgessBar = new TimerTask() {
+//											public void run() {
+//												if ( (infiletransfer.getStatus() == FileTransfer.Status.error)
+//														|| (infiletransfer.getStatus() == FileTransfer.Status.refused)
+//														|| (infiletransfer.getStatus() == FileTransfer.Status.cancelled)
+//														) 
+//												{
+//													System.out
+//													.println("接收文件出错");
+//													handler.sendEmptyMessage(7);
+//												
+//													
+//												}
+//												else if((infiletransfer.getAmountWritten() >= request.getFileSize())
+//														||(infiletransfer.getStatus() == FileTransfer.Status.complete)){
+//													System.out
+//															.println("接收文件完成");
+//													handler.sendEmptyMessage(4);
+//													cancel();
+//												}
+//												else
+//												{
+//													long p = infiletransfer.getAmountWritten() * 100L / infiletransfer.getFileSize();													
+//													
+//													android.os.Message message = handler.obtainMessage();
+//													message.arg1 = Math.round((float) p);
+//													message.what = 3;
+//													message.sendToTarget();
+////													Toast.makeText(ActionBarActivity.this,"接收完成!",Toast.LENGTH_SHORT).show();
+//												}
+//											}
+//										};
+//										timer.scheduleAtFixedRate(updateProgessBar, 10L, 10L);
+//										dialog.dismiss();
+//									}
+//								})
+//						.setNegativeButton("取消",
+//								new DialogInterface.OnClickListener() {
+//									public void onClick(DialogInterface dialog, int id)
+//									{
+//										request.reject();
+//										dialog.cancel();
+//									}
+//								}).show();
+				
 				break;
 			case 6:
 				// pd.show();
@@ -392,8 +709,18 @@ public class ActionBarActivity extends FragmentActivity {
 							Toast.LENGTH_SHORT).show();
 				}
 				break;
-			case 7:
+			case 7:  //发送文件失败
+				Toast.makeText(ActionBarActivity.this,"接收文件失败",Toast.LENGTH_SHORT).show();
+//				if(menu!=null)
+//				menu.getItem(0).setTitle(((MyApplication)getApplication()).userName);
+//				
+//				popup.getMenuInflater().inflate(R.menu.settings_popup_menu, menu);
 				break;
+//			case 8:
+//				if(menu!=null)
+//					menu.getItem(0).setTitle("登陆");
+//				popup.getMenuInflater().inflate(R.menu.settings_popup_menu, menu);
+//				break;
 			default:
 				break;
 			}
@@ -406,6 +733,7 @@ public class ActionBarActivity extends FragmentActivity {
 	public void initList() {
 		for(int i=0; i<TAB_COUNT;i++)
 		{
+			
 			Tab tab = this.getActionBar().newTab();
 			// tab.setContentDescription("Tab 1");
 
@@ -445,11 +773,13 @@ public class ActionBarActivity extends FragmentActivity {
 					Toast.LENGTH_SHORT).show();
 			break;
 		case R.id.home_settings_btn:
-			Intent intent = new Intent();
-			intent.setClass(this, AccountSettingActivity.class);
-
-			// intent.setClass(this,LoginAndRegistActivity.class);
-			startActivity(intent);
+			 View  sv = findViewById(R.id.home_settings_btn);
+				showPopup(sv);
+//			Intent intent = new Intent();
+//			intent.setClass(this, AccountSettingActivity.class);
+//
+//			// intent.setClass(this,LoginAndRegistActivity.class);
+//			startActivity(intent);
 			// Toast.makeText(getApplicationContext(), "settings",
 			// Toast.LENGTH_SHORT).show();
 			break;
@@ -555,6 +885,30 @@ public class ActionBarActivity extends FragmentActivity {
 		chatRecord.setType("0");
 		chatRecord.setIsGroupChat("false");
 		chatRecord.setJid("-1");
+		chatRecord.setContent_type("nomal");
+		System.out.println("写入数据库成功，内容为： " + args[1]);
+		db.insertRecord(chatRecord);
+
+		// }
+
+	}
+	
+	
+	public void addFileRecordToDb(String[] args) {
+		// if(((MyApplication)getActivity().getApplication()).currentActivity.equals("main")){
+		ChatRecord chatRecord = new ChatRecord();
+		String s = args[0].toString().contains("@") ? args[0].toString().split(
+				"@")[0] : args[0].toString();
+				
+		chatRecord.setAccount(s);
+		chatRecord.setContent(args[1]);
+		chatRecord.setFlag("in");
+		chatRecord.setTime(TimeRender.getDate().split(" ")[1]);
+		chatRecord.setDate(TimeRender.getDate().split(" ")[0]);
+		chatRecord.setType("0");
+		chatRecord.setIsGroupChat("false");
+		chatRecord.setJid("-1");
+		chatRecord.setContent_type("unnomal");
 		System.out.println("写入数据库成功，内容为： " + args[1]);
 		db.insertRecord(chatRecord);
 
@@ -592,18 +946,44 @@ public class ActionBarActivity extends FragmentActivity {
 		return false;
 
 	}
+	
+//	private class MyBroadcastReciver extends BroadcastReceiver {
+//		public void onReceive(Context context, Intent intent) {
+//			String action = intent.getAction();
+//			if (action.equals("cn.abel.action.loginBroadcast")) {
+//				Boolean loginFlag = intent.getBooleanExtra("loginFlag",false);
+//
+//				// 在控制台显示接收到的广播内容
+//				System.out.println("收到广播，loginFlag" + loginFlag);
+//				if(loginFlag){
+//					handler.sendEmptyMessage(7);
+//				}
+//				else{
+//					handler.sendEmptyMessage(8);
+//				}
+//
+//				
+//				// 在android端显示接收到的广播内容
+//				// Toast.makeText(ChatMainActivity.this, author, 1).show();
+//
+//				// 在结束时可取消广播
+//				// MainActivity.this.unregisterReceiver(this);
+//			}
+//		}
+//	}
 
-	@Override
-	protected void onResume() {
-		super.onResume();
-
+//	@Override
+//	protected void onResume() {
+//		super.onResume();
+//		/**
+//		 * @author YouMingyang
+//		 */
 //		Intent intent = getIntent();
-//		if(intent!=null){
 //		if (intent.getAction().equals(
 //				"scu.android.activity.IssueQuestionActivity")) {
 ////			handler.removeMessages(5);
+//			
 //			mViewPager.setCurrentItem(TAB_INDEX_TAB_2);
 //		}
-//		}
-	}
+//	}
 }

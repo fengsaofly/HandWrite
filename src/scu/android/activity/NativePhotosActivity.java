@@ -275,21 +275,9 @@ public class NativePhotosActivity extends Activity {
 		if (loader != null)
 			loader.stop();
 		super.onStop();
+
 	}
 
-	@Override
-	protected void onDestroy() {
-		// 清空cache
-		if (loader != null) {
-			loader.clearMemoryCache();
-			loader.clearDiskCache();
-		}
-		super.onDestroy();
-	}
-
-	// ///////////////////////////////////////////////////////////
-
-	// ///////////////////////////////////////////////////////////
 	public void OnClick(View view) {
 		switch (view.getId()) {
 		case R.id.selectParent:

@@ -19,7 +19,7 @@ public class DbManager2 {
 	
 	public void insertRecord(ChatRecord chatRecord){
 
-		db.execSQL("insert into tb_chatrecord values(null,?,?,?,?,?,?,?,?)",
+		db.execSQL("insert into tb_chatrecord values(null,?,?,?,?,?,?,?,?,?)",
                 new String[]{chatRecord.getAccount(),
 				chatRecord.getTime(),
 				chatRecord.getContent(),
@@ -27,7 +27,8 @@ public class DbManager2 {
 				chatRecord.getDate(),
 				chatRecord.getType(),
 				chatRecord.getIsGroupChat(),
-				chatRecord.getJid()
+				chatRecord.getJid(),
+				chatRecord.getContent_type()
 		});
 
 	}
@@ -81,7 +82,7 @@ public void deleteAllRecord(){
 		db.execSQL(sql1);
 		db.execSQL(sql2);
 		}
-		else System.out.println("��Ϊ��");
+		else System.out.println("已经删除了");
 	}
 
 

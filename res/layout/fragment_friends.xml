@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" 
     android:background="@color/BackgroundGrayColor">
+    
+    
+    <LinearLayout 
+         android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" 
+        >
 
     <FrameLayout
         android:id="@+id/friend_list_lay"
@@ -63,12 +70,22 @@
   
    <ListView android:id="@+id/friendListView" android:visibility="visible" android:fadingEdge="none" android:descendantFocusability="blocksDescendants" android:layout_width="fill_parent" android:layout_height="wrap_content" android:cacheColorHint="#00000000" android:divider="#ffb4b4b4" android:dividerHeight="1.0px"  />
 
-   <scu.android.util.SideBar  
+   </LinearLayout>
+   <RelativeLayout 
+        android:layout_height="fill_parent"  
+	    android:layout_width="50dp" 
+	    android:gravity="top|right" 
+	    android:layout_gravity="top|right"
+	    android:layout_alignParentRight="true"
+       >
+      <scu.android.util.SideBar  
 	    android:id ="@+id/sideBar"  
 	    android:layout_height="wrap_content"  
 	    android:layout_width="20dp" 
-	    android:gravity="right|center_vertical" 
-	    android:layout_gravity="right|center_vertical"
+	    android:gravity="top|right" 
+	    android:layout_gravity="top|right"
 	    android:background="@drawable/mm_text_bg_trans"
-	/> 
-</LinearLayout>
+	/>  
+   </RelativeLayout>
+   
+</RelativeLayout>

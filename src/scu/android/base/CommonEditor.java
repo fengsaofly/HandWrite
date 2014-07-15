@@ -1,21 +1,17 @@
 package scu.android.base;
 
 import java.util.ArrayList;
-import scu.android.activity.ScanPhotosActivity;
 import scu.android.ui.PhotosAdapter;
 import scu.android.util.AppUtils;
 import scu.android.util.Constants;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.LinearLayout;
@@ -100,8 +96,9 @@ public class CommonEditor extends LinearLayout implements OnClickListener {
 		thumbnails = new ArrayList<String>();
 		thumbnailsAdapter = new PhotosAdapter(activity, thumbnails);
 		thumbnailsAdapter.setColumnNum(4);
+		thumbnailsAdapter.setAction(action);
 		thumbnailsView.setAdapter(thumbnailsAdapter);
-		thumbnailsView.setOnItemClickListener(new ThumbnailListener());
+//		thumbnailsView.setOnItemClickListener(new ThumbnailListener());
 	}
 
 	@Override
@@ -153,22 +150,22 @@ public class CommonEditor extends LinearLayout implements OnClickListener {
 			break;
 		}
 	}
-
-	// 缩略图监听器
-	private class ThumbnailListener implements OnItemClickListener {
-
-		@Override
-		public void onItemClick(AdapterView<?> parent, View v, int position,
-				long id) {
-			Intent intent = new Intent(activity, ScanPhotosActivity.class);
-			Bundle bundle = new Bundle();
-			bundle.putStringArrayList("photos", thumbnails);
-			bundle.putInt("index", position + 1);
-			bundle.putString("action", action);
-			intent.putExtras(bundle);
-			activity.startActivity(intent);
-		}
-	}
+//
+//	// 缩略图监听器
+//	private class ThumbnailListener implements OnItemClickListener {
+//
+//		@Override
+//		public void onItemClick(AdapterView<?> parent, View v, int position,
+//				long id) {
+//			Intent intent = new Intent(activity, ScanPhotosActivity.class);
+//			Bundle bundle = new Bundle();
+//			bundle.putStringArrayList("photos", thumbnails);
+//			bundle.putInt("index", position + 1);
+//			bundle.putString("action", action);
+//			intent.putExtras(bundle);
+//			activity.startActivity(intent);
+//		}
+//	}
 
 	public void disableAddExtras() {
 		addExtras.setVisibility(View.GONE);

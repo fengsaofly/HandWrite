@@ -50,6 +50,9 @@ public class GetOffLineMessageThread extends AsyncTask<Void, Integer, Void>{
          * Perform download and Bitmap conversion here
          *
          */
+//    	System.out.println("切换为离线登陆状态。。。");
+    	Presence presence = new Presence(Presence.Type.unavailable);
+		XmppTool.getConnection().sendPacket(presence);
     	OfflineMessageManager offlineManager = new OfflineMessageManager(XmppTool.getConnection());  
 	    try {  
 	        Iterator<org.jivesoftware.smack.packet.Message> it = offlineManager  

@@ -8,12 +8,17 @@ import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.inputmethod.EditorInfo;
 import android.widget.BaseAdapter;
+import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
 import com.demo.note.R;
@@ -26,12 +31,14 @@ import com.nostra13.universalimageloader.core.ImageLoader;
  * @author YouMingyang
  * 
  */
-public class GroupListActivity extends ActivitySupport {
+public class GroupListActivity extends ActivitySupport implements
+		OnEditorActionListener {
 	private ImageLoader loader;
 	private DisplayImageOptions options;
 
 	private ProgressDialog dialog;
 	private View noNetworkConnect;
+	private EditText searchInput;
 
 	private GroupsListAdapter groupsListAdapter;
 	private ArrayList<RosterGroup> groups;
@@ -39,6 +46,7 @@ public class GroupListActivity extends ActivitySupport {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.group_list_lay);
 		init();
 	}
@@ -47,9 +55,12 @@ public class GroupListActivity extends ActivitySupport {
 		final View activityTop = findViewById(R.id.activity_top);
 		final TextView title = (TextView) activityTop.findViewById(R.id.title);
 		title.setText("群组");
-		
-		noNetworkConnect=findViewById(R.id.no_network_connect);
+
+		noNetworkConnect = findViewById(R.id.no_network_connect);
 		refreshData(null);
+		final View searchBar = findViewById(R.id.search_bar);
+		searchInput = (EditText) searchBar.findViewById(R.id.search_input);
+		searchInput.setOnEditorActionListener(this);
 
 		this.loader = ImageLoader.getInstance();
 		this.options = new DisplayImageOptions.Builder()
@@ -90,7 +101,7 @@ public class GroupListActivity extends ActivitySupport {
 			} else {
 				switch (resultCode) {
 				case 0:
-					
+
 					break;
 				default:
 					showToast("暂无数据", Toast.LENGTH_SHORT);
@@ -149,7 +160,7 @@ public class GroupListActivity extends ActivitySupport {
 	}
 
 	public void refreshData(String param) {
-		
+
 		if (hasInternetConnected()) {
 			showProgressDialog();
 			noNetworkConnect.setVisibility(View.GONE);
@@ -164,13 +175,27 @@ public class GroupListActivity extends ActivitySupport {
 		dialog.setMessage("正在搜索群组");
 		dialog.show();
 	}
-	
-	public void OnClick(View view){
-		switch(view.getId()){
+
+	public void myOnClick(View view) {
+		switch (view.getId()) {
 		case R.id.no_network_connect:
 			AppUtils.networkSet(this);
 			break;
+		case R.id.action_back:
+			closeInput();
+			super.onBackPressed();
+			break;
 		}
+	}
+
+	@Override
+	public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+		switch (actionId) {
+		case EditorInfo.IME_ACTION_SEARCH:
+			showToast("搜索群组");
+			break;
+		}
+		return false;
 	}
 
 }

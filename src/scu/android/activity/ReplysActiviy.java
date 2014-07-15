@@ -9,6 +9,7 @@ import scu.android.base.CommonEditor;
 import scu.android.db.ReplyDao;
 import scu.android.db.UserDao;
 import scu.android.entity.Reply;
+import scu.android.entity.Resource;
 import scu.android.entity.User;
 import scu.android.ui.MGridView;
 import scu.android.ui.MListView;
@@ -216,8 +217,8 @@ public class ReplysActiviy extends ActivitySupport implements
 			if (result != null) {
 				for (Reply reply : result) {
 					ArrayList<Reply> replysString = ReplyDao.getReply(context,
-							reply.getRepId(), 0, 5, 1);
-//					reply.setReplys(replysString);
+							reply.getrId(), 0, 5, 1);
+					reply.setReplys(replysString);
 					replys.add(reply);
 					maps.put(reply, replysString);
 				}
@@ -256,7 +257,7 @@ public class ReplysActiviy extends ActivitySupport implements
 			isRefreshing = true;
 			long srcType = params[0];
 			long object = params[1];
-			long repId=params[2];
+			long repId = params[2];
 
 			ArrayList<Reply> mLocalReplys = null;
 			switch ((int) srcType) {
@@ -270,7 +271,7 @@ public class ReplysActiviy extends ActivitySupport implements
 							localLens = localReplyNum;
 							isAllDownload = true;
 						}
-						mLocalReplys = ReplyDao.getReply(context,repId,
+						mLocalReplys = ReplyDao.getReply(context, repId,
 								(long) replys.size(), localLens, 1);
 					} else {
 						resultCode = -1;
@@ -379,7 +380,7 @@ public class ReplysActiviy extends ActivitySupport implements
 			}
 			final Reply reply = replys.get(position);
 			final User user = UserDao.getUserById(ReplysActiviy.this,
-					reply.getUserId());
+					reply.getrUser());
 			ImageView avatar = (ImageView) convertView
 					.findViewById(R.id.avatar);
 			final int width = AppUtils.getDefaultPhotoWidth(ReplysActiviy.this,
@@ -396,26 +397,29 @@ public class ReplysActiviy extends ActivitySupport implements
 			else
 				distance.setText("1.2千米");
 			((TextView) convertView.findViewById(R.id.reply_time))
-					.setText(AppUtils.timeToNow(reply.getReplyTime()));
+					.setText(AppUtils.timeToNow(reply.getCreatedTime()));
 			TextView content = ((TextView) convertView
 					.findViewById(R.id.content));
-			if (reply.getContent() == null || reply.getContent().length() == 0)
+			if (reply.getrTextContent() == null
+					|| reply.getrTextContent().length() == 0)
 				content.setVisibility(View.GONE);
 			else
-				content.setText(reply.getContent());
+				content.setText(reply.getrTextContent());
 			final TextView goRely = (TextView) convertView
 					.findViewById(R.id.go_reply);
 			MGridView photosView = (MGridView) convertView
 					.findViewById(R.id.photos_view);
-			if (reply.getImages() == null || reply.getImages().size() < 0) {
+			ArrayList<String> images = Resource
+					.getLImages(reply.getResources());
+			if (images == null || images.size() < 0) {
 				photosView.setVisibility(View.GONE);
 			} else {
 				photosView.setAdapter(new PhotosAdapter(ReplysActiviy.this,
-						reply.getImages(), null));
+						images, images));
 			}
 			ImageButton audio = (ImageButton) convertView
 					.findViewById(R.id.audio);
-			final String sAudio = reply.getAudio();
+			final String sAudio = Resource.getAudio(reply.getResources());
 			if (sAudio != null && sAudio.length() > 0) {
 				audio.setVisibility(View.VISIBLE);
 				audio.setOnClickListener(new OnClickListener() {
@@ -439,7 +443,7 @@ public class ReplysActiviy extends ActivitySupport implements
 				@Override
 				public void onClick(View view) {
 					toggleEditor();
-					curRepId = reply.getRepId();
+					curRepId = reply.getrId();
 					curRepAdapter = adapter;
 				}
 			});
@@ -491,9 +495,19 @@ public class ReplysActiviy extends ActivitySupport implements
 					.setText(MyApplication.getLoginUser(ReplysActiviy.this)
 							.getNickname() + "回复：" + nickname);
 			((TextView) convertView.findViewById(R.id.reply_time))
-					.setText(AppUtils.timeToNow(reply.getReplyTime()));
-			((TextView) convertView.findViewById(R.id.content)).setText(reply
-					.getContent());
+					.setText(AppUtils.timeToNow(reply.getCreatedTime()));
+			final TextView content = ((TextView) convertView
+					.findViewById(R.id.content));
+			content.setText(reply.getrTextContent());
+			content.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					toggleEditor();
+					curRepId = reply.getqId();
+					curRepAdapter = MListViewAdapter.this;
+				}
+			});
 			return convertView;
 		}
 	}
@@ -530,19 +544,19 @@ public class ReplysActiviy extends ActivitySupport implements
 	// 回复评论
 	public void doReply() {
 		editor.hideSoft();
-		String content = editor.getContent();
-		if ((content != null && content.length() > 0)) {
-			Reply reply = new Reply(0, content, null, null, null, curRepId,
-					MyApplication.getLoginUser(this).getUserId(), 1);
-			long repId = ReplyDao.insertReply(this, reply);
-			if (repId != 0L) {
+		String rTextContent = editor.getContent();
+		if ((rTextContent != null && rTextContent.length() > 0)) {
+			final long rUser = MyApplication.getLoginUser(this).getUserId();
+			Reply reply = new Reply(0, rTextContent, 0, new Date(), curRepId,
+					rUser, 1);
+			long rId = ReplyDao.insertReply(this, reply);
+			if (rId != 0L) {
 				editor.getThumbnailsParentView().setVisibility(View.INVISIBLE);
 				editor.getExtrasView().setVisibility(View.GONE);
 				editor.getThumbnails().clear();
 				editor.clearContent();
 				editor.setCurPhotosNum(0);
-				reply.setRepId(repId);
-				reply.setReplyTime(new Date());
+				reply.setrId(rId);
 				curRepAdapter.getReplys().add(0, reply);
 				curRepAdapter.notifyDataSetChanged();
 				toggleEditor();
@@ -556,14 +570,14 @@ public class ReplysActiviy extends ActivitySupport implements
 
 	// 删除问题
 	public void deleteReply(final Reply reply, final int location) {
-		if (reply.getUserId() == MyApplication.getLoginUser(this).getUserId()) {
+		if (reply.getrUser() == MyApplication.getLoginUser(this).getUserId()) {
 			Dialog alert = new AlertDialog.Builder(this).setTitle("破题")
 					.setMessage("确定删除回复?")
 					.setPositiveButton("确定", new Dialog.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
 							if (!ReplyDao.deleteReply(ReplysActiviy.this,
-									reply.getRepId(), 0)) {
+									reply.getrId(), 0)) {
 								Toast.makeText(ReplysActiviy.this, "删除失败。。.",
 										Toast.LENGTH_SHORT).show();
 							} else {

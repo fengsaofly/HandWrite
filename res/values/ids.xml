@@ -91,6 +91,9 @@
     <item  type="id" name="tag_group_owner_val"/>
     <item  type="id" name="tag_group_name_val"/>
     <item  type="id" name="tag_group_occupant_val"/>
+    <item  type="id" name="tag_group_maxmember_val"/>
+    <item  type="id" name="tag_group_tag_val"/>
+    <item  type="id" name="tag_group_notice_val"/>
     
     <!-- 应用基本 -->
     <item  type="id" name="activity_title"/>
@@ -104,12 +107,14 @@
     <!-- 基本控件，一般一个页面只有一个 -->
     <item  type="id" name="thumbnails"/> <!-- 缩略图，是一个gridview -->
     <item  type="id" name="popup_gridview"/>
+    <item  type="id" name="schoolstory_top_edittext"/> <!-- 校园故事头部编辑框 -->
+    
     
     <item name="popup_doodle_lay" type="id"/>
     <item name="popup_record_lay" type="id"/>
     <item name="common_editor" type="id"/>
     
-     <!-- @YouMingyang 新添加 -->
+      <!-- @YouMingyang 新添加 -->
     <item name="nearby_people" type="id"/>
     <item name="nearby_list" type="id"/>
     <item name="nearby_settings" type="id"/>
@@ -121,6 +126,15 @@
     <item name="no_network_connect" type="id"/>
     <item name="upload_status" type="id"/>
     <item name="upload_complete" type="id"/>
+    <item name="hometeacher_add" type="id"/>
+    <item name="loading_more" type="id"/>
+    <item name="audio" type="id"/>
+    <item name="duration" type="id"/>
+    <item name="status" type="id"/>
+    <item name="loading" type="id"/>
+    
+      <item name="popup_menu_option_login" type="id"/>
+        <item name="popup_menu_option_logout" type="id"/>
 
     
     

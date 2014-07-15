@@ -104,4 +104,10 @@
             layout="@layout/voice_rcd_hint_window" />
     </LinearLayout>
 -->
+
+ <include
+        android:id="@id/rcChat_popup"
+        layout="@layout/voice_rcd_hint_window"
+        android:visibility="gone" />
+ 
 </RelativeLayout>

@@ -133,49 +133,64 @@ public class SearchFriendActivity extends Activity{
 				@Override
 				public void run() {
 					// TODO Auto-generated method stub
-					String strUrl = "http://"+((MyApplication)getApplication()).hostIp+":9090/plugins/presence/status?jid="+search_input.getText().toString()+"@"+((MyApplication)getApplication()).hostName+"&type=xml";
-					System.out.println("strUrl"+strUrl);
-				    short            shOnLineState    = 0;    //-不存在-
-				    
-				    try
-				    {
-				        URL             oUrl     = new URL(strUrl);
-				    URLConnection     oConn     = oUrl.openConnection();
-				    oConn.setConnectTimeout(10*1000);
-				    if(oConn!=null)
-				    {
-				        BufferedReader     oIn = new BufferedReader(new InputStreamReader(oConn.getInputStream()));
-				        if(null!=oIn)
-				        {
-				            String strFlag = oIn.readLine();
-				            oIn.close();
-				            
-				            if(strFlag.indexOf("type=\"unavailable\"")>=0)
-				            {
-				                shOnLineState = 1;
-				            }
-				            if(strFlag.indexOf("type=\"error\"")>=0)
-				            {
-				                shOnLineState = 0;
-				            }
-				            else if(strFlag.indexOf("priority")>=0 || strFlag.indexOf("id=\"")>=0)
-				            {
-				                shOnLineState = 1;
-				            }
-				        }
+//					String strUrl = "http://"+((MyApplication)getApplication()).hostIp+":9090/plugins/presence/status?jid="+search_input.getText().toString()+"@"+((MyApplication)getApplication()).hostName+"&type=xml";
+//					System.out.println("strUrl"+strUrl);
+				    int  shOnLineState    = 0;    //-不存在-
+				    shOnLineState = ((MyApplication)getApplication()).IsUserOnLine(search_input.getText().toString());
+				    if(shOnLineState==0){  //用户不存在
 				        Message msg = mHandler.obtainMessage();
-				        msg.what = shOnLineState;
+				        msg.what = 0;
 				        mHandler.sendMessage(msg);
-				       
 				    }
-				    }
-				    catch(Exception e)
-				    {   
-				    	e.printStackTrace();
-				    	 Message msg = mHandler.obtainMessage();
+				    else if(shOnLineState == 3){  //搜索出错
+				    	  Message msg = mHandler.obtainMessage();
 					        msg.what = 3;
 					        mHandler.sendMessage(msg);
 				    }
+				    else{   //用户存在
+				    	 Message msg = mHandler.obtainMessage();
+					        msg.what = 1;
+					        mHandler.sendMessage(msg);
+				    }
+//				    try
+//				    {
+//				        URL             oUrl     = new URL(strUrl);
+//				    URLConnection     oConn     = oUrl.openConnection();
+//				    oConn.setConnectTimeout(10*1000);
+//				    if(oConn!=null)
+//				    {
+//				        BufferedReader     oIn = new BufferedReader(new InputStreamReader(oConn.getInputStream()));
+//				        if(null!=oIn)
+//				        {
+//				            String strFlag = oIn.readLine();
+//				            oIn.close();
+//				            
+//				            if(strFlag.indexOf("type=\"unavailable\"")>=0)
+//				            {
+//				                shOnLineState = 1;
+//				            }
+//				            if(strFlag.indexOf("type=\"error\"")>=0)
+//				            {
+//				                shOnLineState = 0;
+//				            }
+//				            else if(strFlag.indexOf("priority")>=0 || strFlag.indexOf("id=\"")>=0)
+//				            {
+//				                shOnLineState = 1;
+//				            }
+//				        }
+//				        Message msg = mHandler.obtainMessage();
+//				        msg.what = shOnLineState;
+//				        mHandler.sendMessage(msg);
+//				       
+//				    }
+//				    }
+//				    catch(Exception e)
+//				    {   
+//				    	e.printStackTrace();
+//				    	 Message msg = mHandler.obtainMessage();
+//					        msg.what = 3;
+//					        mHandler.sendMessage(msg);
+//				    }
 				}
 			}).start();
 			}

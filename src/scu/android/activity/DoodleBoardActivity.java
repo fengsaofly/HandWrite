@@ -28,6 +28,7 @@ public class DoodleBoardActivity extends Activity {
 
 	private DoodleCanvas doodleCanvas;
 	private View paintSet;
+	private ImageView paintSize;
 	private ImageView paintDemo;
 	private SeekBar range;
 	private Intent intent;
@@ -46,6 +47,7 @@ public class DoodleBoardActivity extends Activity {
 		actionBar.setDisplayHomeAsUpEnabled(true);
 		doodleCanvas = (DoodleCanvas) findViewById(R.id.doodle_canvas);
 		paintSet = findViewById(R.id.paint_set);
+		paintSize = (ImageView) paintSet.findViewById(R.id.paint_size);
 		paintDemo = (ImageView) paintSet.findViewById(R.id.paint_demo);
 		isSetColor = true;
 		range = (SeekBar) paintSet.findViewById(R.id.range);
@@ -151,6 +153,7 @@ public class DoodleBoardActivity extends Activity {
 		switch (view.getId()) {
 		case R.id.paint_size:
 			isSetColor = !isSetColor;
+			togglePaintBg();
 			break;
 		case R.id.withdraw:
 			doodleCanvas.withdraw(false);
@@ -163,7 +166,13 @@ public class DoodleBoardActivity extends Activity {
 			break;
 		}
 	}
-
+	public void togglePaintBg() {
+		if (isSetColor) {
+			paintSize.setBackgroundResource(R.drawable.paint_color);
+		} else {
+			paintSize.setBackgroundResource(R.drawable.paint_size);
+		}
+	}
 	public void setPaintSetVisibility() {
 		if (paintSet.getVisibility() == View.INVISIBLE)
 			paintSet.setVisibility(View.VISIBLE);

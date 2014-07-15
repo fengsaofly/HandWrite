@@ -40,7 +40,7 @@ public class ModifyNomalActivity extends Activity{
 		String type = intent.getStringExtra("type");
 		if(type.equals("grade")){
 			s1 = "年级";
-			s2 = "请填写你所在的年级";
+			s2 = "请填写你所在的职业";
 			tag = 1;
 		}
 		else if(type.equals("nickName")){

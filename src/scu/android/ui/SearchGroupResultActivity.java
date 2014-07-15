@@ -5,7 +5,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smackx.muc.Affiliate;
+import org.jivesoftware.smackx.muc.MultiUserChat;
+import org.jivesoftware.smackx.muc.RoomInfo;
+
 import scu.android.application.MyApplication;
+import scu.android.util.XmppTool;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -36,15 +42,59 @@ public class SearchGroupResultActivity extends Activity{
 	
 	public void initial(){
 		Intent intent = getIntent();
+		List<RoomInfo> rooms = new ArrayList<RoomInfo>();
+		((MyApplication)getApplication()).getRoomInfo(rooms);
 		final String roomName = intent.getStringExtra("roomName");
+		String sign = "";
+		String jid = roomName+"@conference"+"."+((MyApplication)getApplication()).hostName;
+		String ower = "";
+		int currentCount = 0;
+		for(RoomInfo room:rooms){
+			if(room.getRoom().split("@")[0].equals(roomName)){
+				sign = room.getDescription();
+				currentCount = room.getOccupantsCount();
+//				jid = room.getRoom();
+				break;
+			}
+		}
+		
+		MultiUserChat muc = new MultiUserChat(XmppTool.getConnection(),jid );
+		String nickName = "123";
+//				((MyApplication)getApplication()).vCard.getNickName().toString();
+		
+		try {
+			muc.join(nickName);
+			java.util.Collection<Affiliate>  admins = muc.getOwners();
+			
+			if(admins!=null&&admins.size()!=0){
+				
+			
+			for(Affiliate item: admins){
+				ower = item.getJid().split("@")[0];
+			}
+			}
+			
+		} catch (XMPPException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		muc.leave();
 		friend_name = (TextView)findViewById(R.id.friend_name);
 		group_name_val = (TextView)findViewById(R.id.group_name_val);
 		joinInTheRoom = (TextView)findViewById(R.id.joinInTheRoom);
 		group_owner_val= (TextView)findViewById(R.id.group_owner_val);
+		group_owner_val.setText(ower);
 		tag_sign_val= (TextView)findViewById(R.id.tag_sign_val);
+		if(!sign.equals("")){
+			tag_sign_val.setText(sign);
+		}
 		group_members_val= (TextView)findViewById(R.id.group_members_val);
-		currentNum =Integer.parseInt( group_members_val.getText().toString().replace("(", "").replace(")", "").split("/")[0]);
+		currentNum = currentCount;
+//		currentNum =Integer.parseInt( group_members_val.getText().toString().replace("(", "").replace(")", "").split("/")[0]);
 		TotleNum = Integer.parseInt( group_members_val.getText().toString().replace("(", "").replace(")", "").split("/")[1]);
+		
+		group_members_val.setText("("+currentNum+"/"+TotleNum+")");
 		System.out.println("currentNum: "+currentNum+"TotleNum: "+TotleNum);
 		roomInformationList = new ArrayList<Map<String,Object>>();
 		((MyApplication)getApplication()).loadArray(roomInformationList);
@@ -79,7 +129,7 @@ public class SearchGroupResultActivity extends Activity{
 		    	map.put("roomOwner",group_owner_val.getText().toString());
 		    	map.put("roomNoti", tag_sign_val.getText().toString());
 		    	map.put("roomCurrentPeople", currentNum);
-		    	map.put("roomTotlePeople", currentNum);
+		    	map.put("roomTotlePeople", TotleNum);
 		    	roomInformationList.add(map);
 				((MyApplication)getApplication()).saveArray(roomInformationList);
 				finish();

@@ -2,48 +2,132 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" 
     android:background="@color/BackgroundGrayColor"
+    android:orientation="vertical"
     android:paddingLeft="10dp"
-    android:paddingRight="10dp">
+    android:paddingRight="10dp" >
 
-    
-	<RelativeLayout android:clickable="true" android:padding="10dp" android:layout_marginTop="20dp" android:layout_width="fill_parent" android:layout_height="wrap_content" android:background="@anim/find_item_selector">
-	    
-	      <TextView android:drawableLeft="@drawable/find_list_item_nearby_icon" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="附近的人" style="@style/text_style_large" android:drawablePadding="10dp" />
-		 <ImageView android:layout_centerVertical="true" android:src="@drawable/arrow_right_bold" android:layout_alignParentRight="true" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
-	  
-	</RelativeLayout>
-	
-	<RelativeLayout android:clickable="true" android:padding="10dp" android:layout_marginTop="20dp" android:layout_width="fill_parent" android:layout_height="wrap_content" android:background="@anim/find_item_selector">
-		    
-	      <TextView android:drawableLeft="@drawable/find_list_item_schoolstory_icon" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="校园故事" style="@style/text_style_large" android:drawablePadding="10dp" />
-		 <ImageView android:layout_centerVertical="true" android:src="@drawable/arrow_right_bold" android:layout_alignParentRight="true" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
-	  
-	</RelativeLayout>
-	
-	<RelativeLayout android:clickable="true" android:padding="10dp" android:layout_marginTop="20dp" android:layout_width="fill_parent" android:layout_height="wrap_content" android:background="@anim/find_item_selector">
-		    
-	      <TextView android:drawableLeft="@drawable/find_list_item_learningenglish_icon" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="说句外国话" style="@style/text_style_large" android:drawablePadding="10dp" />
-		 <ImageView android:layout_centerVertical="true" android:src="@drawable/arrow_right_bold" android:layout_alignParentRight="true" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
-	  
-	</RelativeLayout>
-	
-	<RelativeLayout android:clickable="true" android:padding="10dp" android:layout_marginTop="20dp" android:layout_width="fill_parent" android:layout_height="wrap_content" android:background="@anim/find_item_selector">
-		    
-	      <TextView android:drawableLeft="@drawable/find_list_item_groups_icon" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="群组" style="@style/text_style_large" android:drawablePadding="10dp" />
-		 <ImageView android:layout_centerVertical="true" android:src="@drawable/arrow_right_bold" android:layout_alignParentRight="true" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
-	  
-	</RelativeLayout>
-	
-	<RelativeLayout android:clickable="true" android:padding="10dp" android:layout_marginTop="20dp" android:layout_width="fill_parent" android:layout_height="wrap_content" android:background="@anim/find_item_selector">
-		    
-	      <TextView android:drawableLeft="@drawable/find_list_item_teacher_icon" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="请家教" style="@style/text_style_large" android:drawablePadding="10dp" />
-		 <ImageView android:layout_centerVertical="true" android:src="@drawable/arrow_right_bold" android:layout_alignParentRight="true" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
-	  
-	</RelativeLayout>
-	
+    <RelativeLayout
+        android:id="@id/nearby_people"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:background="@anim/find_item_selector"
+        android:clickable="true"
+        android:padding="10dp" >
 
+        <TextView
+            style="@style/text_style_large"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/find_list_item_nearby_icon"
+            android:drawablePadding="10dp"
+            android:text="附近的人" />
 
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/arrow_right_bold" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:background="@anim/find_item_selector"
+        android:clickable="true"
+        android:padding="10dp" >
+
+        <TextView
+            style="@style/text_style_large"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/find_list_item_schoolstory_icon"
+            android:drawablePadding="10dp"
+            android:text="校园故事" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/arrow_right_bold" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:background="@anim/find_item_selector"
+        android:clickable="true"
+        android:padding="10dp" >
+
+        <TextView
+            style="@style/text_style_large"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/find_list_item_learningenglish_icon"
+            android:drawablePadding="10dp"
+            android:text="说句外国话" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/arrow_right_bold" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@id/groups_list"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:background="@anim/find_item_selector"
+        android:clickable="true"
+        android:padding="10dp" >
+
+        <TextView
+            style="@style/text_style_large"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/find_list_item_groups_icon"
+            android:drawablePadding="10dp"
+            android:text="群组" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/arrow_right_bold" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@id/hometeacher_add"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:background="@anim/find_item_selector"
+        android:clickable="true"
+        android:padding="10dp" >
+
+        <TextView
+            style="@style/text_style_large"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/find_list_item_teacher_icon"
+            android:drawablePadding="10dp"
+            android:text="请家教" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/arrow_right_bold" />
+    </RelativeLayout>
 
 </LinearLayout>

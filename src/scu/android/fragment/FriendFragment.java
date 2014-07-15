@@ -119,13 +119,33 @@ public class FriendFragment extends Fragment
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
-
-		System.out.println("oncreateView:  ");
+		System.out.println("进入Friend----oncreateView");
+//		System.out.println("oncreateView:  ");
 		 
 //		pd = new ProgressDialog(getActivity());
 //		pd.setTitle("提示");
 //		pd.setMessage("正在更新列表");
 //		pd.show();
+		
+		new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				if(((MyApplication)getActivity().getApplication()).loginFlag){
+				while(((MyApplication)getActivity().getApplication()).allContactsVcard==null||((MyApplication)getActivity().getApplication()).allContactsVcard.size()==0){
+					try {
+						System.out.println("正在等待好友数据。。。");
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				}
+			
+			}
+		}).start();
 		View view = inflater.inflate(R.layout.fragment_friends, container,
 				false);
 		friendListView = (ListView) view.findViewById(R.id.friendListView);
@@ -133,22 +153,31 @@ public class FriendFragment extends Fragment
 		mWindowManager = (WindowManager)getActivity().getSystemService(Context.WINDOW_SERVICE);
 		 
 		 indexBar = (SideBar)view.findViewById(R.id.sideBar);  
-	        indexBar.setListView(friendListView); 
-	        mDialogText = (TextView) LayoutInflater.from(getActivity()).inflate(R.layout.list_position, null);
-	        mDialogText.setVisibility(View.INVISIBLE);
-	        WindowManager.LayoutParams lp = new WindowManager.LayoutParams(
-	                LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT,
-	                WindowManager.LayoutParams.TYPE_APPLICATION,
-	                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
-	                        | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
-	                PixelFormat.TRANSLUCENT);
-	        mWindowManager.addView(mDialogText, lp);
-	        indexBar.setTextView(mDialogText);
+	       
 		
 		// multiListView = (ListView)view.findViewById(R.id.multiListView);
 
 //		entries = ((MyApplication) getActivity().getApplication()).entries;
 		multiChat = (LinearLayout)view.findViewById(R.id.multiChat);
+		if(((MyApplication)getActivity().getApplication()).loginFlag==false){
+			multiChat.setVisibility(View.INVISIBLE);
+			indexBar.setVisibility(View.INVISIBLE);
+		}
+		else {
+			multiChat.setVisibility(View.VISIBLE);
+			indexBar.setVisibility(View.VISIBLE);
+			 indexBar.setListView(friendListView); 
+		        mDialogText = (TextView) LayoutInflater.from(getActivity()).inflate(R.layout.list_position, null);
+		        mDialogText.setVisibility(View.INVISIBLE);
+		        WindowManager.LayoutParams lp = new WindowManager.LayoutParams(
+		                LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT,
+		                WindowManager.LayoutParams.TYPE_APPLICATION,
+		                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+		                        | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+		                PixelFormat.TRANSLUCENT);
+		        mWindowManager.addView(mDialogText, lp);
+		        indexBar.setTextView(mDialogText);
+		}
 		multiChat.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -165,24 +194,26 @@ public class FriendFragment extends Fragment
 		friendData = new ArrayList<Map<String, Object>>();
 		// multiData = new ArrayList<Map<String,Object>>();
 
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				/**
-				 * 添加聊天室列表
-				 */
+		if(((MyApplication)getActivity().getApplication()).loginFlag){
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					/**
+					 * 添加聊天室列表
+					 */
 
-				// addMultiRoom();
+					// addMultiRoom();
 
-				/**
-				 * 添加好友列表
-				 */
-				addChatList();
-				Message msg = new Message();
-				msg.what = 10;
-				handler.sendMessage(msg);
-			}
-		}).start();
+					/**
+					 * 添加好友列表
+					 */
+					addChatList();
+					Message msg = new Message();
+					msg.what = 10;
+					handler.sendMessage(msg);
+				}
+			}).start();
+		}
 
 		friendListView.setOnItemClickListener(new OnItemClickListener() {
 
@@ -290,24 +321,37 @@ public class FriendFragment extends Fragment
 
 	@Override
 	public void onResume() {
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				/**
-				 * 添加聊天室列表
-				 */
+		if(((MyApplication)getActivity().getApplication()).loginFlag){
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					/**
+					 * 添加聊天室列表
+					 */
 
-				// addMultiRoom();
+					// addMultiRoom();
 
-				/**
-				 * 添加好友列表
-				 */
-				addChatList();
-				Message msg = new Message();
-				msg.what = 10;
-				handler.sendMessage(msg);
-			}
-		}).start();
+					/**
+					 * 添加好友列表
+					 */
+					System.out.println("进入Friend----onresume");
+					while(((MyApplication)getActivity().getApplication()).allContactsVcard==null||((MyApplication)getActivity().getApplication()).allContactsVcard.size()==0){
+						try {
+							System.out.println("正在等待好友数据。。。");
+							Thread.sleep(1000);
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+					addChatList();
+					Message msg = new Message();
+					msg.what = 10;
+					handler.sendMessage(msg);
+				}
+			}).start();
+		}
+		
 		super.onResume();
 	}
 
@@ -329,7 +373,25 @@ public class FriendFragment extends Fragment
 //					.equals("")))
 //				friendData.add(map);
 //		}
-		friendData = ((MyApplication)getActivity().getApplication()).allContactsVcard;
+//		if(((MyApplication)getActivity().getApplication()).allContactsVcard!=null&&((MyApplication)getActivity().getApplication()).allContactsVcard.size()!=0)
+		
+		if(((MyApplication)getActivity().getApplication()).allContactsVcard==null||((MyApplication)getActivity().getApplication()).allContactsVcard.size()==0){
+			friendData = new ArrayList<Map<String,Object>>();
+			for(RosterEntry entry:((MyApplication)getActivity().getApplication()).entries){
+				Map<String,Object> map2 = new HashMap<String, Object>();
+				map2.put("friend_avatar", getActivity().getResources().getDrawable(R.drawable.default_avatar));
+				map2.put("friend_name", entry.getName());
+				map2.put("friend_nickName", entry.getName());
+				map2.put("friend_carrer", "");
+				map2.put("friend_gender", "");
+				map2.put("friend_zone", "");
+				map2.put("friend_sign", "");
+				friendData.add(map2);
+			}
+		}
+		else{
+			friendData = ((MyApplication)getActivity().getApplication()).allContactsVcard;
+		}
 	}
 	
 	

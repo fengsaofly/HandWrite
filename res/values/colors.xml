@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+
     <color name="AppBackgroundColor">#ffc0e7fa</color>
+    
+
     <color name="TextColorBlack">#ff000000</color>
     <color name="TextColorWhite">#ffffffff</color>
+
     <color name="TextColorBlue">#ff0066cc</color>
+
     <color name="TextColorRed">#ffe26926</color>
     <color name="BgColor">#ffd1dce9</color>
     <color name="my_buddy_footer_color">#ffd0d0d0</color>
@@ -55,8 +60,6 @@
     <!-- A light Holo shade of blue -->
     <color name="holo_blue_light">#ff33b5e5</color>
 
-
-
     <!-- A light Holo shade of green -->
     <color name="holo_green_light">#ff99cc00</color>
     <!-- A light Holo shade of red -->
@@ -78,30 +81,7 @@
 
     <color name="question_item_backgrond">#ffffff</color>
     <color name="question_item_border">#aaa</color>
-    <color name="text_normal_black">#ff333333</color>
 
-    <!-- 灰色 -->
-
-    <color name="BackgroundGrayColor">#EFEFF4</color>
- <!-- 浅灰 -->
-    <color name="TextColorGray">#ff505050</color>
- <!-- 接近黑色的灰色 -->
-    <color name="gray_normal">#ff686868</color>
- <!-- 灰色 -->
-    <color name="gray_light">#33999999</color>
- <!-- 非常浅灰 -->
-    <color name="gray_bright">#33CCCCCC</color>
- <!-- 最浅灰 -->
-
-    <color name="black">#000000</color>
-    <color name="red">#ff0000</color>
-    <color name="blue">#0080ff</color>
-    <color name="green">#00ff00</color>
-    <color name="purbe">#ff00ff</color>
-    <color name="orange">#ff8000</color>
-
-    <color name="question_item_backgrond">#ffffff</color>
-    <color name="question_item_border">#aaa</color>
     
     <color name="text_normal_black">#ff333333</color>
     
@@ -113,8 +93,8 @@
     <color name="gray_normal">#ff686868</color>      <!-- 灰色 -->
     <color name="gray_light">#33999999</color>      <!-- 非常浅灰 -->
     <color name="gray_bright">#33CCCCCC</color> <!-- 最浅灰 -->
-
     
+
      <color name="black">#000000</color>
     <color name="red">#ff0000</color>
     <color name="blue">#0080ff</color>

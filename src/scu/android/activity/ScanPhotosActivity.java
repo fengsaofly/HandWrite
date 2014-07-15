@@ -1,7 +1,6 @@
 package scu.android.activity;
 
 import java.util.ArrayList;
-
 import scu.android.ui.PhotosViewPager;
 import uk.co.senab.photoview.PhotoView;
 import android.app.Activity;
@@ -14,7 +13,6 @@ import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
-import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -38,7 +36,7 @@ public class ScanPhotosActivity extends Activity {
 	private PhotosViewPager viewPager;
 	private ScanPageAdater adapter;
 	private ArrayList<String> photos;
-	private int action;
+	private String action;
 	private TextView pageIndex;
 	private ImageLoader imageLoader;
 	private DisplayImageOptions options;
@@ -63,12 +61,8 @@ public class ScanPhotosActivity extends Activity {
 		final Bundle bundle = intent.getExtras();
 		photos = bundle.getStringArrayList("photos");
 		int index = bundle.getInt("index", 1);
-		action = bundle.getInt("action", 0);
-		System.out.println(action);
+		action = bundle.getString("action");
 		toggleDel();
-
-		DisplayMetrics outMetrics = new DisplayMetrics();
-		getWindowManager().getDefaultDisplay().getMetrics(outMetrics);
 
 		viewPager = (PhotosViewPager) findViewById(R.id.viewPager);
 		adapter = new ScanPageAdater(photos);
@@ -185,9 +179,14 @@ public class ScanPhotosActivity extends Activity {
 	}
 
 	public void toggleDel() {
-		// String action = intent.getAction();
-		if (action != 0) {
+		if (action != null) {
 			findViewById(R.id.delete_photo).setVisibility(View.VISIBLE);
+		}
+	}
+
+	public void toggleToReply() {
+		if (action != null) {
+
 		}
 	}
 
@@ -199,19 +198,8 @@ public class ScanPhotosActivity extends Activity {
 		}
 	}
 
-	public String getAction(int action) {
-		switch (action) {
-		case 1:
-			return "scu.android.activity.IssueQuestionActivity";
-		case 2:
-			return "scu.android.activiy.RelpyQuestionActivity";
-		}
-		return null;
-	}
-
 	public void deletePhoto() {
 		final int index = viewPager.getCurrentItem();
-		final String act = getAction(action);
 		Dialog alert = new AlertDialog.Builder(this).setTitle("破题")
 				.setMessage("删除这张照片?")
 				.setPositiveButton("确定", new Dialog.OnClickListener() {
@@ -220,7 +208,7 @@ public class ScanPhotosActivity extends Activity {
 						photos.remove(index);
 						adapter.notifyDataSetChanged();
 						Intent del = new Intent();
-						del.setAction(act);
+						del.setAction(action);
 						del.putExtra("photoIndex", index);
 						sendBroadcast(del);
 						if (photos.size() <= 0)
@@ -253,13 +241,4 @@ public class ScanPhotosActivity extends Activity {
 		imageLoader.stop();
 		super.onStop();
 	}
-
-	@Override
-	protected void onDestroy() {
-		imageLoader.clearMemoryCache();
-		imageLoader.clearDiskCache();
-		// viewPager.destroyDrawingCache();
-		super.onDestroy();
-	}
-
 }

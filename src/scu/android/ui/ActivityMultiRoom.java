@@ -41,6 +41,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -107,6 +108,7 @@ public class ActivityMultiRoom extends Activity implements OnClickListener {
 	private int count = 0;
 	private String history = "";
 	SharedPreferences sp = null;
+	
 	/**
 	 * 房间ID
 	 */
@@ -139,13 +141,21 @@ public class ActivityMultiRoom extends Activity implements OnClickListener {
 				String time = bd.getString("time");
 				
 				entity.setDate(time);
+//				entity.setTime("");
 				entity.setName(from);
-				if(from.contains(((MyApplication)getApplication()).userName)||(from.contains(((MyApplication)getApplication()).vCard.getNickName()))){
+				
+				if(from.contains(((MyApplication)getApplication()).userName)||(from.contains(((MyApplication)getApplication()).nickName))){
 					entity.setMsgType(false);
+					mEditTextContent.setText("");// 清空输入框
+					
 				}
-				else entity.setMsgType(true);
+				else {
+					entity.setMsgType(true);
+				
+				}
 				
 				entity.setText(body);
+				entity.setTextType("nomal");
 				mDataArrays.add(entity);// 增加一个信息
 				mAdapter.notifyDataSetChanged();// 更新视图
 
@@ -165,6 +175,7 @@ public class ActivityMultiRoom extends Activity implements OnClickListener {
 				chatRecord.setType("0");
 				chatRecord.setIsGroupChat("true");
 				chatRecord.setJid(jid);
+				chatRecord.setContent_type("nomal");
 				db.insertRecord(chatRecord);
 				history += from + ":" + body + time+"\n";
 				System.out.println("history：  "+history);
@@ -202,6 +213,7 @@ public class ActivityMultiRoom extends Activity implements OnClickListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_chat);
 
 		// 旧消息
@@ -273,8 +285,19 @@ public class ActivityMultiRoom extends Activity implements OnClickListener {
 			System.out.println("房间号：" + jid);
 			if ("join".equals(action)) {
 				// 进入房间后的nickname(昵称)
-				String nickName = ((MyApplication)getApplication()).vCard.getNickName().toString();
-				muc.join(nickName);
+				
+//				if(((MyApplication)getApplication()).vCard==null){
+//					muc.join(((MyApplication)getApplication()).userName);
+//				}
+//				else {
+//					String nickName = ((MyApplication)getApplication()).vCard.getNickName().toString();
+//					muc.join(nickName);
+//				}
+				if(((MyApplication)getApplication()).nickName.equals("")){
+					muc.join(((MyApplication)getApplication()).userName);
+				}
+				else
+				muc.join(((MyApplication)getApplication()).nickName);
 				Log.v(TAG, "join success");
 			} else {
 				// 创建房间并加入
@@ -304,14 +327,14 @@ public class ActivityMultiRoom extends Activity implements OnClickListener {
 					+ cursor.getString(2) + "3: " + cursor.getString(3));
 			if (cursor.getString(4).equals("in"))
 				mDataArrays.add(new ChatMsgEntity(cursor.getString(1), cursor
-						.getString(2), cursor.getString(3), true));
+						.getString(2), cursor.getString(3), true,cursor.getString(9)));
 			else
 				mDataArrays.add(new ChatMsgEntity(
 						((MyApplication) getApplication()).userName, cursor
-								.getString(2), cursor.getString(3), false));
+								.getString(2), cursor.getString(3), false,cursor.getString(9)));
 		}
 
-		mAdapter = new ChatMsgViewAdapter(this, mDataArrays, "groupChat");
+		mAdapter = new ChatMsgViewAdapter(this, mDataArrays, "groupChat",1);
 		mListView.setAdapter(mAdapter);
 
 	}
@@ -379,6 +402,22 @@ public class ActivityMultiRoom extends Activity implements OnClickListener {
 			try {
 
 				muc.sendMessage(contString);
+//				ChatMsgEntity entity = new ChatMsgEntity();
+//	
+//				
+//				
+//				entity.setMsgType(false);
+//				entity.setText(mEditTextContent.getText().toString());
+//				
+//				entity.setDate(TimeRender.getDate());
+//				entity.setTextType("nomal");
+//				entity.setName(((MyApplication)getApplication()).userName);
+//				mDataArrays.add(entity);// 增加一个信息
+//				mAdapter.notifyDataSetChanged();// 更新视图
+//
+//				mEditTextContent.setText("");// 清空输入框
+//
+//				mListView.setSelection(mListView.getCount() - 1);// 设置当前listView的选中行为最后一行
 
 			} catch (XMPPException e) {
 				e.printStackTrace();
@@ -417,12 +456,12 @@ public class ActivityMultiRoom extends Activity implements OnClickListener {
 		finish();
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		menu.add(1, MENU_MULCHAT, Menu.NONE, "邀请");
-		menu.add(2, MENU_DESTROY, Menu.NONE, "销毁");
-		return super.onCreateOptionsMenu(menu);
-	}
+//	@Override
+//	public boolean onCreateOptionsMenu(Menu menu) {
+//		menu.add(1, MENU_MULCHAT, Menu.NONE, "邀请");
+//		menu.add(2, MENU_DESTROY, Menu.NONE, "销毁");
+//		return super.onCreateOptionsMenu(menu);
+//	}
 
 //	@Override
 //	public void onCreateContextMenu(ContextMenu menu, View v,
@@ -498,8 +537,11 @@ public class ActivityMultiRoom extends Activity implements OnClickListener {
 		// + "@conference.xmpp.chaoboo.com");
 		try {
 			// 创建聊天室
-			muc.create(((MyApplication)getApplication()).vCard.getNickName().toString());
-			
+			if(!((MyApplication)getApplication()).nickName.equals(""))
+			muc.create(((MyApplication)getApplication()).nickName);
+			else{
+				muc.create(((MyApplication)getApplication()).userName);
+			}
 			// 获得聊天室的配置表单
 			Form form = muc.getConfigurationForm();
 			System.out.println("form:" + form.toString());

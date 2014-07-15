@@ -12,9 +12,23 @@ public class ChatMsgEntity {
     
     private String time;
     
+    private String textType;
+    
+    
+    
     
 
-    public String getTime() {
+    public String getTextType() {
+		return textType;
+	}
+
+	public void setTextType(String textType) {
+		this.textType = textType;
+	}
+
+	
+
+	public String getTime() {
 		return time;
 	}
 
@@ -59,12 +73,13 @@ public class ChatMsgEntity {
     public ChatMsgEntity() {
     }
 
-    public ChatMsgEntity(String name, String date, String text, boolean isComMsg) {
+    public ChatMsgEntity(String name, String date, String text, boolean isComMsg,String textType) {
         super();
         this.name = name;
         this.date = date;
         this.text = text;
         this.isComMeg = isComMsg;
+        this.textType = textType;
     }
 
 }

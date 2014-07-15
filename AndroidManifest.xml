@@ -5,7 +5,7 @@
     android:versionName="1.0" >
 
     <uses-sdk
-        android:minSdkVersion="11"
+        android:minSdkVersion="14"
         android:targetSdkVersion="17" />
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -34,6 +34,7 @@
         </activity>
         <activity
             android:name="scu.android.note.ActionBarActivity"
+            android:launchMode="singleInstance"
             android:screenOrientation="portrait" >
                     <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -53,10 +54,13 @@
         <activity android:name="scu.android.ui.LoginActivity" >
       
             </activity>
+            
         <activity android:name="scu.android.ui.RegisterActivity" />
         <activity android:name="scu.android.ui.AccountSettingActivity" />
         <activity android:name="scu.android.activity.ReplyQuestionActivity" />
+         <activity android:name="scu.android.activity.ImageCropperActivity" />
         <activity android:name="scu.android.activity.IssueQuestionActivity" />
+         <activity android:name="scu.android.handwrite.HwActivity" />
           <activity android:name="scu.android.ui.ContactDetailActivity" />
         
         <activity android:name="scu.android.ui.HandWriteCanvasActivity" />

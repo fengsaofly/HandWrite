@@ -29,7 +29,8 @@ public class DbHelper2 extends SQLiteOpenHelper {
 				                                  + " date text,"
 		                                          + " type text,"
 				                                  + " isGroupChat,"
-		                                          + " jid"
+		                                          + " jid,"
+				                                  + " content_type"
 				                                  +")";     
 		db.execSQL(sql);
 	}

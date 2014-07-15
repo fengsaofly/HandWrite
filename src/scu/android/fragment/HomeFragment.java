@@ -121,6 +121,9 @@ public class HomeFragment extends Fragment{
 		chatRecord.setTime(TimeRender.getDate().split(" ")[1]);
 		chatRecord.setDate(TimeRender.getDate().split(" ")[0]);
 		chatRecord.setType("2");//破题消息
+		chatRecord.setIsGroupChat("false");
+		chatRecord.setJid("-1");
+		
 		
 		db.insertRecord(chatRecord);
 		
@@ -130,7 +133,8 @@ public class HomeFragment extends Fragment{
 		chatRecord.setTime(TimeRender.getDate().split(" ")[1]);
 		chatRecord.setDate(TimeRender.getDate().split(" ")[0]);
 		chatRecord.setType("1");//通知消息
-		
+		chatRecord.setIsGroupChat("false");
+		chatRecord.setJid("-1");
 		db.insertRecord(chatRecord);
 		
 		
@@ -140,7 +144,8 @@ public class HomeFragment extends Fragment{
 		chatRecord.setTime(TimeRender.getDate().split(" ")[1]);
 		chatRecord.setDate(TimeRender.getDate().split(" ")[0]);
 		chatRecord.setType("2");//破题消息
-		
+		chatRecord.setIsGroupChat("false");
+		chatRecord.setJid("-1");
 		db.insertRecord(chatRecord);
 		
 		
@@ -150,7 +155,8 @@ public class HomeFragment extends Fragment{
 		chatRecord.setTime(TimeRender.getDate().split(" ")[1]);
 		chatRecord.setDate(TimeRender.getDate().split(" ")[0]);
 		chatRecord.setType("3");//动态消息
-		
+		chatRecord.setIsGroupChat("false");
+		chatRecord.setJid("-1");
 		db.insertRecord(chatRecord);
 		
 		chatRecord.setAccount("好友动态：flyln");
@@ -159,7 +165,8 @@ public class HomeFragment extends Fragment{
 		chatRecord.setTime(TimeRender.getDate().split(" ")[1]);
 		chatRecord.setDate(TimeRender.getDate().split(" ")[0]);
 		chatRecord.setType("3");//动态消息
-		
+		chatRecord.setIsGroupChat("false");
+		chatRecord.setJid("-1");
 		db.insertRecord(chatRecord);
 		
 		

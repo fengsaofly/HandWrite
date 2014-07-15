@@ -2,7 +2,6 @@ package scu.android.util;
 
 import java.io.File;
 import java.util.Date;
-
 import scu.android.activity.DoodleBoardActivity;
 import scu.android.activity.ImageCropperActivity;
 import scu.android.activity.NativePhotosActivity;
@@ -14,7 +13,9 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Environment;
+import android.os.StrictMode;
 import android.provider.MediaStore;
+import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
@@ -107,17 +108,18 @@ public class AppUtils {
 				}
 			}
 		} else {
-			if (Math.abs(nDay - dDay) == 1) {
-				if (nHour >= dHour) {
-					elapsed = "1天前";
-				} else {
-					elapsed = Math.abs(nHour - dHour) + "小时前";
-				}
-			} else {
-				elapsed = (date.getMonth() + 1) + "月" + (dDay + 1) + "日";
-			}
+			// if (Math.abs(nDay - dDay) == 1) {
+			// // if (nHour >= dHour) {
+			// elapsed = "1天前";
+			// // } else {
+			// // elapsed = Math.abs(nHour + 24 - dHour) + "小时前";
+			// // }
+			// } else {
+			elapsed = (date.getMonth() + 1) + "月" + (dDay-1) + "日";
+			// }
 		}
 		return elapsed;
+		// return date.toLocaleString();
 	}
 
 	// 设置图片缩略图大小
@@ -133,6 +135,12 @@ public class AppUtils {
 				/ columnNum;
 	}
 
+	/**
+	 * 手机截图
+	 * 
+	 * @param activity
+	 * @param imgPath
+	 */
 	public static void sysCrop(Activity activity, String imgPath) {
 		Intent intent = new Intent(activity, ImageCropperActivity.class);
 		intent.putExtra("imgPath", imgPath);
@@ -157,8 +165,11 @@ public class AppUtils {
 		return true;
 	}
 
-	/*
-	 * 获取手机当前网络连接
+	/**
+	 * 获取当前网络连接
+	 * 
+	 * @param activity
+	 * @return
 	 */
 	public static boolean isNetworkConnect(Activity activity) {
 		ConnectivityManager connectivityManager = (ConnectivityManager) activity
@@ -176,8 +187,38 @@ public class AppUtils {
 		return false;
 	}
 
+	/**
+	 * 跳转到网络设置
+	 * 
+	 * @param activity
+	 */
 	public static void networkSet(Activity activity) {
 		Intent intent = new Intent("android.settings.WIRELESS_SETTINGS");
 		activity.startActivity(intent);
+	}
+
+	/**
+	 * 解码加密的字符串
+	 * 
+	 * @param content
+	 * @return
+	 */
+	public static String decodeString(String content) {
+		if (content != null) {
+			return new String(Base64.decode(content,
+					android.util.Base64.DEFAULT));
+		}
+		return null;
+	}
+
+	/**
+	 * 安全策略
+	 */
+	public static void setStrictMode() {
+		if (android.os.Build.VERSION.SDK_INT > 9) {
+			StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
+					.permitAll().build();
+			StrictMode.setThreadPolicy(policy);
+		}
 	}
 }
