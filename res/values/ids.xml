@@ -52,6 +52,7 @@
     <item name="chat_input_field" type="id"/>
     <item name="chat_add_btn" type="id"/>
     <item name="question_popup_layout" type="id"/>
+    <item name="group_type_val" type="id"/>
     
     <!--用户信息描述:请老师 -->
      <item name="tag_addr" type="id"/>
@@ -78,6 +79,8 @@
     <item  type="id" name="lay_career"/>
     <item  type="id" name="lay_nickname"/>
     <item  type="id" name="lay_avatar"/>
+    
+    
     
     <!-- 基本action  -->
     <item name="submit" type="id"/>

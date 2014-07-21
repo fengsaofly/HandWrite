@@ -12,16 +12,17 @@ import net.sourceforge.pinyin4j.format.HanyuPinyinOutputFormat;
 import net.sourceforge.pinyin4j.format.HanyuPinyinToneType;
 import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombination;
 
+import org.jivesoftware.smack.Chat;
 import org.jivesoftware.smack.RosterEntry;
 
 import scu.android.application.MyApplication;
 import scu.android.ui.ChatMainActivity;
 import scu.android.ui.MultiRoomListActivity;
+import scu.android.ui.NewFriendsActivity;
 import scu.android.util.PinyinComparator;
 import scu.android.util.SideBar;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -33,7 +34,6 @@ import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
@@ -41,7 +41,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
 import android.widget.SectionIndexer;
@@ -58,43 +57,45 @@ public class FriendFragment extends Fragment
 	ListView friendListView = null;
 	// ListView multiListView = null;
 //	public List<RosterEntry> entries;
-	public static List<Map<String, Object>> friendData = null;
+	private  ArrayList<Map<String, Object>> friendData = null;
 	// List<Map<String,Object>> multiData = null;
 	ContactAdapter friendAdapter = null;
-	
+	Chat newchat;
 	// SimpleAdapter multiAdapter = null;
 //	private ProgressDialog pd;
-	LinearLayout multiChat = null;
+//	LinearLayout multiChat = null;
 	
 	private SideBar indexBar;
 	private WindowManager mWindowManager;
 	private TextView mDialogText;
+	private boolean createFlag = false;
 	// List<DiscoverItems.Item> items = new ArrayList<DiscoverItems.Item>();
 	public Handler handler = new Handler() {
 		@Override
 		public void handleMessage(android.os.Message msg) {
 
 			switch (msg.what) {
+			
 			case 10:
 //				pd.dismiss();
-				if (friendAdapter == null) {
+//				if (friendAdapter == null) {
 					// multiAdapter = new SimpleAdapter(getActivity(),
 					// multiData, R.layout.friend_item, new
 					// String[]{"friend_icon","friend_name"},new
 					// int[]{R.id.friend_icon,R.id.friend_name} );
 					// multiListView.setAdapter(multiAdapter);
 
-					friendAdapter = new ContactAdapter(getActivity());
+					friendAdapter = new ContactAdapter(getActivity(),friendData);
 //							new String[] {
 //									"friend_icon", "friend_name" }, new int[] {
 //									R.id.friend_icon, R.id.friend_name });
 					friendListView.setAdapter(friendAdapter);
-				} else {
-					// multiAdapter.notifyDataSetChanged();
-					// multiListView.invalidate();
-					friendAdapter.notifyDataSetChanged();
-					friendListView.invalidate();
-				}
+//				} else {
+////					// multiAdapter.notifyDataSetChanged();
+////					// multiListView.invalidate();
+//					friendAdapter.notifyDataSetChanged();
+//					friendListView.invalidate();
+//				}
 
 				break;
 			}
@@ -133,7 +134,8 @@ public class FriendFragment extends Fragment
 			public void run() {
 				// TODO Auto-generated method stub
 				if(((MyApplication)getActivity().getApplication()).loginFlag){
-				while(((MyApplication)getActivity().getApplication()).allContactsVcard==null||((MyApplication)getActivity().getApplication()).allContactsVcard.size()==0){
+					
+				while(((MyApplication)getActivity().getApplication()).getAllContactsVcard()==null||((MyApplication)getActivity().getApplication()).getAllContactsVcard().size()==0){
 					try {
 						System.out.println("正在等待好友数据。。。");
 						Thread.sleep(1000);
@@ -158,13 +160,13 @@ public class FriendFragment extends Fragment
 		// multiListView = (ListView)view.findViewById(R.id.multiListView);
 
 //		entries = ((MyApplication) getActivity().getApplication()).entries;
-		multiChat = (LinearLayout)view.findViewById(R.id.multiChat);
+//		multiChat = (LinearLayout)view.findViewById(R.id.multiChat);
 		if(((MyApplication)getActivity().getApplication()).loginFlag==false){
-			multiChat.setVisibility(View.INVISIBLE);
+//			multiChat.setVisibility(View.INVISIBLE);
 			indexBar.setVisibility(View.INVISIBLE);
 		}
 		else {
-			multiChat.setVisibility(View.VISIBLE);
+//			multiChat.setVisibility(View.VISIBLE);
 			indexBar.setVisibility(View.VISIBLE);
 			 indexBar.setListView(friendListView); 
 		        mDialogText = (TextView) LayoutInflater.from(getActivity()).inflate(R.layout.list_position, null);
@@ -178,17 +180,17 @@ public class FriendFragment extends Fragment
 		        mWindowManager.addView(mDialogText, lp);
 		        indexBar.setTextView(mDialogText);
 		}
-		multiChat.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View arg0) {
-				// TODO Auto-generated method stub
-				Intent intent = new Intent(getActivity(),
-						MultiRoomListActivity.class);
-
-				startActivity(intent);
-			}
-		});
+//		multiChat.setOnClickListener(new OnClickListener() {
+//			
+//			@Override
+//			public void onClick(View arg0) {
+//				// TODO Auto-generated method stub
+//				Intent intent = new Intent(getActivity(),
+//						MultiRoomListActivity.class);
+//
+//				startActivity(intent);
+//			}
+//		});
 
 
 		friendData = new ArrayList<Map<String, Object>>();
@@ -208,6 +210,7 @@ public class FriendFragment extends Fragment
 					 * 添加好友列表
 					 */
 					addChatList();
+					createFlag = true;
 					Message msg = new Message();
 					msg.what = 10;
 					handler.sendMessage(msg);
@@ -221,19 +224,26 @@ public class FriendFragment extends Fragment
 			public void onItemClick(AdapterView<?> arg0, View arg1,
 					int position, long arg3) {
 				// TODO Auto-generated method stub
-//				if (position != 0) {
+				if(position==0){
+					Intent intent = new Intent(getActivity(),
+							MultiRoomListActivity.class);
+	
+					startActivity(intent);
+				}
+				else if(position==1) {
+					Intent intent = new Intent(getActivity(),
+							NewFriendsActivity.class);
+
+					startActivity(intent);
+				}
+				else  {
 					Intent intent = new Intent();
 					intent.setClass(getActivity(), ChatMainActivity.class);
-					intent.putExtra("currentContact", friendData.get(position)
+					intent.putExtra("currentContact", friendData.get(position-2)
 							.get("friend_name").toString());
 					startActivity(intent);
-//				}
-//			else {
-//					Intent intent = new Intent(getActivity(),
-//							MultiRoomListActivity.class);
-//
-//					startActivity(intent);
-//				}
+				}
+			
 			}
 		});
 
@@ -247,11 +257,11 @@ public class FriendFragment extends Fragment
 						final int p = position;
 					
 						
-//						if (position != 0) {
+						if (position != 0&&position!=1) {
 							new AlertDialog.Builder(getActivity())
 									.setMessage(
 											"确认删除好友"
-													+ friendData.get(position)
+													+ friendData.get(position-2)
 															.get("friend_name")
 															.toString() + "吗")
 									.setTitle("系统提示")
@@ -268,7 +278,7 @@ public class FriendFragment extends Fragment
 													if (((MyApplication) getActivity()
 															.getApplication())
 															.removeUser(friendData
-																	.get(p)
+																	.get(p-2)
 																	.get("friend_name")
 																	.toString())) {
 														Toast.makeText(
@@ -276,12 +286,13 @@ public class FriendFragment extends Fragment
 																"删除成功",
 																Toast.LENGTH_SHORT)
 																.show();
-														friendData.remove(p);
+														friendData.remove(p-2);
 //														friendAdapter
 //																.notifyDataSetChanged();
 //														friendListView
 //																.invalidate();
-														friendAdapter = new ContactAdapter(getActivity()
+														friendData = (ArrayList<Map<String, Object>>) ((MyApplication)getActivity().getApplication()).getAllContactsVcard().clone();
+														friendAdapter = new ContactAdapter(getActivity(),friendData
 																);
 //		
 														friendListView.setAdapter(friendAdapter);
@@ -301,7 +312,7 @@ public class FriendFragment extends Fragment
 
 												}
 											}).create().show();
-//						}
+						}
 						return false;
 					}
 				});
@@ -322,6 +333,8 @@ public class FriendFragment extends Fragment
 	@Override
 	public void onResume() {
 		if(((MyApplication)getActivity().getApplication()).loginFlag){
+			System.out.println("进入Friend----onresume");
+			System.out.println("before: friendData。size()"+friendData.size());
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
@@ -335,29 +348,40 @@ public class FriendFragment extends Fragment
 					 * 添加好友列表
 					 */
 					System.out.println("进入Friend----onresume");
-					while(((MyApplication)getActivity().getApplication()).allContactsVcard==null||((MyApplication)getActivity().getApplication()).allContactsVcard.size()==0){
-						try {
-							System.out.println("正在等待好友数据。。。");
-							Thread.sleep(1000);
-						} catch (InterruptedException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					}
+//					while(((MyApplication)getActivity().getApplication()).allContactsVcard==null||((MyApplication)getActivity().getApplication()).allContactsVcard.size()==0){
+//						try {
+//							System.out.println("正在等待好友数据。。。");
+//							Thread.sleep(1000);
+//						} catch (InterruptedException e) {
+//							// TODO Auto-generated catch block
+//							e.printStackTrace();
+//						}
+//					}
+//					handler.sendEmptyMessage(9);
+//					friendData =null;
+					
 					addChatList();
+//					friendData = new ArrayList<Map<String,Object>>();
+//					friendData = ((MyApplication)getActivity().getApplication()).getAllContactsVcard();
+					
 					Message msg = new Message();
 					msg.what = 10;
 					handler.sendMessage(msg);
 				}
 			}).start();
+			
+			System.out.println("afater: friendData。size()"+friendData.size());
 		}
+//		
 		
 		super.onResume();
 	}
+	
 
 
 
-	public void addChatList() {
+
+	public  void addChatList() {
 //		Map<String, Object> map2 = new HashMap<String, Object>();
 //		map2.put("friend_icon", R.drawable.group_icon);
 //		map2.put("friend_name", "群聊");
@@ -375,44 +399,57 @@ public class FriendFragment extends Fragment
 //		}
 //		if(((MyApplication)getActivity().getApplication()).allContactsVcard!=null&&((MyApplication)getActivity().getApplication()).allContactsVcard.size()!=0)
 		
-		if(((MyApplication)getActivity().getApplication()).allContactsVcard==null||((MyApplication)getActivity().getApplication()).allContactsVcard.size()==0){
+//		if(((MyApplication)getActivity().getApplication()).getAllContactsVcard()==null||((MyApplication)getActivity().getApplication()).getAllContactsVcard().size()==0){
+//			friendData = new ArrayList<Map<String,Object>>();
+//			for(RosterEntry entry:((MyApplication)getActivity().getApplication()).entries){
+//				Map<String,Object> map2 = new HashMap<String, Object>();
+//				map2.put("friend_avatar", getActivity().getResources().getDrawable(R.drawable.default_avatar));
+//				map2.put("friend_name", entry.getName());
+//				map2.put("friend_nickName", entry.getName());
+//				map2.put("friend_carrer", "");
+//				map2.put("friend_gender", "");
+//				map2.put("friend_zone", "");
+//				map2.put("friend_sign", "");
+//				friendData.add(map2);
+//			}
+//		}
+//		else{
+			System.out.println("getAllContactsVcard不为空");
+//			friendData = null;
 			friendData = new ArrayList<Map<String,Object>>();
-			for(RosterEntry entry:((MyApplication)getActivity().getApplication()).entries){
-				Map<String,Object> map2 = new HashMap<String, Object>();
-				map2.put("friend_avatar", getActivity().getResources().getDrawable(R.drawable.default_avatar));
-				map2.put("friend_name", entry.getName());
-				map2.put("friend_nickName", entry.getName());
-				map2.put("friend_carrer", "");
-				map2.put("friend_gender", "");
-				map2.put("friend_zone", "");
-				map2.put("friend_sign", "");
-				friendData.add(map2);
-			}
-		}
-		else{
-			friendData = ((MyApplication)getActivity().getApplication()).allContactsVcard;
-		}
+			friendData = (ArrayList<Map<String, Object>>) ((MyApplication)getActivity().getApplication()).getAllContactsVcard().clone();
+//		}
 	}
 	
 	
 	  static class ContactAdapter extends BaseAdapter implements SectionIndexer {  
 	    	private Context mContext;
 	    	private String[] mNicks;
+	    	List<Map<String,Object>> data = new ArrayList<Map<String,Object>>();
 //	    	private List<Map<String, Object>> data;
 	    	private int size = 0;
 	    	@SuppressWarnings("unchecked")
-			public ContactAdapter(Context mContext){
+			public ContactAdapter(Context mContext,ArrayList<Map<String,Object>> datasrc){
+	    		
 	    		this.mContext = mContext;
+//	    		for(Map<String,Object> map :datasrc){
+//	    			this.data.add(map);
+//	    		}
+	    		this.data = (List<Map<String, Object>>) datasrc.clone();
 //	    		this.data = data;
-	    		size = friendData.size();
+	    		size = data.size();
+	    		System.out.println("现在的大小是： "+size);
 	    		this.mNicks = new String[size];
 	    		for(int i=0;i<size;i++){
-	    			this.mNicks[i] = friendData.get(i).get("friend_name").toString();
+	    			this.mNicks[i]
+	    					= data
+	    					.get(i).
+	    					get("friend_name").toString();
 	    		}
 	    		//排序(实现了中英文混排)
 	    		Arrays.sort(mNicks, new PinyinComparator());
 	    		System.out.println("排序前：  "+"---------");
-	    		for(Map<String, Object> item:friendData){
+	    		for(Map<String, Object> item:data){
 	    			System.out.println("item: "+item.get("friend_name"));
 	    		}
 	    		
@@ -424,11 +461,11 @@ public class FriendFragment extends Fragment
 	    		}
 	    		
 	    		for(int i=0;i<mNicks.length;i++){
-	    			for(int j=0;j<friendData.size();j++){
-	    				if(mNicks[i].equals(friendData.get(j).get("friend_name"))){
-	    					Map<String,Object> temp = friendData.get(j);
-	    					friendData.set(j,friendData.get(i));
-	    					friendData.set(i,temp);
+	    			for(int j=0;j<data.size();j++){
+	    				if(mNicks[i].equals(data.get(j).get("friend_name"))){
+	    					Map<String,Object> temp = data.get(j);
+	    					data.set(j,data.get(i));
+	    					data.set(i,temp);
 	    					
 	    				}
 	    			}
@@ -436,9 +473,40 @@ public class FriendFragment extends Fragment
 	    		
 	    		System.out.println("交换后： ");
 	    		
-	    		for(Map<String, Object> item:friendData){
+	    		for(Map<String, Object> item:data){
 	    			System.out.println("item: "+item.get("friend_name"));
 	    		}
+	    		
+	    		//添加群聊和新的朋友
+	    		Map<String,Object> temp = new HashMap<String, Object>();
+	    		temp.put("friend_avatar", mContext.getResources().getDrawable((R.drawable.default_avatar)));
+	    		temp.put("friend_name", "新的朋友");
+	    		temp.put("friend_sign", "");
+	    		
+	    		Map<String,Object> temp1 = new HashMap<String, Object>();
+	    		temp1.put("friend_avatar", mContext.getResources().getDrawable((R.drawable.group_icon)));
+	    		temp1.put("friend_name", "群聊");
+	    		temp1.put("friend_sign", "");
+	    		
+	    		data.add(0, temp);
+	    		data.add(0, temp1);
+	    		
+	    		System.out.println("交换后data的size： "+data.size());
+	    		
+	    		String[] tempMNicks = new String[(mNicks.length)];
+	    		for(int i=0;i<tempMNicks.length;i++){
+	    			tempMNicks[i] = mNicks[i];
+	    		}
+	    		mNicks = new String[tempMNicks.length+2];
+	    		mNicks[0] = "群聊";
+    			mNicks[1] = "新的朋友";
+	    		for(int i=0;i<tempMNicks.length;i++){
+	    			
+	    			mNicks[i+2] = tempMNicks[i];
+	    		}
+	    		
+	    		System.out.println("交换后mNick的size： "+mNicks.length);
+	    		
 	    	}
 			@Override
 			public int getCount() {
@@ -458,8 +526,8 @@ public class FriendFragment extends Fragment
 			@Override
 			public View getView(int position, View convertView, ViewGroup parent) {
 				final String nickName = mNicks[position];
-				ViewHolder viewHolder = null;
-				if(convertView == null){
+				ViewHolder viewHolder = new ViewHolder();
+//				if(convertView == null){
 					convertView = LayoutInflater.from(mContext).inflate(R.layout.friend_item, null);
 					viewHolder = new ViewHolder();
 					viewHolder.tvCatalog = (TextView)convertView.findViewById(R.id.contactitem_catalog);
@@ -468,14 +536,19 @@ public class FriendFragment extends Fragment
 					viewHolder.sign = (TextView)convertView.findViewById(R.id.distance_textview);
 					
 					convertView.setTag(viewHolder);
-				}else{
-					viewHolder = (ViewHolder)convertView.getTag();
-				}
+//				}else{
+//					viewHolder = (ViewHolder)convertView.getTag();
+//				}
 				String catalog = converterToFirstSpell(nickName).substring(0, 1);
-				if(position == 0){
+				if(position == 0||position == 1){
+					viewHolder.tvCatalog.setVisibility(View.INVISIBLE);
+					viewHolder.tvCatalog.setText(catalog);
+				}
+				else if(position==2){
 					viewHolder.tvCatalog.setVisibility(View.VISIBLE);
 					viewHolder.tvCatalog.setText(catalog);
-				}else{
+				}
+				else{
 					String lastCatalog = converterToFirstSpell(mNicks[position-1]).substring(0, 1);
 					if(catalog.equals(lastCatalog)){
 						viewHolder.tvCatalog.setVisibility(View.GONE);
@@ -487,8 +560,9 @@ public class FriendFragment extends Fragment
 				
 				
 				viewHolder.tvNick.setText(nickName);
-				viewHolder.ivAvatar.setImageDrawable((Drawable)friendData.get(position).get("friend_avatar"));
-				viewHolder.sign.setText(friendData.get(position).get("friend_sign").toString());
+				System.out.println("position: "+position);
+				viewHolder.ivAvatar.setImageDrawable((Drawable)data.get(position).get("friend_avatar"));
+				viewHolder.sign.setText(data.get(position).get("friend_sign").toString());
 				return convertView;
 			}
 	    	

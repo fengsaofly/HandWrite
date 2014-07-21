@@ -75,13 +75,14 @@ public class MultiRoomListActivity extends Activity{
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
+//		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		
 		setContentView(R.layout.multiroom_list);
 		initial();
 	}
 	
 	public void initial(){
-		
+		getActionBar().setTitle("群聊");
 		multiListView = (ListView)findViewById(R.id.multiListView);
 //		right_btn = (ImageButton)findViewById(R.id.right_btn);
 //		right_btn.setOnClickListener(new View.OnClickListener() {

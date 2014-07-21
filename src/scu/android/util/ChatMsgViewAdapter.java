@@ -54,7 +54,7 @@ public class ChatMsgViewAdapter extends BaseAdapter {
 		this.chatContact = chatContact;
 		mInflater = LayoutInflater.from(context);
 		this.type = type;
-		allContactsVcard = MyApplication.allContactsVcard;
+		allContactsVcard = MyApplication.getAllContactsVcard();
 	}
 
 	public int getCount() {

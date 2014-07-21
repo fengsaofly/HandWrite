@@ -14,8 +14,10 @@ import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.Form;
 import org.jivesoftware.smackx.FormField;
+import org.jivesoftware.smackx.muc.Affiliate;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.ParticipantStatusListener;
+import org.jivesoftware.smackx.muc.RoomInfo;
 import org.jivesoftware.smackx.packet.DelayInformation;
 
 import scu.android.application.MyApplication;
@@ -31,12 +33,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -59,14 +59,11 @@ public class ActivityMultiRoom extends Activity implements OnClickListener {
 	private final int MEMBER = 2;
 	public final int MENU_MULCHAT = 1;
 	public final int MENU_DESTROY = 2;
-//	private Button send;
-//	private Button showHistory;
-//	private EditText et_Record, et_Message;
-//	private ListView lv_Members;
-	
-	
-	
-	
+	// private Button send;
+	// private Button showHistory;
+	// private EditText et_Record, et_Message;
+	// private ListView lv_Members;
+
 	private TextView mBtnSend;
 	private TextView mBtnRcd, currentChat = null;
 	private Button mBtnBack;
@@ -85,18 +82,14 @@ public class ActivityMultiRoom extends Activity implements OnClickListener {
 	private LinearLayout del_re;
 	private ImageView chatting_mode_btn, volume;
 	private boolean btn_vocie = false;
-	
-	
+
 	private String voiceName;
-	
-	
+
 	private long startVoiceT, endVoiceT;
-	
+
 	private Cursor cursor;
 	private DbManager2 db;
-	
-	
-	
+
 	/**
 	 * 聊天室成员
 	 */
@@ -108,7 +101,7 @@ public class ActivityMultiRoom extends Activity implements OnClickListener {
 	private int count = 0;
 	private String history = "";
 	SharedPreferences sp = null;
-	
+
 	/**
 	 * 房间ID
 	 */
@@ -125,35 +118,35 @@ public class ActivityMultiRoom extends Activity implements OnClickListener {
 
 			switch (msg.what) {
 			case RECEIVE: {
-				db.deleteGroupChatRecord(jid, TimeRender.getDate().split(" ")[0], "true");
+				db.deleteGroupChatRecord(jid,
+						TimeRender.getDate().split(" ")[0], "true");
 				ChatMsgEntity entity = new ChatMsgEntity();
-				
 
-				
 				// if(((MyApplication)getApplication()).currentActivity.equals("chat")){
-				
-				System.out.println("msg.toString:"+ msg.getData().toString());
-//				MUCRoomHistory mrh = new MUCRoomHistory(muc.getRoom(),HistoryStrategy.defaulType);
+
+				System.out.println("msg.toString:" + msg.getData().toString());
+				// MUCRoomHistory mrh = new
+				// MUCRoomHistory(muc.getRoom(),HistoryStrategy.defaulType);
 				// 新消息
 				Bundle bd = msg.getData();
 				String from = bd.getString("from");
 				String body = bd.getString("body");
 				String time = bd.getString("time");
-				
+
 				entity.setDate(time);
-//				entity.setTime("");
+				// entity.setTime("");
 				entity.setName(from);
-				
-				if(from.contains(((MyApplication)getApplication()).userName)||(from.contains(((MyApplication)getApplication()).nickName))){
+
+				if (from.contains(((MyApplication) getApplication()).userName)
+						|| (from.contains(((MyApplication) getApplication()).nickName))) {
 					entity.setMsgType(false);
 					mEditTextContent.setText("");// 清空输入框
-					
-				}
-				else {
+
+				} else {
 					entity.setMsgType(true);
-				
+
 				}
-				
+
 				entity.setText(body);
 				entity.setTextType("nomal");
 				mDataArrays.add(entity);// 增加一个信息
@@ -162,14 +155,14 @@ public class ActivityMultiRoom extends Activity implements OnClickListener {
 				mEditTextContent.setText("");// 清空输入框
 
 				mListView.setSelection(mListView.getCount() - 1);// 设置当前listView的选中行为最后一行
-				ChatRecord chatRecord = new ChatRecord();  //添加进入数据库
+				ChatRecord chatRecord = new ChatRecord(); // 添加进入数据库
 				chatRecord.setAccount(from);
 				chatRecord.setContent(body);
-				if(entity.getMsgType()){
+				if (entity.getMsgType()) {
 					chatRecord.setFlag("in");
-				}
-				else chatRecord.setFlag("out");
-				
+				} else
+					chatRecord.setFlag("out");
+
 				chatRecord.setTime(TimeRender.getDate().split(" ")[1]);
 				chatRecord.setDate(TimeRender.getDate().split(" ")[0]);
 				chatRecord.setType("0");
@@ -177,35 +170,36 @@ public class ActivityMultiRoom extends Activity implements OnClickListener {
 				chatRecord.setJid(jid);
 				chatRecord.setContent_type("nomal");
 				db.insertRecord(chatRecord);
-				history += from + ":" + body + time+"\n";
-				System.out.println("history：  "+history);
-//				if (isHistory) {
-//					receiveMsg(from, body,time);
-//				} else {
-//					Editor editor = sp.edit();
-//					editor.putString("historyMessage", history);
-//					editor.commit();
-//					System.out.println("保存了历史消息");
-//				}
-				
-//				mDataArrays.add(new ChatMsgEntity("groupChat", time, body, true));
-//
-//				mAdapter.notifyDataSetChanged();
-//				mListView.setSelection(mListView.getCount() - 1);
+				history += from + ":" + body + time + "\n";
+				System.out.println("history：  " + history);
+				// if (isHistory) {
+				// receiveMsg(from, body,time);
+				// } else {
+				// Editor editor = sp.edit();
+				// editor.putString("historyMessage", history);
+				// editor.commit();
+				// System.out.println("保存了历史消息");
+				// }
+
+				// mDataArrays.add(new ChatMsgEntity("groupChat", time, body,
+				// true));
+				//
+				// mAdapter.notifyDataSetChanged();
+				// mListView.setSelection(mListView.getCount() - 1);
 			}
 				break;
-//			case MEMBER:
-//				if (memberAdapter == null) {
-//					// 更行成员列表
-//					memberAdapter = new MemberAdapter(ActivityMultiRoom.this,
-//							affiliates);
-//					lv_Members.setAdapter(memberAdapter);
-//				} else {
-//					memberAdapter.notifyDataSetChanged();
-//					lv_Members.invalidate();
-//				}
-//				Log.i(TAG, "成员列表 " + affiliates.size() + " 个！");
-//				break;
+			// case MEMBER:
+			// if (memberAdapter == null) {
+			// // 更行成员列表
+			// memberAdapter = new MemberAdapter(ActivityMultiRoom.this,
+			// affiliates);
+			// lv_Members.setAdapter(memberAdapter);
+			// } else {
+			// memberAdapter.notifyDataSetChanged();
+			// lv_Members.invalidate();
+			// }
+			// Log.i(TAG, "成员列表 " + affiliates.size() + " 个！");
+			// break;
 			}
 		}
 	};
@@ -219,25 +213,22 @@ public class ActivityMultiRoom extends Activity implements OnClickListener {
 		// 旧消息
 		sp = getSharedPreferences("history", Context.MODE_PRIVATE);
 		// 后面服务名称必需是创建房间的那个服务
-//		jid = getIntent().getStringExtra("jid");
-//		
-//		send = (Button) findViewById(R.id.send);
-//		showHistory = (Button) findViewById(R.id.showHistory);
-//		et_Record = (EditText) findViewById(R.id.record);
-//		et_Message = (EditText) findViewById(R.id.message);
-//		lv_Members = (ListView) this.findViewById(R.id.listview);
-//		send.setOnClickListener(this);
-//		showHistory.setOnClickListener(this);
+		jid = getIntent().getStringExtra("jid");
+		//
+		// send = (Button) findViewById(R.id.send);
+		// showHistory = (Button) findViewById(R.id.showHistory);
+		// et_Record = (EditText) findViewById(R.id.record);
+		// et_Message = (EditText) findViewById(R.id.message);
+		// lv_Members = (ListView) this.findViewById(R.id.listview);
+		// send.setOnClickListener(this);
+		// showHistory.setOnClickListener(this);
 		initView();
 
 		initData();
-		
-		
-//		registerForContextMenu(lv_Members);
+
+		// registerForContextMenu(lv_Members);
 	}
-	
-	
-	
+
 	public void initView() {
 
 		db = new DbManager2(this);
@@ -250,10 +241,8 @@ public class ActivityMultiRoom extends Activity implements OnClickListener {
 		mBtnBack = (Button) findViewById(R.id.btn_back);
 		mBottom = (LinearLayout) findViewById(R.id.chat_input_field);
 		mBtnBack.setOnClickListener(this);
-
+		muc = new MultiUserChat(XmppTool.getConnection(), jid);
 		mEditTextContent = (EditText) findViewById(R.id.input_field);
-
-		
 
 		mBtnRcd.setOnTouchListener(new OnTouchListener() {
 
@@ -268,15 +257,73 @@ public class ActivityMultiRoom extends Activity implements OnClickListener {
 			@Override
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
-//				 Intent intent = new Intent();
-//				 intent.setClass(ChatMainActivity.this,
-//				 ContactDetailActivity.class);
-//				 intent.putExtra("contactName", chatContact);
-//				 startActivity(intent);
+				
+				Intent intent = new Intent();
+				intent.setClass(ActivityMultiRoom.this,
+						GroupDetailActivity.class);
+				intent.putExtra("roomName",
+						jid.contains("@") ? jid.split("@")[0] : jid);
+			
+				startActivity(intent);
+				
+//				String roomType = "";
+//				String roomCount = "";
+//				String sign = "";
+//				ArrayList<Map<String, Object>> roomInformationList = new ArrayList<Map<String, Object>>();
+//				((MyApplication) getApplicationContext())
+//						.loadArray(roomInformationList);
+//				List<RoomInfo> rooms = new ArrayList<RoomInfo>();
+//				((MyApplication) getApplication()).getRoomInfo(rooms);
+//				for (RoomInfo room : rooms) {
+//					if (room.getRoom().split("@")[0].equals(jid.split("@")[0])) {
+//						sign = room.getDescription();
+//
+//						roomType = room.getSubject();
+//						roomCount = room.getOccupantsCount() + "";
+//						// jid = room.getRoom();
+//						break;
+//					}
+//				}
+//
+////				java.util.Collection<Affiliate> admins;
+////				try {
+////					admins = muc.getOwners();
+////					if (admins != null && admins.size() != 0) {
+////
+////						String ower = "";
+////						for (Affiliate item : admins) {
+////							ower = item.getJid().split("@")[0];
+////						}
+////
+////					}
+////				} catch (XMPPException e) {
+////					// TODO Auto-generated catch block
+////					e.printStackTrace();
+////				}
+//
+//				
+//
+//				RoomInformation roomInfo = new RoomInformation();
+//				roomInfo.setGroup_maxmember(30+"");
+//				roomInfo.setGroup_name(jid.split("@")[0]);
+//				
+//				roomInfo.setRoomCount(roomCount);
+//				roomInfo.setRoomType(roomType);
+////				roomInfo.setExistPosition(existPosition);
+//
+//				Intent intent = new Intent();
+//				intent.setClass(ActivityMultiRoom.this,
+//						GroupDetailActivity.class);
+////				intent.putExtra("roomName",
+////						jid.contains("@") ? jid.split("@")[0] : jid);
+//				Bundle bundle = new Bundle();
+//				bundle.putSerializable("roomInfo", roomInfo);
+//				intent.putExtras(bundle);
+//				startActivity(intent);
+
 			}
 		});
-		
-		muc = new MultiUserChat(XmppTool.getConnection(), jid);
+
 		chatListener = new ChatPacketListener(muc);
 		myPacketListener = new MyPacketListener();
 		myParticipantStatusListener = new MyParticipantStatusListener();
@@ -285,19 +332,19 @@ public class ActivityMultiRoom extends Activity implements OnClickListener {
 			System.out.println("房间号：" + jid);
 			if ("join".equals(action)) {
 				// 进入房间后的nickname(昵称)
-				
-//				if(((MyApplication)getApplication()).vCard==null){
-//					muc.join(((MyApplication)getApplication()).userName);
-//				}
-//				else {
-//					String nickName = ((MyApplication)getApplication()).vCard.getNickName().toString();
-//					muc.join(nickName);
-//				}
-				if(((MyApplication)getApplication()).nickName.equals("")){
-					muc.join(((MyApplication)getApplication()).userName);
-				}
-				else
-				muc.join(((MyApplication)getApplication()).nickName);
+
+				// if(((MyApplication)getApplication()).vCard==null){
+				// muc.join(((MyApplication)getApplication()).userName);
+				// }
+				// else {
+				// String nickName =
+				// ((MyApplication)getApplication()).vCard.getNickName().toString();
+				// muc.join(nickName);
+				// }
+				if (((MyApplication) getApplication()).nickName.equals("")) {
+					muc.join(((MyApplication) getApplication()).userName);
+				} else
+					muc.join(((MyApplication) getApplication()).nickName);
 				Log.v(TAG, "join success");
 			} else {
 				// 创建房间并加入
@@ -316,25 +363,27 @@ public class ActivityMultiRoom extends Activity implements OnClickListener {
 
 	}
 
-	
 	public void initData() {
-		
+
 		mDataArrays = new ArrayList<ChatMsgEntity>();
-		cursor = db.readGroupChatRecord(jid,  TimeRender.getDate().split(" ")[0],"true");
+		cursor = db.readGroupChatRecord(jid,
+				TimeRender.getDate().split(" ")[0], "true");
 		cursor.moveToPosition(-1);
 		while (cursor.moveToNext()) {
 			System.out.println("1: " + cursor.getString(1) + "2: "
 					+ cursor.getString(2) + "3: " + cursor.getString(3));
 			if (cursor.getString(4).equals("in"))
 				mDataArrays.add(new ChatMsgEntity(cursor.getString(1), cursor
-						.getString(2), cursor.getString(3), true,cursor.getString(9)));
+						.getString(2), cursor.getString(3), true, cursor
+						.getString(9)));
 			else
 				mDataArrays.add(new ChatMsgEntity(
 						((MyApplication) getApplication()).userName, cursor
-								.getString(2), cursor.getString(3), false,cursor.getString(9)));
+								.getString(2), cursor.getString(3), false,
+						cursor.getString(9)));
 		}
 
-		mAdapter = new ChatMsgViewAdapter(this, mDataArrays, "groupChat",1);
+		mAdapter = new ChatMsgViewAdapter(this, mDataArrays, "groupChat", 1);
 		mListView.setAdapter(mAdapter);
 
 	}
@@ -392,38 +441,36 @@ public class ActivityMultiRoom extends Activity implements OnClickListener {
 			break;
 		}
 	}
-	
-	
+
 	private void send() {
 		String contString = mEditTextContent.getText().toString();
 		if (contString.length() > 0) {
-			
 
 			try {
 
 				muc.sendMessage(contString);
-//				ChatMsgEntity entity = new ChatMsgEntity();
-//	
-//				
-//				
-//				entity.setMsgType(false);
-//				entity.setText(mEditTextContent.getText().toString());
-//				
-//				entity.setDate(TimeRender.getDate());
-//				entity.setTextType("nomal");
-//				entity.setName(((MyApplication)getApplication()).userName);
-//				mDataArrays.add(entity);// 增加一个信息
-//				mAdapter.notifyDataSetChanged();// 更新视图
-//
-//				mEditTextContent.setText("");// 清空输入框
-//
-//				mListView.setSelection(mListView.getCount() - 1);// 设置当前listView的选中行为最后一行
+				// ChatMsgEntity entity = new ChatMsgEntity();
+				//
+				//
+				//
+				// entity.setMsgType(false);
+				// entity.setText(mEditTextContent.getText().toString());
+				//
+				// entity.setDate(TimeRender.getDate());
+				// entity.setTextType("nomal");
+				// entity.setName(((MyApplication)getApplication()).userName);
+				// mDataArrays.add(entity);// 增加一个信息
+				// mAdapter.notifyDataSetChanged();// 更新视图
+				//
+				// mEditTextContent.setText("");// 清空输入框
+				//
+				// mListView.setSelection(mListView.getCount() - 1);//
+				// 设置当前listView的选中行为最后一行
 
 			} catch (XMPPException e) {
 				e.printStackTrace();
 			}
-			
-			
+
 			// }
 
 		}
@@ -435,9 +482,10 @@ public class ActivityMultiRoom extends Activity implements OnClickListener {
 	 * @param from
 	 * @param msg
 	 */
-	private void receiveMsg(String from, String msg,String time) {
+	private void receiveMsg(String from, String msg, String time) {
 		Log.v(TAG, "添加消息： " + from + " :" + msg);
-//		et_Record.setText(et_Record.getText() + from + ":" + msg + time+"\n");
+		// et_Record.setText(et_Record.getText() + from + ":" + msg +
+		// time+"\n");
 	}
 
 	@Override
@@ -456,77 +504,99 @@ public class ActivityMultiRoom extends Activity implements OnClickListener {
 		finish();
 	}
 
-//	@Override
-//	public boolean onCreateOptionsMenu(Menu menu) {
-//		menu.add(1, MENU_MULCHAT, Menu.NONE, "邀请");
-//		menu.add(2, MENU_DESTROY, Menu.NONE, "销毁");
-//		return super.onCreateOptionsMenu(menu);
-//	}
+	@Override
+	protected void onResume() {
+		// TODO Auto-generated method stub
+		if (!muc.isJoined()) {
+			if (((MyApplication) getApplication()).nickName.equals("")) {
+				try {
+					muc.join(((MyApplication) getApplication()).userName);
+				} catch (XMPPException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			} else
+				try {
+					muc.join(((MyApplication) getApplication()).nickName);
+				} catch (XMPPException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		}
+		super.onResume();
+	}
 
-//	@Override
-//	public void onCreateContextMenu(ContextMenu menu, View v,
-//			ContextMenuInfo menuInfo) {
-//		// 长按ListView弹出的对话框
-//		super.onCreateContextMenu(menu, v, menuInfo);
-//		MenuInflater inflater = getMenuInflater();
-//		inflater.inflate(R.menu.notemenu, menu);
-//	}
-//
-//	@Override
-//	public boolean onContextItemSelected(MenuItem item) {
-//		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
-//				.getMenuInfo();
-//		int id = (int) info.id;
-//		switch (item.getItemId()) {
-//		case R.id.mn_tall:
-//			// 私聊
-//			break;
-//		case R.id.mn_Grant:
-//			// 授权
-//			break;
-//		case R.id.mn_kick:
-//			// 踢人
-//			try {
-//				String nickName = affiliates.get(id);
-//				muc.kickParticipant(nickName
-//						.substring(nickName.indexOf("]") + 1), "看你不爽就 踢了你");
-//				getAllMember();
-//				android.os.Message msg = new android.os.Message();
-//				msg.what = MEMBER;
-//				handler.sendMessage(msg);
-//				Toast.makeText(this, "他被T了", Toast.LENGTH_LONG).show();
-//			} catch (XMPPException e) {
-//				e.printStackTrace();
-//				Toast.makeText(this, "你没有权利踢人", Toast.LENGTH_LONG).show();
-//			}
-//			break;
-//		}
-//		return super.onContextItemSelected(item);
-//	}
-//
-//	@Override
-//	public boolean onOptionsItemSelected(MenuItem item) {
-//		Intent intent;
-//		switch (item.getItemId()) {
-//		case MENU_MULCHAT:
-//			intent = new Intent(ActivityMultiRoom.this, MainActivity.class);
-//			intent.putExtra("type", "1");
-//			startActivityForResult(intent, 0);
-//			break;
-//		case MENU_DESTROY:
-//			// 销毁房间，根据JID
-//			try {
-//				muc.destroy("不要了，销毁掉！", jid);
-//			} catch (XMPPException e) {
-//				e.printStackTrace();
-//				Log.i(TAG, "销毁失败");
-//			}
-//			intent = new Intent(ActivityMultiRoom.this, MainActivity.class);
-//			startActivity(intent);
-//			break;
-//		}
-//		return false;// false表示继续传递到父类处理
-//	}
+	// @Override
+	// public boolean onCreateOptionsMenu(Menu menu) {
+	// menu.add(1, MENU_MULCHAT, Menu.NONE, "邀请");
+	// menu.add(2, MENU_DESTROY, Menu.NONE, "销毁");
+	// return super.onCreateOptionsMenu(menu);
+	// }
+
+	// @Override
+	// public void onCreateContextMenu(ContextMenu menu, View v,
+	// ContextMenuInfo menuInfo) {
+	// // 长按ListView弹出的对话框
+	// super.onCreateContextMenu(menu, v, menuInfo);
+	// MenuInflater inflater = getMenuInflater();
+	// inflater.inflate(R.menu.notemenu, menu);
+	// }
+	//
+	// @Override
+	// public boolean onContextItemSelected(MenuItem item) {
+	// AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
+	// .getMenuInfo();
+	// int id = (int) info.id;
+	// switch (item.getItemId()) {
+	// case R.id.mn_tall:
+	// // 私聊
+	// break;
+	// case R.id.mn_Grant:
+	// // 授权
+	// break;
+	// case R.id.mn_kick:
+	// // 踢人
+	// try {
+	// String nickName = affiliates.get(id);
+	// muc.kickParticipant(nickName
+	// .substring(nickName.indexOf("]") + 1), "看你不爽就 踢了你");
+	// getAllMember();
+	// android.os.Message msg = new android.os.Message();
+	// msg.what = MEMBER;
+	// handler.sendMessage(msg);
+	// Toast.makeText(this, "他被T了", Toast.LENGTH_LONG).show();
+	// } catch (XMPPException e) {
+	// e.printStackTrace();
+	// Toast.makeText(this, "你没有权利踢人", Toast.LENGTH_LONG).show();
+	// }
+	// break;
+	// }
+	// return super.onContextItemSelected(item);
+	// }
+	//
+	// @Override
+	// public boolean onOptionsItemSelected(MenuItem item) {
+	// Intent intent;
+	// switch (item.getItemId()) {
+	// case MENU_MULCHAT:
+	// intent = new Intent(ActivityMultiRoom.this, MainActivity.class);
+	// intent.putExtra("type", "1");
+	// startActivityForResult(intent, 0);
+	// break;
+	// case MENU_DESTROY:
+	// // 销毁房间，根据JID
+	// try {
+	// muc.destroy("不要了，销毁掉！", jid);
+	// } catch (XMPPException e) {
+	// e.printStackTrace();
+	// Log.i(TAG, "销毁失败");
+	// }
+	// intent = new Intent(ActivityMultiRoom.this, MainActivity.class);
+	// startActivity(intent);
+	// break;
+	// }
+	// return false;// false表示继续传递到父类处理
+	// }
 
 	/**
 	 * 创建房间
@@ -537,10 +607,10 @@ public class ActivityMultiRoom extends Activity implements OnClickListener {
 		// + "@conference.xmpp.chaoboo.com");
 		try {
 			// 创建聊天室
-			if(!((MyApplication)getApplication()).nickName.equals(""))
-			muc.create(((MyApplication)getApplication()).nickName);
-			else{
-				muc.create(((MyApplication)getApplication()).userName);
+			if (!((MyApplication) getApplication()).nickName.equals(""))
+				muc.create(((MyApplication) getApplication()).nickName);
+			else {
+				muc.create(((MyApplication) getApplication()).userName);
 			}
 			// 获得聊天室的配置表单
 			Form form = muc.getConfigurationForm();
@@ -557,12 +627,13 @@ public class ActivityMultiRoom extends Activity implements OnClickListener {
 				}
 			}
 			// 设置聊天室的新拥有者
-			 List owners = new ArrayList();
-			 owners.add("jalsary"+"@"+((MyApplication)getApplication()).hostName);
+			List owners = new ArrayList();
+			owners.add("jalsary" + "@"
+					+ ((MyApplication) getApplication()).hostName);
 			// owners.add("liaonaibo1\\40slook.cc");
-			 submitForm.setAnswer("muc#roomconfig_roomowners", owners);
+			submitForm.setAnswer("muc#roomconfig_roomowners", owners);
 			// 设置聊天室是持久聊天室，即将要被保存下来
-			
+
 			submitForm.setAnswer("muc#roomconfig_roomdesc", "这时房间的描述，用来测试公告");
 			submitForm.setAnswer("muc#roomconfig_persistentroom", true);
 			// 房间仅对成员开放
@@ -581,25 +652,24 @@ public class ActivityMultiRoom extends Activity implements OnClickListener {
 			submitForm.setAnswer("x-muc#roomconfig_registration", false);
 			// 发送已完成的表单（有默认值）到服务器来配置聊天室
 			muc.sendConfigurationForm(submitForm);
-			
-			
-			Form fo =   muc.getConfigurationForm();
-			
-			  for(Iterator<FormField> it =   fo.getFields(); it.hasNext(); ) {
-				  FormField o = (FormField) it.next();
-				   System.out.println("formfield为："+o.toXML()); 
-				}
-			List<Map<String,Object>> roomInformationList = new ArrayList<Map<String,Object>>();
-			((MyApplication)getApplication()).loadArray(roomInformationList);
-			Map<String,Object> map = new HashMap<String, Object>();
+
+			Form fo = muc.getConfigurationForm();
+
+			for (Iterator<FormField> it = fo.getFields(); it.hasNext();) {
+				FormField o = (FormField) it.next();
+				System.out.println("formfield为：" + o.toXML());
+			}
+			List<Map<String, Object>> roomInformationList = new ArrayList<Map<String, Object>>();
+			((MyApplication) getApplication()).loadArray(roomInformationList);
+			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("roomName", room.split("@")[0]);
-	    	map.put("roomNumber", 834031918);
-	    	map.put("roomOwner",((MyApplication)getApplication()).userName);
-	    	map.put("roomNoti", "暂无公告");
-	    	map.put("roomCurrentPeople", 1);
-	    	map.put("roomTotlePeople", 30);
-	    	roomInformationList.add(map);
-			((MyApplication)getApplication()).saveArray(roomInformationList);
+			map.put("roomNumber", 834031918);
+			map.put("roomOwner", ((MyApplication) getApplication()).userName);
+			map.put("roomNoti", "暂无公告");
+			map.put("roomCurrentPeople", 1);
+			map.put("roomTotlePeople", 30);
+			roomInformationList.add(map);
+			((MyApplication) getApplication()).saveArray(roomInformationList);
 		} catch (XMPPException e) {
 			e.printStackTrace();
 		}
@@ -633,25 +703,28 @@ public class ActivityMultiRoom extends Activity implements OnClickListener {
 			if (message.getBody() != null) {
 				DelayInformation inf = (DelayInformation) message.getExtension(
 						"x", "jabber:x:delay");
-				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd-HH:mm:ss");
+				SimpleDateFormat format = new SimpleDateFormat(
+						"yyyy-MM-dd-HH:mm:ss");
 				String t = "";
-//				DelayInfo delayInfo = (DelayInfo) packet.getExtension("delay", "urn:xmpp:delay");
-//				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd-HH:mm:ss");  
-//				
-//				
-//		        String t=format.format(inf.getStamp());
-//
-//		        System.out.println("得到的时间： "+t);
-//				System.out.println("判断消息");
+				// DelayInfo delayInfo = (DelayInfo)
+				// packet.getExtension("delay", "urn:xmpp:delay");
+				// SimpleDateFormat format = new
+				// SimpleDateFormat("yyyy-MM-dd-HH:mm:ss");
+				//
+				//
+				// String t=format.format(inf.getStamp());
+				//
+				// System.out.println("得到的时间： "+t);
+				// System.out.println("判断消息");
 				if (inf == null && count >= 1) {
 					System.out.println("新消息来了");
 					t = format.format(new Date());
 					isHistory = true;
 				} else {
-					  
-//					
-//					
-			        t=format.format(inf.getStamp());
+
+					//
+					//
+					t = format.format(inf.getStamp());
 					System.out.println("这是旧的消息");
 				}
 				android.os.Message msg = new android.os.Message();
@@ -659,14 +732,14 @@ public class ActivityMultiRoom extends Activity implements OnClickListener {
 				Bundle bd = new Bundle();
 				bd.putString("from", from.split("/")[1]);
 				bd.putString("body", message.getBody());
-				bd.putString("time",t);
-				
+				bd.putString("time", t);
+
 				msg.setData(bd);
 				handler.sendMessage(msg);
 			}
 			count++;
 		}
-	
+
 	}
 
 	/**

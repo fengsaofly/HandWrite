@@ -614,15 +614,18 @@ public class ChatMainActivity extends Activity implements OnClickListener {
 					+ cursor.getString(2) + "3: " + cursor.getString(3));
 			String textType = "";
 
-			if (cursor.getString(4).equals("in"))
-				mDataArrays.add(new ChatMsgEntity(cursor.getString(1), cursor
-						.getString(2), cursor.getString(3), true, cursor
-						.getString(9)));
-			else
-				mDataArrays.add(new ChatMsgEntity(
-						((MyApplication) getApplication()).userName, cursor
-								.getString(2), cursor.getString(3), false,
-						cursor.getString(9)));
+			if(!cursor.getString(3).contains("subscribe")){
+				if (cursor.getString(4).equals("in"))
+					mDataArrays.add(new ChatMsgEntity(cursor.getString(1), cursor
+							.getString(2), cursor.getString(3), true, cursor
+							.getString(9)));
+				else
+					mDataArrays.add(new ChatMsgEntity(
+							((MyApplication) getApplication()).userName, cursor
+									.getString(2), cursor.getString(3), false,
+							cursor.getString(9)));
+			}
+			
 		}
 
 		mAdapter = new ChatMsgViewAdapter(this, mDataArrays, chatContact, 0);

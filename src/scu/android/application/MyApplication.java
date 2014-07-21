@@ -22,6 +22,8 @@ import java.util.Map;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
+import org.jivesoftware.smack.Chat;
+import org.jivesoftware.smack.ChatManager;
 import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.RosterEntry;
 import org.jivesoftware.smack.RosterGroup;
@@ -69,6 +71,8 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.NinePatchDrawable;
 import android.os.Environment;
 import android.util.Log;
+import android.view.Display;
+import android.view.WindowManager;
 
 import com.demo.note.R;
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
@@ -83,17 +87,17 @@ public class MyApplication extends Application {
 //	public String hostName = "handwriteserver";
 
 	 public static String hostIp = "192.168.1.116";
-	 public String hostName = "dolphin0520-pc";
+	 public static String hostName = "dolphin0520-pc";
 	 
-//	 public static String hostIp = "192.168.1.148";
-//	 public String hostName = "handwriteserver";
-	public static List<Map<String,Object>> allContactsVcard = new ArrayList<Map<String,Object>>();
+//	 public static String hostIp = "192.168.1.210";
+//	 public static String hostName = "handwriteserver";
+	private static ArrayList<Map<String,Object>> allContactsVcard = new ArrayList<Map<String,Object>>();
 	public static Map<String,Object> myVcard = new HashMap<String,Object>();
 //	public Map<String, Drawable> DrawableOfNameMap;
 //	public Map<String, Drawable> DrawableOfNickNameMap;
 	public static Drawable myIconDrawable = null;
 	public static String nickName = "";
-	public String userName = "jalsary";
+	public static String userName = "jalsary";
 	public String passWord = "123456";
 
 	public List<RosterGroup> groups = new ArrayList<RosterGroup>();
@@ -111,6 +115,7 @@ public class MyApplication extends Application {
 	private static User loginUser;
 	public static long oldId = 0;
 	public static long oldResourceId = 0;
+	public static int mHeight = 0;  //屏幕高度
 //	public static Handler actionBarHandler = null;
 
 	@Override
@@ -122,6 +127,14 @@ public class MyApplication extends Application {
 		initImageLoader(getApplicationContext());
 		// System.out.println("oncreate   ");
 		sp = getSharedPreferences("poti", MODE_PRIVATE);
+		
+		WindowManager mWindowManager = (WindowManager) this  
+                .getSystemService(Context.WINDOW_SERVICE);  
+        Display mDisplay = mWindowManager.getDefaultDisplay();  
+        mHeight = mDisplay.getHeight();
+        if(mHeight ==0){
+        	mHeight = 30*26;
+        }
 		
 		
 	}
@@ -259,6 +272,16 @@ public class MyApplication extends Application {
 			roster.createEntry(userName, name, new String[] { groupName });
 			this.groups = getGroups();
 			this.entries = getAllEntries();
+			
+			Map<String,Object> map2 = new HashMap<String, Object>();
+            map2.put("friend_avatar", getResources().getDrawable(R.drawable.default_avatar));
+			map2.put("friend_name", userName);
+			map2.put("friend_nickName", userName);
+			map2.put("friend_carrer", "");
+			map2.put("friend_gender", "");
+			map2.put("friend_zone", "");
+			map2.put("friend_sign", "");
+			getAllContactsVcard().add(map2);
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -285,6 +308,27 @@ public class MyApplication extends Application {
 			roster.removeEntry(entry);
 			this.groups = getGroups();
 			this.entries = getAllEntries();
+			
+			for(int i=0;i<getAllContactsVcard().size();i++){
+				if(getAllContactsVcard().get(i).get("friend_name").equals(userName)){
+					getAllContactsVcard().remove(i);
+					break;
+				}
+			}
+			
+			
+			
+			ChatManager cm = XmppTool.getConnection().getChatManager();
+			Chat newchat = cm.createChat(userName+ "@"
+					+ hostName, null);
+			
+			try {
+
+				newchat.sendMessage("unsubscribe");
+
+			} catch (XMPPException e) {
+				e.printStackTrace();
+			}
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -843,7 +887,7 @@ public class MyApplication extends Application {
 	
 	
 	public  Map<String,Object> getFriendVcard(String friendName){
-		for(Map<String,Object> item : allContactsVcard){
+		for(Map<String,Object> item : getAllContactsVcard()){
 			if(item.get("friend_name").equals(friendName)){
 				return item;
 			
@@ -995,7 +1039,21 @@ public class MyApplication extends Application {
 	        }  
 	  
 	        return shOnLineState;  
-	    }  
+	    }
+
+
+
+
+	public static ArrayList<Map<String,Object>> getAllContactsVcard() {
+		return allContactsVcard;
+	}
+
+
+
+
+	public static void setAllContactsVcard(ArrayList<Map<String,Object>> allContactsVcard) {
+		MyApplication.allContactsVcard = allContactsVcard;
+	}  
 	 
 	 
 //	 public  void sendFile(XMPPConnection connection,  

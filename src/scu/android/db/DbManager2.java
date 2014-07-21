@@ -69,6 +69,16 @@ public Cursor queryRecent(){
 }
 
 
+public Cursor readFriendReq(){	
+	Cursor cursor = db.query(DbHelper2.TABLE_NAME, null, "content=? or content = ? or content = ? ", new String[]{"subscribe","subscribed","unsubscribe"}, null, null ,"_id ASC");
+	return cursor;
+}
+public void deleteFriendReq(int id){
+//	 db.delete(DbHelper2.TABLE_NAME, "id = ?", new int[]{id});
+	String selectSql = "delete from "+DbHelper2.TABLE_NAME+" where _id = "+id;
+	db.execSQL(selectSql);
+}
+
 public void deleteGroupChatRecord(String jid,String date,String isGroupChat){
 	 db.delete(DbHelper2.TABLE_NAME, "jid = ? and date=? and isGroupChat=?", new String[]{jid,date, isGroupChat});
 	

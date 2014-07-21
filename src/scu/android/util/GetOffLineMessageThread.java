@@ -1,5 +1,6 @@
 package scu.android.util;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -8,6 +9,10 @@ import java.util.Set;
 
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.OfflineMessageManager;
+import org.jivesoftware.smackx.packet.DelayInformation;
+
+import scu.android.db.ChatRecord;
+import scu.android.db.DbManager2;
 
 import android.app.Activity;
 import android.content.Context;
@@ -17,7 +22,8 @@ public class GetOffLineMessageThread extends AsyncTask<Void, Integer, Void>{
 	
 	private Context mContext;
 	private Activity myActivity;
-		 
+		
+	private DbManager2 db;
 
 	
 
@@ -25,9 +31,7 @@ public class GetOffLineMessageThread extends AsyncTask<Void, Integer, Void>{
 	public GetOffLineMessageThread(Context context,Activity activity){
 		this.mContext = context;
 		this.myActivity = activity;	
-	
-		
-		
+		db = new DbManager2(mContext);
 	
 		
 	}
@@ -41,6 +45,9 @@ public class GetOffLineMessageThread extends AsyncTask<Void, Integer, Void>{
     protected void onPostExecute(Void result) {//通知handler下载完成
         // TODO Auto-generated method stub
         super.onPostExecute(result);
+        if(db!=null){
+        	db.close();
+        }
 
     }
     @Override
@@ -99,6 +106,20 @@ public class GetOffLineMessageThread extends AsyncTask<Void, Integer, Void>{
 //	            }  
 	            
 	            for(org.jivesoftware.smack.packet.Message msg : ms){
+	            	String args [] = new String[3];
+	            	DelayInformation inf = (DelayInformation) msg.getExtension(
+							"x", "jabber:x:delay");
+					SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd-HH:mm:ss");
+					String t = "";
+					t=format.format(inf.getStamp());
+					
+					args[0] = msg.getFrom().toString();
+					args[1] = msg.getBody().toString();
+					args[2] = t;
+					
+					addOfflineMessageToDb(args);
+					
+					
 	            	System.out.println("消息：   "+msg.toString());
 	            }
 	        } 
@@ -122,5 +143,23 @@ public class GetOffLineMessageThread extends AsyncTask<Void, Integer, Void>{
     	
     	
         return null;
+    }
+    
+    public void addOfflineMessageToDb(String args[]){
+    	ChatRecord chatRecord = new ChatRecord();
+		String s = args[0].toString().contains("@") ? args[0].toString().split(
+				"@")[0] : args[0].toString();
+				
+		chatRecord.setAccount(s);
+		chatRecord.setContent(args[1]);
+		chatRecord.setFlag("in");
+//		chatRecord.setTime(TimeRender.getDate().split(" ")[1]);
+		chatRecord.setDate(args[2]);
+		chatRecord.setType("4");
+		chatRecord.setIsGroupChat("false");
+		chatRecord.setJid("-1");
+		chatRecord.setContent_type("nomal");
+		System.out.println("写入数据库成功，内容为： " + args[1]);
+		db.insertRecord(chatRecord);
     }
 }

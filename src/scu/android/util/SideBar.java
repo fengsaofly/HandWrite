@@ -1,9 +1,12 @@
 package scu.android.util;
 
+import scu.android.application.MyApplication;
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ListView;
@@ -15,9 +18,18 @@ public class SideBar extends View {
 	    private SectionIndexer sectionIndexter = null;  
 	    private ListView list;  
 	    private TextView mDialogText;
-	    private final int m_nItemHeight = 30;  
+	    
+	    private  final int m_nItemHeight = (MyApplication.mHeight/5*4+30)/26;  
 	    public SideBar(Context context) {  
-	        super(context);  
+	        super(context); 
+//	        DisplayMetrics dm = new DisplayMetrics();
+//	         //获取屏幕信息
+//	        activity.getWindowManager().getDefaultDisplay().getMetrics(dm);
+//	         
+//	                int screenWidth = dm.widthPixels;
+//	         
+//	                int screenHeigh = dm.heightPixels;
+//	                m_nItemHeight =  dm.heightPixels/26 - 3; 
 	        init();  
 	    }  
 	    public SideBar(Context context, AttributeSet attrs) {  

@@ -2,11 +2,7 @@ package scu.android.ui;
 
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.RosterEntry;
@@ -88,9 +84,23 @@ public class LoginActivity extends Activity{
 				((MyApplication) getApplication()).entries = ((MyApplication) getApplication())
 						.getAllEntries();
 				System.out.println("输出所有的entry： ");
-				for(RosterEntry entry:((MyApplication) getApplication()).entries){
-					System.out.println("entry："+entry.getName()+"\n");
+//				boolean flag = false;
+				List<Integer> deleteNullItem = new ArrayList<Integer>();
+				for(int i=0;i<((MyApplication) getApplication()).entries.size();i++){
+//					if(entry.getName().equals("null")){
+//						((MyApplication)getApplication()).removeUser("null");
+//					}
+					if(((MyApplication) getApplication()).entries.get(i).getName()==null){
+						deleteNullItem.add(i);
+					}
+					System.out.println("entry："+((MyApplication) getApplication()).entries.get(i).getName()+"\n");
 				}
+				for(int i=0;i<deleteNullItem.size();i++){
+					((MyApplication) getApplication()).entries.remove(deleteNullItem.get(i));
+				}
+				
+//				((MyApplication) getApplication()).entries = ((MyApplication) getApplication())
+//						.getAllEntries();
 				((MyApplication)getApplication()).loginFlag=true;
 				
 				
@@ -109,43 +119,52 @@ public class LoginActivity extends Activity{
 //						EntriesList.add(i.next());
 				
 				
-//				new Thread(new Runnable() {  //获取自己的vcard
-//				
-//				@Override
-//				public void run() {
-//					// TODO Auto-generated method stub
-//					VCard vCard = new VCard();
-//					ProviderManager.getInstance().addIQProvider("vCard", "vcard-temp",
-//							new org.jivesoftware.smackx.provider.VCardProvider());
-//					try {
-//						vCard.load(XmppTool.getConnection(), userName.getText().toString() + "@" + XmppTool.getConnection().getServiceName());
-////						myIconDrawable
-//						if (vCard == null || vCard.getAvatar() == null)
-//						((MyApplication)getApplication()).myIconDrawable =  getResources().getDrawable(R.drawable.default_avatar);
-//						else{
-//							ByteArrayInputStream bais = new ByteArrayInputStream(vCard.getAvatar());
-//							((MyApplication)getApplication()).myIconDrawable = ((MyApplication)getApplication()).bitmap2Drawable(BitmapFactory.decodeStream(bais)) ; 
-//						}
-//						if ("".equals(vCard.getNickName())
-//								|| null == vCard.getNickName()) {
-//							System.out.println("昵称是空的");
-//							vCard.setNickName("快乐的汤姆猫");
-//						}
+				new Thread(new Runnable() {  //获取自己的vcard
+				
+				@Override
+				public void run() {
+					// TODO Auto-generated method stub
+					VCard vCard = new VCard();
+					ProviderManager.getInstance().addIQProvider("vCard", "vcard-temp",
+							new org.jivesoftware.smackx.provider.VCardProvider());
+					try {
+						vCard.load(XmppTool.getConnection(), userName.getText().toString() + "@" + MyApplication.hostName);
+//						myIconDrawable
+						if (vCard == null || vCard.getAvatar() == null)
+						((MyApplication)getApplication()).myIconDrawable =  getResources().getDrawable(R.drawable.default_avatar);
+						else{
+							ByteArrayInputStream bais = new ByteArrayInputStream(vCard.getAvatar());
+							((MyApplication)getApplication()).myIconDrawable = ((MyApplication)getApplication()).bitmap2Drawable(BitmapFactory.decodeStream(bais)) ; 
+						}
+						if ("".equals(vCard.getNickName())
+								|| null == vCard.getNickName()) {
+							System.out.println("昵称是空的");
+							vCard.setNickName("快乐的汤姆猫");
+							
+						}
 //						((MyApplication) getApplication()).vCard = vCard;
-//					} catch (Exception e) {
-//						// TODO Auto-generated catch block
-//						e.printStackTrace();
-//					}
-//					
-//				}
-//			}).start();
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					
-			
+				}
+			}).start();
+					
+
+//				/**
+//				 * 
+//				 * 启动监听好友服务（添加好友请求、同意、好友状态等）
+//				 */
+//				Intent presenceServiceIntent = new Intent(LoginActivity.this,PresenceService.class);
+//				startService(presenceServiceIntent);
+				
+				
 				GetAllContactVcardThread gacvt = new GetAllContactVcardThread(LoginActivity.this, LoginActivity.this,((MyApplication) getApplication()).entries,handler);
 				gacvt.execute();
 				
-//				GetOffLineMessageThread golmt = new GetOffLineMessageThread(LoginActivity.this, LoginActivity.this);
-//				golmt.execute();
+				GetOffLineMessageThread golmt = new GetOffLineMessageThread(LoginActivity.this, LoginActivity.this);
+				golmt.execute();
 				
 				try {
 					Thread.sleep(2000);
@@ -160,17 +179,20 @@ public class LoginActivity extends Activity{
 				intent.putExtra("USERID", "");
 				startActivity(intent);
 				
+				
+				//测试添加好友
+//				try {
+//					XmppTool.getConnection().getRoster().createEntry("bbb"+"@"+((MyApplication)getApplication()).hostName, "bbb", new String[]{"我的好友"});
+//				} catch (XMPPException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+				
+				
 				finish();
 				
 				
-//				new Thread(new Runnable() {
-//					
-//					@Override
-//					public void run() {
-//						// TODO Auto-generated method stub
-//						getAllContactsVcard(EntriesList);
-//					}
-//				}).start();
+
 				
 				
 				
@@ -199,23 +221,7 @@ public class LoginActivity extends Activity{
 	
 	public void myOnclick(View v){
 		switch(v.getId()){
-//		case R.id.buttonBack:
-//			new AlertDialog.Builder(this).setTitle("确定要退出应用吗？").setPositiveButton("确定", new DialogInterface.OnClickListener() {
-//				
-//				@Override
-//				public void onClick(DialogInterface dialog, int which) {
-//					// TODO Auto-generated method stub
-//					System.exit(0);
-//				}
-//			}).setNegativeButton("取消", new DialogInterface.OnClickListener() {
-//				
-//				@Override
-//				public void onClick(DialogInterface dialog, int which) {
-//					// TODO Auto-generated method stub
-//					
-//				}
-//			}).create().show();
-//			break;
+
 		case R.id.register_btn:  //注册
 			
 			startActivity(new Intent(this,RegisterActivity.class));
@@ -233,10 +239,11 @@ public class LoginActivity extends Activity{
 					
 					try {
 						
-						
-						XmppTool.getConnection().login(USERID, PWD);
-						Presence presence = new Presence(Presence.Type.available);
+						Presence presence = new Presence(Presence.Type.unavailable);
 						XmppTool.getConnection().sendPacket(presence);
+						XmppTool.getConnection().login(USERID, PWD);
+//						Presence presence = new Presence(Presence.Type.available);
+//						XmppTool.getConnection().sendPacket(presence);
 						System.out.println("在线登陆：成功。。。");
 //						getOffLineMessage();
 //					             新建presence对象  ״̬

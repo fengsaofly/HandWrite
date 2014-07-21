@@ -12,8 +12,17 @@ import org.jivesoftware.smack.Chat;
 import org.jivesoftware.smack.ChatManager;
 import org.jivesoftware.smack.ChatManagerListener;
 import org.jivesoftware.smack.MessageListener;
+import org.jivesoftware.smack.PacketListener;
+import org.jivesoftware.smack.Roster;
+import org.jivesoftware.smack.RosterEntry;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.filter.AndFilter;
+import org.jivesoftware.smack.filter.PacketFilter;
+import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.sasl.SASLMechanism.AuthMechanism;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.filetransfer.FileTransfer;
 import org.jivesoftware.smackx.filetransfer.FileTransferListener;
@@ -40,12 +49,9 @@ import android.app.ActionBar.Tab;
 import android.app.ActionBar.TabListener;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
@@ -61,8 +67,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.PopupMenu;
-import android.widget.ProgressBar;
 import android.widget.PopupMenu.OnMenuItemClickListener;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -264,8 +270,83 @@ public class ActionBarActivity extends FragmentActivity {
 		
 		FileTransferManager transfer = new FileTransferManager(XmppTool.getConnection());
 		transfer.addFileTransferListener(new RecFileTransferListener());
-
 		
+		
+		
+		
+		/**
+		 * 
+		 * 
+		 *  packet监听
+		 */
+		
+		  
+//		 PacketFilter filter = new AndFilter(new PacketTypeFilter(  
+//                 Presence.class));  
+//         PacketListener listener = new PacketListener() {  
+//
+//             @Override  
+//             public void processPacket(Packet packet) {  
+//             	db = new DbManager2(ActionBarActivity.this);
+//                 Log.i("Presence", "PresenceService------" + packet.toXML());  
+//                 //看API可知道   Presence是Packet的子类  
+//                 if (packet instanceof Presence) {  
+//                     Log.i("Presence", packet.toXML());  
+//                     Presence presence = (Presence) packet;  
+//                     //Presence还有很多方法，可查看API   
+//                     String from = presence.getFrom();//发送方  
+//                     String to = presence.getTo();//接收方  
+//                     System.out.println("发送方： "+from);
+//                     System.out.println("接收方： "+to);
+//                     //Presence.Type有7中状态  
+//                     
+//                     if (presence.getType().equals(Presence.Type.subscribe)) {//好友申请  
+//                     	if(to.contains(MyApplication.userName)||to.contains(MyApplication.nickName)){
+//                     		String[] args = new String[] { from,
+// 									"subscribe", TimeRender.getDate(),
+// 									
+// 									"IN" };
+//                     		addFriendReqRecordToDb(args);
+//                     	}
+//                     	
+//                           System.out.println("好友申请");
+//                     } 
+//                     else if (presence.getType().equals(  
+//                             Presence.Type.subscribed)) {//同意添加好友  
+//                     	if(to.contains(MyApplication.userName)||to.contains(MyApplication.nickName)){
+//                     		String[] args = new String[] { from,
+// 									"subscribed", TimeRender.getDate(),
+// 									"IN" };
+//                     		addFriendReqRecordToDb(args);
+//                     	}
+//                     	System.out.println("同意添加好友  ");
+//                     } 
+//                     else if (presence.getType().equals(  
+//                             Presence.Type.unsubscribe)) {//拒绝添加好友  和  删除好友  
+//                     	if(to.contains(MyApplication.userName)||to.contains(MyApplication.nickName)){
+//                     		String[] args = new String[] { from,
+// 									"unsubscribe", TimeRender.getDate(),
+// 									"IN" };
+//                     		addFriendReqRecordToDb(args);
+//                     	}
+//                     	System.out.println("拒绝添加好友  和 删除好友 ");
+//                     }
+//                    
+//                     else if (presence.getType().equals(  
+//                             Presence.Type.unavailable)) {//好友下线   要更新好友列表，可以在这收到包后，发广播到指定页面   更新列表  
+//                     	System.out.println("好友申请");
+//                     } 
+//                     else {//好友上线  
+//                           
+//                     }  
+//                 } 
+//                 if(db!=null){
+//                 	db.close();
+//                 }
+//             }  
+//         }; 
+//
+//         XmppTool.getConnection().addPacketListener(listener, filter); //注册监听
 
 
 	}
@@ -309,7 +390,7 @@ public void showPopup(View v) {
 				popup.getMenu().getItem(0).setVisible(true);
 			}
 			else {
-				popup.getMenu().getItem(0).setTitle("登陆");
+				popup.getMenu().getItem(0).setTitle("登录");
 				popup.getMenu().getItem(1).setVisible(false);
 			}
 //				popup.getMenu().
@@ -482,7 +563,7 @@ public void showPopup(View v) {
 					public void onClick(DialogInterface arg0, int arg1) {
 						// TODO Auto-generated method stub
 						((MyApplication)getApplication()).userName="";
-						((MyApplication)getApplication()).allContactsVcard = null;
+						((MyApplication)getApplication()).setAllContactsVcard(null);
 						((MyApplication)getApplication()).loginFlag = false;
 						XmppTool.closeConnection();
 						
@@ -892,7 +973,29 @@ public void showPopup(View v) {
 		// }
 
 	}
-	
+	   public void addFriendReqRecordToDb(String[] args) {
+			// if(((MyApplication)getActivity().getApplication()).currentActivity.equals("main")){
+			ChatRecord chatRecord = new ChatRecord();
+//			String s = args[0].toString().contains("@") ? args[0].toString().split(
+//					"@")[0] : args[0].toString();
+					
+			chatRecord.setAccount(args[0]);
+			chatRecord.setContent(args[1]);
+			chatRecord.setFlag("in");
+			chatRecord.setTime(TimeRender.getDate().split(" ")[1]);
+			chatRecord.setDate(TimeRender.getDate().split(" ")[0]);
+			chatRecord.setType("0");
+			chatRecord.setIsGroupChat("false");
+			chatRecord.setJid("-1");
+			chatRecord.setContent_type("nomal");
+			System.out.println("写入数据库成功，内容为： " + args[1]);
+			db.insertRecord(chatRecord);
+			
+			
+
+			// }
+
+		}
 	
 	public void addFileRecordToDb(String[] args) {
 		// if(((MyApplication)getActivity().getApplication()).currentActivity.equals("main")){
