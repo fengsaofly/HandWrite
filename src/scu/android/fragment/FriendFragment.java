@@ -13,7 +13,6 @@ import net.sourceforge.pinyin4j.format.HanyuPinyinToneType;
 import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombination;
 
 import org.jivesoftware.smack.Chat;
-import org.jivesoftware.smack.RosterEntry;
 
 import scu.android.application.MyApplication;
 import scu.android.ui.ChatMainActivity;
@@ -40,6 +39,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.BaseAdapter;
+import android.widget.HeaderViewListAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
@@ -90,6 +90,14 @@ public class FriendFragment extends Fragment
 //									"friend_icon", "friend_name" }, new int[] {
 //									R.id.friend_icon, R.id.friend_name });
 					friendListView.setAdapter(friendAdapter);
+					friendListView.setDivider(null);
+//					TextView tv = new TextView(getActivity());
+//					tv.setText("123344");
+//					friendListView.addHeaderView(tv);
+//					
+//					HeaderViewListAdapter listAdapter=(HeaderViewListAdapter)friendListView.getAdapter();
+//					friendAdapter=(ContactAdapter)listAdapter.getWrappedAdapter();
+//					friendAdapter.notifyDataSetChanged();
 //				} else {
 ////					// multiAdapter.notifyDataSetChanged();
 ////					// multiListView.invalidate();
@@ -484,7 +492,7 @@ public class FriendFragment extends Fragment
 	    		temp.put("friend_sign", "");
 	    		
 	    		Map<String,Object> temp1 = new HashMap<String, Object>();
-	    		temp1.put("friend_avatar", mContext.getResources().getDrawable((R.drawable.group_icon)));
+	    		temp1.put("friend_avatar", mContext.getResources().getDrawable((R.drawable.contact_group_icon)));
 	    		temp1.put("friend_name", "群聊");
 	    		temp1.put("friend_sign", "");
 	    		
@@ -534,15 +542,20 @@ public class FriendFragment extends Fragment
 					viewHolder.ivAvatar = (ImageView)convertView.findViewById(R.id.friend_icon);
 					viewHolder.tvNick = (TextView)convertView.findViewById(R.id.friend_name);
 					viewHolder.sign = (TextView)convertView.findViewById(R.id.distance_textview);
-					
+					viewHolder.friend_line = (TextView)convertView.findViewById(R.id.friend_line);
 					convertView.setTag(viewHolder);
 //				}else{
 //					viewHolder = (ViewHolder)convertView.getTag();
 //				}
 				String catalog = converterToFirstSpell(nickName).substring(0, 1);
-				if(position == 0||position == 1){
+				if(position == 0){
 					viewHolder.tvCatalog.setVisibility(View.INVISIBLE);
 					viewHolder.tvCatalog.setText(catalog);
+				}
+				else if(position==1){
+					viewHolder.tvCatalog.setVisibility(View.INVISIBLE);
+					viewHolder.tvCatalog.setText(catalog);
+					viewHolder.friend_line.setVisibility(View.GONE);
 				}
 				else if(position==2){
 					viewHolder.tvCatalog.setVisibility(View.VISIBLE);
@@ -571,6 +584,7 @@ public class FriendFragment extends Fragment
 				ImageView ivAvatar;//头像
 				TextView tvNick;//昵称
 				TextView sign;
+				View friend_line;
 			}
 	 
 			@Override

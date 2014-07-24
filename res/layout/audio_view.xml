@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp"
+    android:background="@drawable/audio_view_bg"
+    android:focusable="true"
+    android:gravity="center"
+    android:padding="5dp" >
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" >
+
+        <TextView
+            android:id="@id/duration"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:textColor="#000000"
+            android:textSize="15sp" />
+
+        <ProgressBar
+            android:id="@id/loading"
+            android:layout_width="20dp"
+            android:layout_height="20dp" />
+    </FrameLayout>
+
+    <ImageButton
+        android:id="@id/status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="30dp"
+        android:background="@drawable/question_add_record_icon_default"
+        android:contentDescription="@string/app_name" />
+
+</LinearLayout>

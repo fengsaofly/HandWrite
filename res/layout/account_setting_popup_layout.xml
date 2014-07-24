@@ -1,0 +1,62 @@
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="90dp"
+        android:background="#eeeeee"
+        android:orientation="vertical"
+        android:padding="5dp" >
+
+        
+
+        <LinearLayout
+            android:id="@id/popup_camera_lay"
+            android:layout_width="fill_parent"
+            android:layout_height="40dp"
+            
+            android:onClick="myOnclick"
+            android:gravity="center"
+            android:orientation="vertical" >
+
+            
+
+            <TextView
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:id="@+id/indexText"
+               android:background="@drawable/chat_textview_bg"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                style="@style/text_style_medium_gray"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="拍照" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@id/popup_imgpicker_lay"
+            android:layout_width="fill_parent"
+            android:layout_height="40dp"
+            
+            android:onClick="myOnclick"
+            android:gravity="center"
+            android:orientation="vertical" >
+
+           
+
+            <TextView
+                  android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:id="@+id/searchText"
+                style="@style/text_style_medium_gray"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:background="@drawable/chat_textview_bg"
+                android:text="从手机相册中选择" />
+        </LinearLayout>
+
+        
+
+    </LinearLayout>
+

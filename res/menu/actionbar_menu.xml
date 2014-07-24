@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
-    <item
-        android:id="@+id/home_search_btn"
-        android:actionLayout="@layout/list_item"
-        android:actionViewClass="android.widget.SearchView"
-        android:icon="@drawable/actionbar_search"
-        android:showAsAction="ifRoom|collapseActionView"
-        android:title="@string/app_name"/>
+
     <item
         android:id="@+id/home_add_btn"
         android:icon="@drawable/actionbar_add"

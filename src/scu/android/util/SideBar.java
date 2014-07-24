@@ -1,5 +1,7 @@
 package scu.android.util;
 
+import com.demo.note.R;
+
 import scu.android.application.MyApplication;
 import android.app.Activity;
 import android.content.Context;
@@ -19,7 +21,8 @@ public class SideBar extends View {
 	    private ListView list;  
 	    private TextView mDialogText;
 	    
-	    private  final int m_nItemHeight = (MyApplication.mHeight/5*4+30)/26;  
+//	    private   int m_nItemHeight = (MyApplication.mHeight * 4/5 -30)/26;  
+	    public int m_nItemHeight = 1;
 	    public SideBar(Context context) {  
 	        super(context); 
 //	        DisplayMetrics dm = new DisplayMetrics();
@@ -30,10 +33,12 @@ public class SideBar extends View {
 //	         
 //	                int screenHeigh = dm.heightPixels;
 //	                m_nItemHeight =  dm.heightPixels/26 - 3; 
+	        m_nItemHeight = getHeight()/26;
 	        init();  
 	    }  
 	    public SideBar(Context context, AttributeSet attrs) {  
 	        super(context, attrs);  
+	        m_nItemHeight = getHeight()/26;
 	        init();  
 	    }  
 	    private void init() {  
@@ -53,7 +58,8 @@ public class SideBar extends View {
 	    }  
 	    public boolean onTouchEvent(MotionEvent event) {  
 	        super.onTouchEvent(event);  
-	        int i = (int) event.getY();  
+	        int i = (int) event.getY(); 
+	        m_nItemHeight = getHeight()/26;
 	        int idx = i / m_nItemHeight;  
 	        if (idx >= l.length) {  
 	            idx = l.length - 1;  
@@ -62,6 +68,7 @@ public class SideBar extends View {
 	        }  
 	        if (event.getAction() == MotionEvent.ACTION_DOWN || event.getAction() == MotionEvent.ACTION_MOVE) {  
 	        	mDialogText.setVisibility(View.VISIBLE);
+	        	mDialogText.setBackgroundDrawable(getResources().getDrawable(R.drawable.contact_index_popup_bg));
 	        	mDialogText.setText(""+l[idx]);
 	            if (sectionIndexter == null) {  
 	                sectionIndexter = (SectionIndexer) list.getAdapter();  
@@ -77,9 +84,10 @@ public class SideBar extends View {
 	        return true;  
 	    }  
 	    protected void onDraw(Canvas canvas) {  
+	    	m_nItemHeight = getHeight()/26;
 	        Paint paint = new Paint();  
 	        paint.setColor(0xff595c61);  
-	        paint.setTextSize(18);  
+	        paint.setTextSize(22);  
 	        paint.setTextAlign(Paint.Align.CENTER);  
 	        float widthCenter = getMeasuredWidth() / 2;  
 	        for (int i = 0; i < l.length; i++) {  

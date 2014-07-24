@@ -334,10 +334,10 @@
     <style name="MMListCatalog">
         <item name="android:textSize">14.0dip</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:textColor">#ff595c61</item>
+        <item name="android:textColor">#ff989898</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:orientation">horizontal</item>
-        <item name="android:background">#ffced2d7</item>
+        <item name="android:background">#f5f5f5</item>
         <item name="android:paddingLeft">10.0dip</item>
         <item name="android:paddingTop">2.0dip</item>
         <item name="android:paddingBottom">2.0dip</item>

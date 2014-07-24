@@ -10,14 +10,24 @@ import android.util.AttributeSet;
 public class CircularImage extends MaskedImage {
 	public CircularImage(Context paramContext) {
 		super(paramContext);
+		if (isInEditMode()) {
+			return;
+		}
 	}
 
 	public CircularImage(Context paramContext, AttributeSet paramAttributeSet) {
 		super(paramContext, paramAttributeSet);
+		if (isInEditMode()) {
+			return;
+		}
 	}
 
-	public CircularImage(Context paramContext, AttributeSet paramAttributeSet, int paramInt) {
+	public CircularImage(Context paramContext, AttributeSet paramAttributeSet,
+			int paramInt) {
 		super(paramContext, paramAttributeSet, paramInt);
+		if (isInEditMode()) {
+			return;
+		}
 	}
 
 	public Bitmap createMask() {
@@ -33,5 +43,7 @@ public class CircularImage extends MaskedImage {
 		RectF localRectF = new RectF(0.0F, 0.0F, f1, f2);
 		localCanvas.drawOval(localRectF, localPaint);
 		return localBitmap;
+		
+		
 	}
 }

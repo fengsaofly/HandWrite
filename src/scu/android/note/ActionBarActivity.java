@@ -849,10 +849,10 @@ public void showPopup(View v) {
 			showPopup(v);
 
 			break;
-		case R.id.home_search_btn:
-			Toast.makeText(getApplicationContext(), "search",
-					Toast.LENGTH_SHORT).show();
-			break;
+//		case R.id.home_search_btn:
+//			Toast.makeText(getApplicationContext(), "search",
+//					Toast.LENGTH_SHORT).show();
+//			break;
 		case R.id.home_settings_btn:
 			 View  sv = findViewById(R.id.home_settings_btn);
 				showPopup(sv);

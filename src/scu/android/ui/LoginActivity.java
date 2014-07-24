@@ -16,6 +16,7 @@ import scu.android.application.MyApplication;
 import scu.android.note.ActionBarActivity;
 import scu.android.util.GetAllContactVcardThread;
 import scu.android.util.GetOffLineMessageThread;
+import scu.android.util.SendIQTestrr;
 import scu.android.util.XmppTool;
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -159,6 +160,19 @@ public class LoginActivity extends Activity{
 //				Intent presenceServiceIntent = new Intent(LoginActivity.this,PresenceService.class);
 //				startService(presenceServiceIntent);
 				
+				
+				/**
+				 * 
+				 * 触发与服务器交互
+				 */
+				
+				try {
+					System.out.println("aljglg");
+					SendIQTestrr.run();
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				
 				GetAllContactVcardThread gacvt = new GetAllContactVcardThread(LoginActivity.this, LoginActivity.this,((MyApplication) getApplication()).entries,handler);
 				gacvt.execute();

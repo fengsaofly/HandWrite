@@ -29,6 +29,7 @@ import org.jivesoftware.smack.RosterEntry;
 import org.jivesoftware.smack.RosterGroup;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.Form;
@@ -80,14 +81,28 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 
+/**
+ * 
+ * 群聊既进既退相关import org.jivesoftware.smack.packet.IQ;
+
+ * 
+ * 
+ */
+import org.jivesoftware.smack.provider.IQProvider;
+import org.xmlpull.v1.XmlPullParser;
+
+
 public class MyApplication extends Application {
 	private static final String TAG = "MyApplication";
 
 //	public static String hostIp = "218.244.144.212";
 //	public String hostName = "handwriteserver";
 
-	 public static String hostIp = "192.168.1.116";
-	 public static String hostName = "dolphin0520-pc";
+//	 public static String hostIp = "192.168.1.116";
+//	 public static String hostName = "dolphin0520-pc";
+	 
+	 public static String hostIp = "192.168.1.149";
+	 public static String hostName = "handwriteserver";
 	 
 //	 public static String hostIp = "192.168.1.210";
 //	 public static String hostName = "handwriteserver";
@@ -117,6 +132,11 @@ public class MyApplication extends Application {
 	public static long oldResourceId = 0;
 	public static int mHeight = 0;  //屏幕高度
 //	public static Handler actionBarHandler = null;
+	
+	
+
+	
+	
 
 	@Override
 	public void onCreate() {
@@ -136,8 +156,99 @@ public class MyApplication extends Application {
         	mHeight = 30*26;
         }
 		
+        
+        ProviderManager.getInstance().addIQProvider("muc", "YANG", new MUCPacketExtensionProvider());
 		
 	}
+	
+	
+	
+	public class MUCPacketExtensionProvider implements IQProvider {
+
+        @Override
+        public IQ parseIQ(XmlPullParser parser) throws Exception {
+                int eventType = parser.getEventType();
+                MUCInfo info = null;
+                while (true) {
+                        if (eventType == XmlPullParser.START_TAG) {
+//                                if ("room".equals(parser.getName())) {
+//                                        String account = parser.getAttributeValue("", "account");
+//                                        String room = parser.nextText();
+//                                        
+//                                        info = new MUCInfo();
+//                                        info.setAccount(account);
+//                                        info.setRoom(room);
+//                                        info.setNickname(account);
+//                                        
+//                                        System.out.println("info: "+info.toString());
+//                                        
+////                                        Application.getInstance().addMUCInfo(info);
+//                                }
+                        	
+                        	System.out.println("parser.getText():  "+parser.getText());
+                        } else if (eventType == XmlPullParser.END_TAG) {
+                                if ("muc".equals(parser.getName())) {
+                                        break;
+                                }
+                        }
+                        eventType = parser.next();
+                }
+                return null;
+        }
+
+}
+	
+	
+	/**
+	 * @Title: MUCInfo.java
+	 * @Package ouc.sei.suxin.android.data.entity
+	 * @Description: 用于传输从Server端传输过来的MUC的信息
+	 * @author Yang Zhilong
+	 * @blog http://blog.csdn.net/yangzl2008
+	 * @date 2013年11月27日 上午9:27:25
+	 * @version V1.0
+	 */
+	public class MUCInfo {
+	        private String account;
+	        private String room;
+	        private String nickname;
+
+	        public String getAccount() {
+	                return account;
+	        }
+
+	        public void setAccount(String account) {
+	                this.account = account;
+	        }
+
+	        public String getRoom() {
+	                return room;
+	        }
+
+	        public void setRoom(String room) {
+	                this.room = room;
+	        }
+
+	        public String getNickname() {
+	                return nickname;
+	        }
+
+	        public void setNickname(String nickname) {
+	                if (nickname.contains("@")) {
+	                        this.nickname = nickname.substring(0, account.indexOf("@"));
+	                        return;
+	                }
+	                this.nickname = nickname;
+	        }
+
+	        @Override
+	        public String toString() {
+	                return "MUCInfo [account=" + account + ", room=" + room + ", nickname="
+	                                + nickname + "]";
+	        }
+
+	}
+
 
 
 	
@@ -955,6 +1066,7 @@ public class MyApplication extends Application {
 				 for(HostedRoom aroom : rooms) {
 					 System.out.println(aroom.getName() + " - " +aroom.getJid());
 					 RoomInfo roomInfo = MultiUserChat.getRoomInfo(XmppTool.getConnection(),aroom.getJid());
+					 
 					 if(roomInfo != null) {
 						 result.add(roomInfo);
 						 System.out.println("roomInfo.getOccupantsCount(): "+roomInfo.getOccupantsCount() + " \nroomInfo.getSubject() : " +roomInfo.getSubject()+"\nroomInfo.getDescription(): "+roomInfo.getDescription()+roomInfo.getRoom());

@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" 
-    android:background="@color/BackgroundGrayColor">
+    >
     
     
     <LinearLayout 
@@ -84,7 +84,7 @@
 	    android:layout_width="20dp" 
 	    android:gravity="top|right" 
 	    android:layout_gravity="top|right"
-	    android:background="@drawable/mm_text_bg_trans"
+	    android:background="@drawable/contact_index_bg"
 	/>  
    </RelativeLayout>
    
