@@ -3,6 +3,7 @@
 
     <item
         android:id="@id/popup_menu_option_issue_question"
+        android:icon="@drawable/search"
         android:title="@string/issue_question"/>
     <item
         android:id="@id/popup_menu_option_add_friend"

@@ -1,7 +1,10 @@
 package scu.android.fragment;
 
 import scu.android.activity.GroupListActivity;
+import scu.android.activity.HomeTeacherActivity;
 import scu.android.activity.NearByPeopleActivity;
+import scu.android.activity.SchoolStoryActivity;
+import scu.android.activity.SpeakForeignLanguageActivity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -84,8 +87,14 @@ public class FindFragment extends Fragment implements OnClickListener {
 		 */
 		final View nearbyPeople = view.findViewById(R.id.nearby_people);
 		nearbyPeople.setOnClickListener(this);
+		final View schoolStory = view.findViewById(R.id.school_story);
+		schoolStory.setOnClickListener(this);
 		final View groupsList = view.findViewById(R.id.groups_list);
 		groupsList.setOnClickListener(this);
+		final View speakForeignLanguage = view.findViewById(R.id.speak_foreign_language);
+		speakForeignLanguage.setOnClickListener(this);
+		final View hometeacherAdd = view.findViewById(R.id.hometeacher_add);
+		hometeacherAdd.setOnClickListener(this);
 		return view;
 	}
 
@@ -200,12 +209,22 @@ public class FindFragment extends Fragment implements OnClickListener {
 	 */
 	@Override
 	public void onClick(View view) {
+		System.out.println(view.getId());
 		switch (view.getId()) {
 		case R.id.nearby_people:
 			startActivity(NearByPeopleActivity.class);
 			break;
+		case R.id.school_story:
+			startActivity(SchoolStoryActivity.class);
+			break;
 		case R.id.groups_list:
 			startActivity(GroupListActivity.class);
+			break;
+		case R.id.speak_foreign_language:
+			startActivity(SpeakForeignLanguageActivity.class);
+			break;
+		case R.id.hometeacher_add:
+			startActivity(HomeTeacherActivity.class);
 			break;
 		}
 	}

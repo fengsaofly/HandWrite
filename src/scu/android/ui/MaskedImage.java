@@ -24,19 +24,31 @@ public abstract class MaskedImage extends ImageView {
 
 	public MaskedImage(Context paramContext) {
 		super(paramContext);
+		if (isInEditMode()) {
+			return;
+		}
 	}
 
 	public MaskedImage(Context paramContext, AttributeSet paramAttributeSet) {
 		super(paramContext, paramAttributeSet);
+		if (isInEditMode()) {
+			return;
+		}
 	}
 
 	public MaskedImage(Context paramContext, AttributeSet paramAttributeSet, int paramInt) {
 		super(paramContext, paramAttributeSet, paramInt);
+		if (isInEditMode()) {
+			return;
+		}
 	}
 
 	public abstract Bitmap createMask();
 
 	protected void onDraw(Canvas paramCanvas) {
+		if (isInEditMode()) {
+			return;
+		}
 		Drawable localDrawable = getDrawable();
 		if (localDrawable == null)
 			return;

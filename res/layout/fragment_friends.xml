@@ -2,7 +2,15 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical" 
+    android:background="@color/BackgroundGrayColor">
+    
+    
+    <LinearLayout 
+         android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" 
+        >
 
     <FrameLayout
         android:id="@+id/friend_list_lay"
@@ -12,9 +20,72 @@
         android:visibility="visible" >
 
          </FrameLayout>
+         
+    <!-- <LinearLayout
+           
+             android:id="@+id/multiChat"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            
+            android:padding="5dp">
+
+            <FrameLayout
+                
+                android:layout_width="70.0dip"
+                android:layout_height="70.0dip"
+                android:layout_centerVertical="true"
+                android:layout_gravity="center" >
+
+                <ImageView
+                    android:id="@+id/friend_icon"
+                    android:layout_width="50.0dip"
+                    android:layout_height="50.0dip"
+                    android:layout_gravity="center"
+                    android:scaleType="fitXY" 
+					android:src="@drawable/default_avatar"/>
+              
+                    
+            </FrameLayout>
+
+            <TextView
+                android:layout_gravity="center"
+               
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                
+                android:layout_toRightOf="@id/image"
+                android:singleLine="true"
+                android:text="群聊"
+                android:textColor="#ff333333"
+                android:textSize="20.0sp"
+                android:textStyle="bold"
+                
+	    		android:drawablePadding="2dp" />
+            
+            
+        </LinearLayout> --> 
 
         
   
-   <ListView android:id="@+id/friendListView" android:visibility="visible" android:fadingEdge="none" android:descendantFocusability="blocksDescendants" android:layout_width="fill_parent" android:layout_height="wrap_content" android:cacheColorHint="#00000000" android:divider="#ffb4b4b4" android:dividerHeight="1.0px"  />
+   <ListView android:id="@+id/friendListView" android:visibility="visible" android:fadingEdge="none" android:descendantFocusability="blocksDescendants" android:layout_width="fill_parent" android:layout_height="fill_parent" android:cacheColorHint="#00000000" android:divider="#ffb4b4b4" android:dividerHeight="1.0px"  />
 
+   </LinearLayout>
+   <RelativeLayout 
+        android:layout_height="fill_parent"  
+	    android:layout_width="50dp" 
+	    android:gravity="top|right" 
+	    android:layout_gravity="top|right"
+	    android:layout_alignParentRight="true"
+       >
+      <scu.android.util.SideBar  
+	    android:id ="@+id/sideBar"  
+	    android:layout_height="wrap_content"  
+	    android:layout_width="20dp" 
+	    android:gravity="top|right" 
+	    android:layout_gravity="top|right"
+	    android:background="@drawable/mm_text_bg_trans"
+	/>  
+   </RelativeLayout>
+   
 </RelativeLayout>

@@ -29,6 +29,9 @@
         android:id="@+id/content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:ellipsize="start"
+        android:maxLines="3"
+        android:singleLine="false"
         android:textColor="#aaaaaa" />
 
 </LinearLayout>

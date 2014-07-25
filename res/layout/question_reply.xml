@@ -51,14 +51,37 @@
             android:layout_height="wrap_content"
             android:padding="5dp" >
 
-            <TextView
-                android:id="@+id/title"
-                style="@style/text_style_big"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+            <LinearLayout
+                android:layout_alignParentLeft="true"
+                android:id="@+id/question_add_gradeAndSub_lay"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/TextColorWhite"
+                android:orientation="horizontal"
+                android:padding="5dp"
+                android:paddingLeft="6dp" >
+
+                <TextView
+                    android:id="@+id/grade"
+                    style="@style/btn_item_text_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/grade_bg"
+                    android:gravity="center" />
+
+                <TextView
+                    android:id="@+id/subject"
+                    style="@style/btn_item_text_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="3dp"
+                    android:background="@drawable/subject_bg"
+                    android:gravity="center" />
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/reply_number"
+                android:layout_centerVertical="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
@@ -67,32 +90,6 @@
                 android:onClick="myOnclick"
                 android:textSize="12sp" />
         </RelativeLayout>
-
-        <LinearLayout
-            android:id="@+id/question_add_gradeAndSub_lay"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/TextColorWhite"
-            android:orientation="horizontal"
-            android:paddingLeft="6dp" >
-
-            <TextView
-                android:id="@+id/grade"
-                style="@style/btn_item_text_style"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/grade_bg"
-                android:gravity="center" />
-
-            <TextView
-                android:id="@+id/subject"
-                style="@style/btn_item_text_style"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="3dp"
-                android:background="@drawable/subject_bg"
-                android:gravity="center" />
-        </LinearLayout>
 
         <RelativeLayout
             android:id="@+id/question_content"

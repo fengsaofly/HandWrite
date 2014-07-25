@@ -13,10 +13,9 @@ import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Registration;
 
 import scu.android.util.XmppTool;
+
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Intent;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -24,9 +23,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.AutoCompleteTextView;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,8 +31,8 @@ import com.demo.note.R;
 
 public class RegisterActivity extends Activity{
 	TextView back = null,registerButton = null;
-	ImageView iconImage = null;
-	Button selectIconButton = null;
+//	ImageView iconImage = null;
+//	Button selectIconButton = null;
 	AutoCompleteTextView emailValue = null;
 	EditText userNameValue = null,userPassValue1 = null;
 	boolean selectFlag=false;
@@ -56,10 +53,10 @@ public class RegisterActivity extends Activity{
 		pd.setTitle("正在注册");
 		pd.setMessage("请等候");
 		pd.setCancelable(true);
-		back = (TextView)findViewById(R.id.buttonBack);
-		registerButton = (TextView)findViewById(R.id.registerButton);
-		iconImage = (ImageView)findViewById(R.id.iconImage);
-		selectIconButton = (Button)findViewById(R.id.selectIconButton);
+//		back = (TextView)findViewById(R.id.buttonBack);
+		registerButton = (TextView)findViewById(R.id.register_btn);
+//		iconImage = (ImageView)findViewById(R.id.iconImage);
+//		selectIconButton = (Button)findViewById(R.id.selectIconButton);
 		emailValue = (AutoCompleteTextView)findViewById(R.id.emailValue);
 		userNameValue = (EditText)findViewById(R.id.userNameValue);
 		userPassValue1 = (EditText)findViewById(R.id.userPassValue1);
@@ -67,10 +64,10 @@ public class RegisterActivity extends Activity{
 	
 	public void myOnclick(View v){
 		switch(v.getId()){
-		case R.id.buttonBack:
-			finish();
-			break;
-		case R.id.registerButton:
+//		case R.id.buttonBack:
+//			finish();
+//			break;
+		case R.id.register_btn:
 			if(emailValue.getText().toString().equals("")||userNameValue.getText().toString().equals("")||userNameValue.getText().toString().equals("")){
 				Toast.makeText(this, "请将信息填写完整", 3).show();
 			}
@@ -104,11 +101,11 @@ public class RegisterActivity extends Activity{
 				}).start();
 			}
 			break;
-		case R.id.selectIconButton:
-//			Intent intent = new Intent(this,SelectIconActivity.class);
-//			intent.putExtra("type", 0);
-//			startActivityForResult(intent, 100);
-			break;
+//		case R.id.selectIconButton:
+////			Intent intent = new Intent(this,SelectIconActivity.class);
+////			intent.putExtra("type", 0);
+////			startActivityForResult(intent, 100);
+//			break;
 			
 			default:
 				break;
@@ -117,22 +114,22 @@ public class RegisterActivity extends Activity{
 		
 	}
 	
-	 @Override  
-	    protected void onActivityResult(int requestCode, int resultCode, Intent data)  
-	    {  
-	        //可以根据多个请求代码来作相应的操作  
-	        if(20==resultCode)  
-	        {  
-	        	
-	        	selectFlag = true;
-	        	selectIconName = data.getExtras().getString("iconName");
-	        	Resources resources = getResources();
-    			int indentify = resources.getIdentifier(getPackageName()+":drawable/"+selectIconName, null, null);
-	        	iconImage.setImageResource(indentify);
-	        	
-	        }  
-	        super.onActivityResult(requestCode, resultCode, data);  
-	    } 
+//	 @Override  
+//	    protected void onActivityResult(int requestCode, int resultCode, Intent data)  
+//	    {  
+//	        //可以根据多个请求代码来作相应的操作  
+//	        if(20==resultCode)  
+//	        {  
+//	        	
+//	        	selectFlag = true;
+//	        	selectIconName = data.getExtras().getString("iconName");
+//	        	Resources resources = getResources();
+//    			int indentify = resources.getIdentifier(getPackageName()+":drawable/"+selectIconName, null, null);
+//	        	iconImage.setImageResource(indentify);
+//	        	
+//	        }  
+//	        super.onActivityResult(requestCode, resultCode, data);  
+//	    } 
 	 
 	 
 	 public  boolean checkEmail(String email)
@@ -214,13 +211,26 @@ public class RegisterActivity extends Activity{
 				case 1:
 					Toast.makeText(RegisterActivity.this, "恭喜你，注册成功", 3).show();
 					String picName = "";
-					if(selectFlag)
-						picName = selectIconName;
-					else 
-						picName = "dota_1";
+//					if(selectFlag)
+//						picName = selectIconName;
+//					else 
+//						picName = "dota_1";
 //					UploadIconThread uit = new UploadIconThread(RegisterActivity.this, RegisterActivity.this, handler, userNameValue.getText().toString(), picName);
 //					uit.start();
-//					finish();
+					
+//					VCard vCard = new VCard();
+//					try {
+//						vCard.load(XmppConnectionManager.getInstance().getConnection());
+//					} catch (XMPPException e) {
+//						// TODO Auto-generated catch block
+//						e.printStackTrace();
+//					}
+//					if ("".equals(vCard.getNickName())
+//							|| null == vCard.getNickName()) {
+//						System.out.println("昵称是空的");
+//						vCard.setNickName("快乐的汤姆猫");
+//					}
+					finish();
 					break;
 				case 2:
 					Toast.makeText(RegisterActivity.this, "用户已存在", 3).show();
@@ -228,8 +238,8 @@ public class RegisterActivity extends Activity{
 				case 3:
 					Toast.makeText(RegisterActivity.this, "注册失败", 3).show();
 					break;
-				case 4:
-					System.out.println("添加到sina云服务器成功");
+//				case 4:
+//					System.out.println("添加到sina云服务器成功");
 					default:
 						break;
 					

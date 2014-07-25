@@ -2,6 +2,8 @@ package scu.android.util;
 
 import java.util.List;
 
+import org.jivesoftware.smackx.muc.Affiliate;
+
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;

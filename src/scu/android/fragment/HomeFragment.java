@@ -11,6 +11,7 @@ import scu.android.db.ChatRecord;
 import scu.android.db.DbManager2;
 import scu.android.util.HomeAdapter;
 import scu.android.util.TimeRender;
+
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -86,7 +87,10 @@ public class HomeFragment extends Fragment{
 		home_List = (ListView)view.findViewById(R.id.home_List);
 		
 		home_List.setAdapter(adapter);
-	
+		if(cursor!=null)
+			cursor.close();
+			if(db!=null)
+			db.close();
 	      return view;
 	  } 
 	
@@ -117,6 +121,9 @@ public class HomeFragment extends Fragment{
 		chatRecord.setTime(TimeRender.getDate().split(" ")[1]);
 		chatRecord.setDate(TimeRender.getDate().split(" ")[0]);
 		chatRecord.setType("2");//破题消息
+		chatRecord.setIsGroupChat("false");
+		chatRecord.setJid("-1");
+		
 		
 		db.insertRecord(chatRecord);
 		
@@ -126,7 +133,8 @@ public class HomeFragment extends Fragment{
 		chatRecord.setTime(TimeRender.getDate().split(" ")[1]);
 		chatRecord.setDate(TimeRender.getDate().split(" ")[0]);
 		chatRecord.setType("1");//通知消息
-		
+		chatRecord.setIsGroupChat("false");
+		chatRecord.setJid("-1");
 		db.insertRecord(chatRecord);
 		
 		
@@ -136,7 +144,8 @@ public class HomeFragment extends Fragment{
 		chatRecord.setTime(TimeRender.getDate().split(" ")[1]);
 		chatRecord.setDate(TimeRender.getDate().split(" ")[0]);
 		chatRecord.setType("2");//破题消息
-		
+		chatRecord.setIsGroupChat("false");
+		chatRecord.setJid("-1");
 		db.insertRecord(chatRecord);
 		
 		
@@ -146,7 +155,8 @@ public class HomeFragment extends Fragment{
 		chatRecord.setTime(TimeRender.getDate().split(" ")[1]);
 		chatRecord.setDate(TimeRender.getDate().split(" ")[0]);
 		chatRecord.setType("3");//动态消息
-		
+		chatRecord.setIsGroupChat("false");
+		chatRecord.setJid("-1");
 		db.insertRecord(chatRecord);
 		
 		chatRecord.setAccount("好友动态：flyln");
@@ -155,8 +165,10 @@ public class HomeFragment extends Fragment{
 		chatRecord.setTime(TimeRender.getDate().split(" ")[1]);
 		chatRecord.setDate(TimeRender.getDate().split(" ")[0]);
 		chatRecord.setType("3");//动态消息
-		
+		chatRecord.setIsGroupChat("false");
+		chatRecord.setJid("-1");
 		db.insertRecord(chatRecord);
+		
 		
 		
 		
@@ -164,8 +176,7 @@ public class HomeFragment extends Fragment{
 	}
 	public void onDestroy() {
 		super.onDestroy();
-		cursor.close();
-		db.close();
+	
 	};
 
 }

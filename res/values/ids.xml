@@ -29,11 +29,11 @@
     <item name="gallery" type="id"/>
     <item name="publish_state_title" type="id"/>
     <item name="publish_state_text_content" type="id"/>
-    <item name="popup_record_lay" type="id"/>
+    <item name="popup_recode_lay" type="id"/>
+    <item name="popup_doodle_lay" type="id"/>
     <item name="popup_camera_lay" type="id"/>
     <item name="popup_imgpicker_lay" type="id"/>
     <item name="popup_handwrite_lay" type="id"/>
-    <item name="popup_doodle_lay" type="id"/>
     <item name="select_grade_btn" type="id"/>
     <item name="select_subject_btn" type="id"/>
     <item name="distance_textview" type="id"/>
@@ -51,8 +51,7 @@
     <item name="chat_input_field" type="id"/>
     <item name="chat_add_btn" type="id"/>
     <item name="question_popup_layout" type="id"/>
-    <item name="common_editor" type="id"/>
-
+    <item name="group_type_val" type="id"/>
     <!-- 用户信息描述:请老师 -->
     <item name="tag_addr" type="id"/>
     <item name="tag_grade" type="id"/>
@@ -64,10 +63,24 @@
     <item name="tag_subject_val" type="id"/>
     <item name="tag_phone_val" type="id"/>
     <item name="tag_detail_description_val" type="id"/>
+    <item name="tag_avatar_val" type="id"/>
+    <item name="tag_nickname_val" type="id"/>
+    <item name="tag_career_val" type="id"/>
+    <item name="tag_region_val" type="id"/>
+    <item name="tag_sex_val" type="id"/>
+    <!-- settings  layout -->
+    <item name="lay_sign" type="id"/>
+    <item name="lay_region" type="id"/>
+    <item name="lay_sex" type="id"/>
+    <item name="lay_career" type="id"/>
+    <item name="lay_nickname" type="id"/>
+    <item name="lay_avatar" type="id"/>
 
     <!-- 基本action -->
     <item name="submit" type="id"/>
     <item name="action_back" type="id"/>
+    <item name="register_btn" type="id"/>
+    <item name="login_btn" type="id"/>
 
     <!-- 群 -->
     <item name="tag_group_name" type="id"/>
@@ -83,10 +96,22 @@
     <item name="activity_top" type="id"/>
     <item name="activity_top_right_action" type="id"/>
     <item name="activity_actionbar_tab_val" type="id"/>
-
+    <item name="username_val" type="id"/>
+    <item name="password_val" type="id"/>
+    <item name="avatar_val" type="id"/>
+    <item name="screen" type="id"/>
+    
     <!-- 基本控件，一般一个页面只有一个 -->
     <item name="thumbnails" type="id"/> <!-- 缩略图，是一个gridview -->
     <item name="popup_gridview" type="id"/>
+    <item name="schoolstory_top_edittext" type="id"/> <!-- 校园故事头部编辑框 -->
+
+    <item name="popup_record_lay" type="id"/>
+    <item name="common_editor" type="id"/>
+    
+    <!-- 登录 -->
+    <item name="login_popup_view" type="id"/>
+
     <!-- @YouMingyang 新添加 -->
     <item name="nearby_people" type="id"/>
     <item name="nearby_list" type="id"/>
@@ -99,5 +124,46 @@
     <item name="no_network_connect" type="id"/>
     <item name="upload_status" type="id"/>
     <item name="upload_complete" type="id"/>
+    <item name="hometeacher_add" type="id"/>
+    <item name="loading_more" type="id"/>
+    <item name="audio" type="id"/>
+    <item name="duration" type="id"/>
+    <item name="play" type="id"/>
+    <item name="pause" type="id"/>
+    <item name="status" type="id"/>
+    <item name="loading" type="id"/>
+    <item name="popup_menu_option_login" type="id"/>
+    <item name="popup_menu_option_logout" type="id"/>
+    <item name="speak_foreign_language" type="id"/>
+    <item name="school_storys" type="id"/>
+    <item name="nickname" type="id"/>
+    <item name="distance" type="id"/>
+    <item name="time" type="id"/>
+    <item name="publish_time" type="id"/>
+    <item name="school_story" type="id"/>
+    <item name="title" type="id"/>
+    <item name="image" type="id"/>
+    <item name="search_bar" type="id"/>
+    <item name="alter_info" type="id"/>
+    <item name="alter_img" type="id"/>
+    <item name="alter_txt" type="id"/>
+    <!-- 发现 -->
+    <item name="find_handUp" type="id"/>
+    <item name="find_comment" type="id"/>
+    <item name="find_title" type="id"/>
+    <item name="find_desc" type="id"/>
+    <item name="find_img" type="id"/>
+    <!-- 发现 -->
+    <item name="layout" type="id"/>
+    <item name="find_handUp" type="id"/>
+    <item name="comment" type="id"/>
+    <item name="find_title" type="id"/>
+    <item name="desc" type="id"/>
+    <item name="img" type="id"/>
+    <item name="post_alert_info" type="id"/>
+    <item name="find_post_alert_info" type="id"/>
+    <item name="find_item_top_lay" type="id"/>
+    <item name="find_item_left_lay" type="id"/>
+    <item name="find_item_right_lay" type="id"/>
 
 </resources>

@@ -5,16 +5,18 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+
 import scu.android.application.MyApplication;
-import scu.android.db.QuestionDao;
-import scu.android.db.ResourceDao;
-import scu.android.entity.Question;
-import scu.android.entity.Resource;
+import scu.android.dao.Question;
+import scu.android.dao.Resource;
+import scu.android.db.DBTools;
 import scu.android.note.ActionBarActivity;
 import scu.android.ui.PhotosAdapter;
+import scu.android.ui.SelectPhotoAdapter;
+import scu.android.util.ActivitySupport;
 import scu.android.util.AppUtils;
 import scu.android.util.Constants;
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -39,7 +41,6 @@ import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
@@ -62,10 +63,8 @@ import com.demo.note.R;
  * @author YouMingyang
  * @version 1.0
  */
-@SuppressLint({ "HandlerLeak", "SimpleDateFormat" })
-public class IssueQuestionActivity extends Activity {
-	ImageView publish_state_add_imgView, volume,
-			question_add_showrecord_imgview;
+public class IssueQuestionActivity extends ActivitySupport {
+	ImageView publish_state_add_imgView, volume, question_add_showrecord_imgview;
 	TextView second = null;
 	TextView testInclude = null;
 	MediaRecorder mr = null;
@@ -75,8 +74,7 @@ public class IssueQuestionActivity extends Activity {
 	View view, view2;
 	AnimationDrawable animaition;
 	private long startVoiceT, endVoiceT;
-	LinearLayout popup_recode_lay = null, popup_camera_lay = null,
-			popup_imgpicker_lay = null, popup_handwrite_lay = null;
+	LinearLayout popup_recode_lay = null, popup_camera_lay = null, popup_imgpicker_lay = null, popup_handwrite_lay = null;
 	LinearLayout rcChat_popup = null, yourVocie_lay = null;
 	RelativeLayout record_pressbtn_lay = null, play_lay = null;
 	Button record_pressbtn = null;
@@ -139,7 +137,6 @@ public class IssueQuestionActivity extends Activity {
 			}
 
 		};
-		publish_state_add_imgView = (ImageView) findViewById(R.id.publish_state_add_imgView);
 		rcChat_popup = (LinearLayout) findViewById(R.id.rcChat_popup);
 		record_pressbtn_lay = (RelativeLayout) findViewById(R.id.record_pressbtn_lay);
 		record_pressbtn = (Button) findViewById(R.id.record_pressbtn);
@@ -153,21 +150,16 @@ public class IssueQuestionActivity extends Activity {
 		// 引入窗口配置文件
 
 		view = inflater.inflate(R.layout.question_popup_layout, null);
-		popup_recode_lay = (LinearLayout) view
-				.findViewById(R.id.popup_record_lay);
-		popup_camera_lay = (LinearLayout) view
-				.findViewById(R.id.popup_camera_lay);
-		popup_imgpicker_lay = (LinearLayout) view
-				.findViewById(R.id.popup_imgpicker_lay);
-		popup_handwrite_lay = (LinearLayout) view
-				.findViewById(R.id.popup_handwrite_lay);
+		popup_recode_lay = (LinearLayout) view.findViewById(R.id.popup_record_lay);
+		popup_camera_lay = (LinearLayout) view.findViewById(R.id.popup_camera_lay);
+		popup_imgpicker_lay = (LinearLayout) view.findViewById(R.id.popup_imgpicker_lay);
+		popup_handwrite_lay = (LinearLayout) view.findViewById(R.id.popup_handwrite_lay);
 		// view2 = inflater2.inflate(R.layout.voice_rcd_hint_window, null);
 		volume = (ImageView) findViewById(R.id.volume2);
 		testInclude = (TextView) findViewById(R.id.testInclude);
 		// 创建PopupWindow对象
 
-		pop = new PopupWindow(view, LayoutParams.MATCH_PARENT,
-				LayoutParams.WRAP_CONTENT, false);
+		pop = new PopupWindow(view, LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, false);
 
 		// // 需要设置一下此参数，点击外边可消失
 		//
@@ -195,24 +187,17 @@ public class IssueQuestionActivity extends Activity {
 					startVoiceT = System.currentTimeMillis();
 					// 按住事件发生后执行代码的区域
 					mr = new MediaRecorder();
-					File file2 = new File(MyApplication.getSDCardPath()
-							+ "/ConquerQustion" + "/"
-							+ ((MyApplication) getApplication()).userName + "/"
-							+ "Audio");
+					File file2 = new File(MyApplication.getSDCardPath() + "/ConquerQustion" + "/" + ((MyApplication) getApplication()).userName + "/" + "Audio");
 
 					if (!file2.exists())
 						file2.mkdirs();
-					SimpleDateFormat df = new SimpleDateFormat(
-							"yyyyMMdd_HHmmss");
+					SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd_HHmmss");
 					String time = df.format(new Date());
 
-					File file = new File(file2.getAbsolutePath() + "/" + time
-							+ ".amr");
+					File file = new File(file2.getAbsolutePath() + "/" + time + ".amr");
 
 					//
-					Toast.makeText(getApplicationContext(),
-							"正在录音，录音文件在" + file.getAbsolutePath(),
-							Toast.LENGTH_LONG).show();
+					Toast.makeText(getApplicationContext(), "正在录音，录音文件在" + file.getAbsolutePath(), Toast.LENGTH_LONG).show();
 
 					path = file.getAbsolutePath();
 					System.out.println("路径： " + path);
@@ -262,8 +247,7 @@ public class IssueQuestionActivity extends Activity {
 					second.setText("" + seconds);
 
 					rcChat_popup.setVisibility(View.GONE);
-					Toast.makeText(getApplicationContext(), "录音完毕",
-							Toast.LENGTH_LONG).show();
+					Toast.makeText(getApplicationContext(), "录音完毕", Toast.LENGTH_LONG).show();
 					// play.setVisibility(View.VISIBLE);
 
 					// 松开事件发生后执行代码的区域
@@ -304,14 +288,11 @@ public class IssueQuestionActivity extends Activity {
 							voiceMp.release();
 							voiceMp = null;
 							animaition.stop();
-							question_add_showrecord_imgview
-									.setImageResource(R.drawable.question_add_record_icon_default);
+							question_add_showrecord_imgview.setImageResource(R.drawable.question_add_record_icon_default);
 						}
 					});
-					question_add_showrecord_imgview
-							.setImageResource(R.anim.playvoice);
-					animaition = (AnimationDrawable) question_add_showrecord_imgview
-							.getDrawable();
+					question_add_showrecord_imgview.setImageResource(R.anim.playvoice);
+					animaition = (AnimationDrawable) question_add_showrecord_imgview.getDrawable();
 					// 最后，就可以启动动画了，代码如下：
 
 					// 是否仅仅启动一次？
@@ -338,20 +319,20 @@ public class IssueQuestionActivity extends Activity {
 
 	public void myOnclick(View v) {
 		switch (v.getId()) {
-		case R.id.publish_state_add_imgView:
-			if (pop.isShowing()) {
-				pop.dismiss();
-			} else {
-				int[] location = new int[2];
-				view.getLocationOnScreen(location);
-				// pop.showAsDropDown(hideView);
-				pop.showAtLocation(view, Gravity.BOTTOM, location[0],
-						location[1] - pop.getHeight());
-				// pop.show
-			}
-			record_pressbtn_lay.setVisibility(View.INVISIBLE);
-			hideSoft();
-			break;
+		// case R.id.publish_state_add_imgView:
+		// if (pop.isShowing()) {
+		// pop.dismiss();
+		// } else {
+		// int[] location = new int[2];
+		// view.getLocationOnScreen(location);
+		// // pop.showAsDropDown(hideView);
+		// pop.showAtLocation(view, Gravity.BOTTOM, location[0],
+		// location[1] - pop.getHeight());
+		// // pop.show
+		// }
+		// record_pressbtn_lay.setVisibility(View.INVISIBLE);
+		// closeInput();
+		// break;
 		case R.id.popup_record_lay:
 			if (pop.isShowing()) {
 				pop.dismiss();
@@ -361,9 +342,9 @@ public class IssueQuestionActivity extends Activity {
 
 		case R.id.popup_camera_lay:
 			if (curPhotosNum < (Constants.MAX_PHOTOS_NUM)) {
-				cameraPath = AppUtils.sysCamera(IssueQuestionActivity.this);
+				cameraPath = AppUtils.sysCamera(this);
 			} else {
-				alertFull();
+				showToast("最多只能选择" + Constants.MAX_PHOTOS_NUM + "张图片");
 			}
 			break;
 		case R.id.popup_imgpicker_lay:
@@ -371,38 +352,38 @@ public class IssueQuestionActivity extends Activity {
 				int availNumber = Constants.MAX_PHOTOS_NUM - curPhotosNum;
 				AppUtils.phonePictures(this, availNumber);
 			} else {
-				alertFull();
+				showToast("最多只能选择" + Constants.MAX_PHOTOS_NUM + "张图片");
 			}
 			break;
 		case R.id.popup_handwrite_lay:
 			if (curPhotosNum < (Constants.MAX_PHOTOS_NUM)) {
 				AppUtils.hwBoard(this);
 			} else {
-				alertFull();
+				showToast("最多只能选择" + Constants.MAX_PHOTOS_NUM + "张图片");
 			}
 			break;
 		case R.id.popup_doodle_lay:
 			if (curPhotosNum < (Constants.MAX_PHOTOS_NUM)) {
 				AppUtils.doodleBoard(this);
 			} else {
-				alertFull();
+				showToast("最多只能选择" + Constants.MAX_PHOTOS_NUM + "张图片");
 			}
 			break;
 		case R.id.select_grade_btn:
-			hideSoft();
+			closeInput();
 			which = 0;
 			selectExtra();
 			break;
 		case R.id.select_subject_btn:
-			hideSoft();
+			closeInput();
 			which = 1;
 			selectExtra();
 			break;
-		case R.id.find_send:// 发布问题
-			hideSoft();
+		case R.id.activity_top_right_action:// 发布问题
+			closeInput();
 			publishQuestion();
 			break;
-		case R.id.find_btn_back:
+		case R.id.action_back:
 			cancel();
 			break;
 		default:
@@ -448,7 +429,7 @@ public class IssueQuestionActivity extends Activity {
 	private String cameraPath;
 	private ArrayList<String> paths;// 图片路径
 	private GridView thumbnails;
-	private PhotosAdapter adapter;
+	private SelectPhotoAdapter adapter;
 	private int curPhotosNum;// 选择图库图片数目
 
 	private TextView grade, subject;
@@ -464,20 +445,20 @@ public class IssueQuestionActivity extends Activity {
 
 	// 初始化
 	public void init() {
+		((TextView) findViewById(R.id.activity_top).findViewById(R.id.title)).setText("发布问题");
+
 		paths = new ArrayList<String>();
-		adapter = new PhotosAdapter(this, paths);
-		adapter.setColumnNum(4);
+		adapter = new SelectPhotoAdapter(this, paths);
 		adapter.setAction(action);
+
 		thumbnails = (GridView) findViewById(R.id.thumbnails);
 		thumbnails.setAdapter(adapter);
 		curPhotosNum = 0;
-		// ///////////////////////////////////////////////
+
 		grade = (TextView) findViewById(R.id.select_grade_btn);
 		subject = (TextView) findViewById(R.id.select_subject_btn);
-		// ///////////////////////////////////////////////
-		title = (TextView) findViewById(R.id.cq_add_title);
 		content = (TextView) findViewById(R.id.publish_state_text_content);
-		// ////////////////////////////////////////////////////
+
 		receiver = new BroadcastReceiver() {
 
 			@Override
@@ -487,11 +468,23 @@ public class IssueQuestionActivity extends Activity {
 					paths.remove(index);
 					adapter.notifyDataSetChanged();
 					--curPhotosNum;
+				} else if (intent.getAction().equals(Constants.SELECT_PHOTO)) {
+					if (pop.isShowing()) {
+						pop.dismiss();
+					} else {
+						int[] location = new int[2];
+						view.getLocationOnScreen(location);
+						// pop.showAsDropDown(hideView);
+						pop.showAtLocation(view, Gravity.BOTTOM, location[0], location[1] - pop.getHeight());
+						// pop.show
+					}
+					record_pressbtn_lay.setVisibility(View.INVISIBLE);
+					closeInput();
 				}
 			}
 		};
 		registerReceiver(receiver, new IntentFilter(action));
-
+		registerReceiver(receiver, new IntentFilter(Constants.SELECT_PHOTO));
 	}
 
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -506,10 +499,9 @@ public class IssueQuestionActivity extends Activity {
 			break;
 		case Constants.PHONE_PICTURES:// 图库
 			if (resultCode == Activity.RESULT_OK) {
-				ArrayList<String> photos = data
-						.getStringArrayListExtra("photos");
+				ArrayList<String> photos = data.getStringArrayListExtra("photos");
 				for (String imgPath : photos) {
-					paths.add(prefix + imgPath);
+					paths.add(0, prefix + imgPath);
 					++curPhotosNum;
 				}
 			}
@@ -517,21 +509,21 @@ public class IssueQuestionActivity extends Activity {
 		case Constants.DOODLE_BOARD:// 涂鸦
 			if (resultCode == Activity.RESULT_OK) {
 				String imgPath = data.getStringExtra("doodlePath");
-				paths.add(prefix + imgPath);
+				paths.add(0, prefix + imgPath);
 				++curPhotosNum;
 			}
 			break;
 		case Constants.HANDWRITE_BOARD:// 手写
 			if (resultCode == Activity.RESULT_OK) {
 				String imgPath = data.getStringExtra("handwritePath");
-				paths.add(prefix + imgPath);
+				paths.add(0, prefix + imgPath);
 				++curPhotosNum;
 			}
 			break;
 		case Constants.SYS_CROP:
 			if (resultCode == Activity.RESULT_OK) {
 				String imgPath = data.getStringExtra("cropPath");
-				paths.add(prefix + imgPath);
+				paths.add(0, prefix + imgPath);
 				++curPhotosNum;
 			}
 			break;
@@ -569,11 +561,9 @@ public class IssueQuestionActivity extends Activity {
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			if (convertView == null) {
-				convertView = LayoutInflater.from(context).inflate(
-						R.layout.issue_question_select_item, null);
+				convertView = LayoutInflater.from(context).inflate(R.layout.issue_question_select_item, null);
 			}
-			((TextView) convertView.findViewById(R.id.item))
-					.setText((String) getItem(position));
+			((TextView) convertView.findViewById(R.id.item)).setText((String) getItem(position));
 			return convertView;
 		}
 	}
@@ -582,8 +572,7 @@ public class IssueQuestionActivity extends Activity {
 	private class SelectListener implements OnItemClickListener {
 
 		@Override
-		public void onItemClick(AdapterView<?> parent, View v, int position,
-				long id) {
+		public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
 			selectWindow.dismiss();
 			if (which == 0) {
 				grade.setText(items[position]);
@@ -595,10 +584,8 @@ public class IssueQuestionActivity extends Activity {
 
 	// 选择年级、科目
 	public void selectExtra() {
-		View content = getLayoutInflater().inflate(
-				R.layout.issue_question_select, null);
-		selectWindow = new PopupWindow(content, LayoutParams.MATCH_PARENT,
-				LayoutParams.MATCH_PARENT, true);
+		View content = getLayoutInflater().inflate(R.layout.issue_question_select, null);
+		selectWindow = new PopupWindow(content, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, true);
 		ListView select = (ListView) content.findViewById(R.id.select);
 		if (which == 0) {
 			items = getResources().getStringArray(R.array.grades);
@@ -608,8 +595,10 @@ public class IssueQuestionActivity extends Activity {
 		select.setAdapter(new SelectAdapter(this, items));
 		select.setOnItemClickListener(new SelectListener());
 		selectWindow.setBackgroundDrawable(new ColorDrawable());
-		selectWindow.showAtLocation(findViewById(R.id.parent), Gravity.CENTER,
-				0, 0);
+		selectWindow.setAnimationStyle(R.anim.slide_in_from_bottom);
+		selectWindow.setFocusable(true);
+		selectWindow.update();
+		selectWindow.showAtLocation(findViewById(R.id.parent), Gravity.BOTTOM, 0, 0);
 		content.setOnTouchListener(new OnTouchListener() {
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
@@ -621,37 +610,41 @@ public class IssueQuestionActivity extends Activity {
 		});
 	}
 
-	/**
-	 * 发布问题
-	 */
+	// 发布问题
 	public void publishQuestion() {
-		final String qTitle = title.getText().toString().trim();
-		if (qTitle.length() != 0 && !qTitle.equals("标题...")) {
-			final String qTextContent = content.getText().toString();
-			final String qGrade = grade.getText().toString();
-			final String qSubject = subject.getText().toString();
-			ArrayList<Resource> resources = new ArrayList<Resource>();
-			for (String resourcePath : paths) {
-				resources.add(new Resource(resourcePath));
+		final long q_user = MyApplication.getCurrentUser(this).getUser_id();
+		final String q_text_content = content.getText().toString().trim();
+		if (q_text_content.length() != 0) {
+			final String q_grade = grade.getText().toString();
+			final String q_subject = subject.getText().toString();
+			List<Resource> resources = new ArrayList<Resource>();
+			// for (String resourcePath : paths) {// 图片
+			// resources.add(new Resource(null, null, resourcePath,
+			// resourcePath));
+			// }
+			if (paths.size() > 1) {
+				String resourcePath = paths.get(0);
+				resources.add(new Resource(null, null, resourcePath, resourcePath));
 			}
-			if (path != null)
-				resources.add(new Resource(path));
-			final long qUser = MyApplication.getLoginUser(this).getUserId();
-			final long qResource = ResourceDao.insertResouce(this, resources);
-			Question question = new Question(0, qTitle, qUser, qTextContent,
-					qResource, new Date(), 2, qGrade, qSubject);
-			question.setResouces(resources);
-			final long qId = QuestionDao.insertQuestion(this, question);
-			MyApplication.oldId = qId;
-			MyApplication.oldResourceId = qResource;
+			if (path != null) {// 音频
+				resources.add(new Resource(null, null, "", path));
+			}
+			long q_resource = -1;
+			if (resources.size() > 0) {
+				q_resource = DBTools.getInstance(context).insertResources(resources);
+				MyApplication.oldResourceId = q_resource;
+			}
+			Question question = new Question(null, null, null, q_text_content, System.currentTimeMillis() / 1000, q_grade, q_subject, (short) 2, q_user, q_resource);
+			final long id = DBTools.getInstance(context).insertQuestion(question);
+			MyApplication.oldId = id;
 			MyApplication.uploadQuestion(this, question);
-			Intent intent = new Intent(IssueQuestionActivity.this,
-					ActionBarActivity.class);
+
+			Intent intent = new Intent(IssueQuestionActivity.this, ActionBarActivity.class);
 			intent.setAction("scu.android.activity.IssueQuestionActivity");
 			startActivity(intent);
+			finish();
 		} else {
-			Toast.makeText(IssueQuestionActivity.this, "忘记输入标题了。。。",
-					Toast.LENGTH_SHORT).show();
+			showToast("忘记输入描述啦。。。");
 		}
 	}
 
@@ -662,36 +655,19 @@ public class IssueQuestionActivity extends Activity {
 
 	// 取消发布问题
 	public void cancel() {
-		Dialog alert = new AlertDialog.Builder(this).setTitle("破题")
-				.setMessage("放弃编辑的问题?")
-				.setPositiveButton("确定", new Dialog.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						finish();
-					}
-				}).setNegativeButton("取消", new Dialog.OnClickListener() {
+		Dialog alert = new AlertDialog.Builder(this).setTitle("破题").setMessage("放弃编辑的问题?").setPositiveButton("确定", new Dialog.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				finish();
+			}
+		}).setNegativeButton("取消", new Dialog.OnClickListener() {
 
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
 
-					}
-				}).create();
+			}
+		}).create();
 		alert.show();
-	}
-
-	public void alertFull() {
-		Toast.makeText(IssueQuestionActivity.this,
-				"最多只能选择" + Constants.MAX_PHOTOS_NUM + "张图片", Toast.LENGTH_SHORT)
-				.show();
-	}
-
-	public void hideSoft() {
-		// 隐藏软键盘
-		InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-		View view = getCurrentFocus();
-		if (view != null)
-			imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
-					InputMethodManager.HIDE_NOT_ALWAYS);
 	}
 
 	@Override

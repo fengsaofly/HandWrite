@@ -2,6 +2,7 @@ package scu.android.db;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+
 import android.database.sqlite.SQLiteOpenHelper;
 
 
@@ -9,7 +10,7 @@ public class DbHelper2 extends SQLiteOpenHelper {
 
 	private final static String DATABASE_NAME = "chatrecord.db";
 //	private final static int DATABASE_VERSION = 1;
-	private final static int DATABASE_VERSION = 2;
+	private final static int DATABASE_VERSION = 3;
 	public final static String TABLE_NAME = "tb_chatrecord";
 	
 	public DbHelper2(Context context) {
@@ -26,7 +27,10 @@ public class DbHelper2 extends SQLiteOpenHelper {
 				                                  + " content text,"
 		                                          + " flag text,"
 				                                  + " date text,"
-		                                          + " type text"
+		                                          + " type text,"
+				                                  + " isGroupChat text,"
+		                                          + " jid text,"
+				                                  + " content_type text"
 				                                  +")";     
 		db.execSQL(sql);
 	}

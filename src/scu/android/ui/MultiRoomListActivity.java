@@ -1,10 +1,13 @@
 package scu.android.ui;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smackx.Form;
+import org.jivesoftware.smackx.FormField;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 
 import scu.android.application.MyApplication;
@@ -24,6 +27,7 @@ import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
@@ -37,7 +41,7 @@ public class MultiRoomListActivity extends Activity{
 	SharedPreferences sp = null;
 	private MultiUserChat muc;
 	
-	
+	ImageButton right_btn = null;
 	boolean existFlag = false;
 	int existPosition = -1;
 	int tagFlag=-1;
@@ -71,14 +75,24 @@ public class MultiRoomListActivity extends Activity{
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
+//		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		
 		setContentView(R.layout.multiroom_list);
 		initial();
 	}
 	
 	public void initial(){
-		
+		getActionBar().setTitle("群聊");
 		multiListView = (ListView)findViewById(R.id.multiListView);
+//		right_btn = (ImageButton)findViewById(R.id.right_btn);
+//		right_btn.setOnClickListener(new View.OnClickListener() {
+//			
+//			@Override
+//			public void onClick(View arg0) {
+//				// TODO Auto-generated method stub
+////				startActivity(new Intent(ActivityMultiRoom.this,GroupDetailActivity.class));
+//			}
+//		});
 		data = new ArrayList<Map<String,Object>>();
 		sp = ((MyApplication)getApplication()).sp;
 		
@@ -100,6 +114,22 @@ public class MultiRoomListActivity extends Activity{
 				handler.sendMessage(msg);
 			}
 		}).start();
+		
+//		muc = new MultiUserChat(XmppTool.getConnection(), "爱我" + "@conference"+"."+((MyApplication)getApplication()).hostName);
+//		Form fo;
+//		try {
+//			fo = muc.getConfigurationForm();
+//			 for(Iterator<FormField> it =   fo.getFields(); it.hasNext(); ) {
+//				  FormField o = (FormField) it.next();
+//				   System.out.println("formfield为："+o.toXML()); 
+//				}
+//		} catch (XMPPException e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		}
+		
+		 
+		
 		
 		multiListView.setOnItemClickListener(new OnItemClickListener() {
 
@@ -211,5 +241,8 @@ public class MultiRoomListActivity extends Activity{
 		((MyApplication)getApplication()).loadArray(data);
 		
 	}
+	
+	
+	
 
 }

@@ -4,39 +4,42 @@ import scu.android.fragment.FindFragment;
 import scu.android.fragment.FriendFragment;
 import scu.android.fragment.HomeFragment;
 import scu.android.fragment.QuestionsFragment;
-import scu.android.note.ActionBarActivity;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 
-public class TabViewPagerAdapter extends FragmentPagerAdapter {
+public class TabViewPagerAdapter extends FragmentStatePagerAdapter {
+	public final String[] titles = { "消息", "破题", "通讯录", "发现" };
 
 	public TabViewPagerAdapter(FragmentManager fm) {
 		super(fm);
 	}
 
 	@Override
-	public Fragment getItem(int arg0) {
-		switch (arg0) {
-		case ActionBarActivity.TAB_INDEX_TAB_1:
-			return HomeFragment.newInstance();
-		case ActionBarActivity.TAB_INDEX_TAB_2:
-			return QuestionsFragment.newInstance();
-		case ActionBarActivity.TAB_INDEX_TAB_3:
-			return FriendFragment.newInstance();
-		case ActionBarActivity.TAB_INDEX_TAB_4:
-			// return AccountFragment.newInstance();
-			/**
-			 * @author YouMingyang 06/18: 修改为发现页面
-			 */
-			return FindFragment.newInstance();
-		}
-
-		throw new IllegalStateException("No fragment at position " + arg0);
+	public CharSequence getPageTitle(int position) {
+		return titles[position];
 	}
 
 	@Override
 	public int getCount() {
-		return ActionBarActivity.TAB_COUNT;
+		return titles.length;
 	}
+
+	@Override
+	public Fragment getItem(int position) {
+		switch (position) {
+		case 0:
+			return HomeFragment.newInstance();
+		case 1:
+			return QuestionsFragment.newInstance();
+		case 2:
+			return FriendFragment.newInstance();
+		case 3:
+			return FindFragment.newInstance();
+		default:
+			return null;
+		}
+		
+	}
+
 }

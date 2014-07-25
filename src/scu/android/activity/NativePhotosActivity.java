@@ -67,6 +67,7 @@ public class NativePhotosActivity extends Activity {
 	private PopupWindow parentsWindow;
 	private ArrayList<Parent> items;
 	private TextView selectParent;
+	// private Spinner selectParent;
 	private TextView selectNumber;
 
 	@Override
@@ -139,13 +140,15 @@ public class NativePhotosActivity extends Activity {
 					.showImageOnLoading(R.drawable.default_photo)
 					.showImageForEmptyUri(R.drawable.default_photo)
 					.showImageOnFail(R.drawable.default_photo)
-					.cacheInMemory(true).cacheOnDisk(true)
+					.cacheInMemory(true)
 					.considerExifParams(true)
 					.bitmapConfig(Bitmap.Config.RGB_565).build();
 
 			selectParent = (TextView) findViewById(R.id.selectParent);
+			// selectParent = (Spinner) findViewById(R.id.selectParent);
 			selectNumber = (TextView) findViewById(R.id.selectNumber);
 			selectNumber.setText("已选" + selectedPhotos.size() + "张");
+			// selectParent.setAdapter(new ParentsAdapter(this, items));
 		} else {
 			Toast.makeText(this, "没有发现任何图片哦...", Toast.LENGTH_SHORT).show();
 		}
@@ -275,21 +278,9 @@ public class NativePhotosActivity extends Activity {
 		if (loader != null)
 			loader.stop();
 		super.onStop();
+
 	}
 
-	@Override
-	protected void onDestroy() {
-		// 清空cache
-		if (loader != null) {
-			loader.clearMemoryCache();
-			loader.clearDiskCache();
-		}
-		super.onDestroy();
-	}
-
-	// ///////////////////////////////////////////////////////////
-
-	// ///////////////////////////////////////////////////////////
 	public void OnClick(View view) {
 		switch (view.getId()) {
 		case R.id.selectParent:
@@ -367,7 +358,7 @@ public class NativePhotosActivity extends Activity {
 
 			parentsWindow.dismiss();
 			Parent item = items.get(position);
-			selectParent.setText(item.parent);
+			// selectParent.setText(item.parent);
 			bitmaps.clear();
 			if (position == 0) {
 				@SuppressWarnings("rawtypes")
@@ -403,7 +394,7 @@ public class NativePhotosActivity extends Activity {
 		parent.setAdapter(new ParentsAdapter(this, items));
 		parent.setOnItemClickListener(new SelectListener());
 		parentsWindow.setBackgroundDrawable(new ColorDrawable());
-		parentsWindow.showAtLocation(findViewById(R.id.parent), Gravity.CENTER,
+		parentsWindow.showAtLocation(findViewById(R.id.parent), Gravity.BOTTOM,
 				0, 0);
 		contentView.setOnTouchListener(new OnTouchListener() {
 			@Override
@@ -415,4 +406,5 @@ public class NativePhotosActivity extends Activity {
 			}
 		});
 	}
+
 }

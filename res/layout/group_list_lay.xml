@@ -10,6 +10,7 @@
         layout="@layout/activity_top" />
 
     <include
+        android:id="@id/search_bar"
         layout="@layout/search_bar_lay"
         android:visibility="visible" />
 
@@ -17,7 +18,7 @@
         android:id="@id/no_network_connect"
         android:layout_gravity="top"
         layout="@layout/no_network_connect"
-        android:onClick="OnClick"
+        android:onClick="myOnClick"
         android:visibility="gone" />
 
     <GridView

@@ -1,13 +1,27 @@
 package scu.android.activity;
 
 import java.util.ArrayList;
-import scu.android.entity.User;
+import java.util.LinkedList;
+import java.util.List;
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+import scu.android.application.MyApplication;
+import scu.android.dao.User;
+import scu.android.db.DBTools;
 import scu.android.util.ActivitySupport;
 import scu.android.util.AppUtils;
+import scu.android.util.Constants;
+import scu.android.util.MLocationManager;
+import scu.android.util.MLocationManager.LocationCallBack;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
+import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.format.DateUtils;
@@ -23,11 +37,10 @@ import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.PopupMenu.OnMenuItemClickListener;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.demo.note.R;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
-import com.handmark.pulltorefresh.library.PullToRefreshBase.OnLastItemVisibleListener;
+import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -41,18 +54,19 @@ import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
  * @version 1.0
  */
 public class NearByPeopleActivity extends ActivitySupport implements
-		OnLastItemVisibleListener, OnRefreshListener<ListView> {
+		OnRefreshListener<ListView>,LocationCallBack {
 
-	private PullToRefreshListView refreshListView;
+	private PullToRefreshListView refreshView;
 
-	private boolean isRefreshing;
-	private boolean isAllDownload;
-	private RecordsAdapter recordsAdapter;
-	private ArrayList<User> records;
+	private boolean isRefreshing;// 刷新中
+	private boolean isDownloading;// 下载中
+	private usersAdapter usersAdapter;
+	private ArrayList<User> users;
+	private MLocationManager locationManager;
 
 	private ImageLoader loader;
 	private DisplayImageOptions options;
-
+	private BroadcastReceiver receiver;
 	private ProgressDialog dialog;
 
 	@Override
@@ -63,14 +77,24 @@ public class NearByPeopleActivity extends ActivitySupport implements
 	}
 
 	public void init() {
-		refreshListView = (PullToRefreshListView) findViewById(R.id.nearby_list);
-		refreshListView.setOnRefreshListener(this);
-		refreshListView.setOnLastItemVisibleListener(this);
-		final ListView recordsView = refreshListView.getRefreshableView();
-		records = new ArrayList<User>();
-		isAllDownload = false;
-		refreshData(0L);
+		refreshView = (PullToRefreshListView) findViewById(R.id.nearby_list);
+		refreshView.setMode(Mode.BOTH);
+		refreshView.setOnRefreshListener(this);
+		
+		final ListView usersView = refreshView.getRefreshableView();
+		users = new ArrayList<User>();
+		initImageLoader();
+		loadData(Constants.DOWN);
 
+		usersAdapter = new usersAdapter(users);
+		usersView.setAdapter(usersAdapter);
+
+		locationManager=MLocationManager.getInstance(context, NearByPeopleActivity.this);
+		receiver = new UsersBroadcastRecevier();
+		context.registerReceiver(receiver, new IntentFilter(Constants.PEOPLE_NEARBY));
+	}
+
+	public void initImageLoader() {
 		loader = ImageLoader.getInstance();
 		options = new DisplayImageOptions.Builder()
 				.showImageOnLoading(R.drawable.default_avatar)
@@ -79,9 +103,6 @@ public class NearByPeopleActivity extends ActivitySupport implements
 				.cacheOnDisk(true).considerExifParams(true)
 				.displayer(new RoundedBitmapDisplayer(10))
 				.bitmapConfig(Bitmap.Config.RGB_565).build();
-
-		recordsAdapter = new RecordsAdapter(records);
-		recordsView.setAdapter(recordsAdapter);
 	}
 
 	@Override
@@ -101,64 +122,138 @@ public class NearByPeopleActivity extends ActivitySupport implements
 		return true;
 	}
 
-	private class GetDataTask extends AsyncTask<Long, Void, ArrayList<User>> {
-		int resultCode = -1;// 错误类型
-
+	private class UsersBroadcastRecevier extends BroadcastReceiver {
 		@Override
-		protected ArrayList<User> doInBackground(Long... params) {
-			isRefreshing = true;
-
-			// long param = params[0];param=0代表首次获取数据，1代表获取后面的数据
-			if (hasInternetConnected()) {
-			} else {
-				resultCode = 0;
-			}
-			return null;
-		}
-
-		@Override
-		protected void onPostExecute(ArrayList<User> result) {
-			dialog.dismiss();
-			if (result != null) {
-				records.addAll(result);
-				recordsAdapter.notifyDataSetChanged();
-				onLastItemVisible();
-			} else {
-				switch (resultCode) {
-				case 0:
-					showAlertDialog();
-					break;
-				default:
-					showToast("暂无数据", Toast.LENGTH_SHORT);
-					break;
+		public void onReceive(Context context, Intent intent) {
+			if (intent.getAction().equals(Constants.PEOPLE_NEARBY)) {
+				final String action = intent.getStringExtra("action");
+				if (action.equals("download") && isDownloading) {
+					@SuppressWarnings("unchecked")
+					ArrayList<User> mUsers = (ArrayList<User>) intent
+							.getSerializableExtra("Users");
+					if (mUsers != null && mUsers.size() > 0) {
+						final User firstUser = mUsers.get(0);
+						if (users.size() > 0
+								&& firstUser.getCreated_time() > users.get(0)
+										.getCreated_time()) {
+							users.addAll(0, mUsers);
+						} else {
+							users.addAll(mUsers);
+						}
+						showToast("下载完毕");
+					} else {
+						showToast("已获取最新数据");
+					}
+					usersAdapter.notifyDataSetChanged();
+					isDownloading = false;
+				} else if (action.equals("special")) {
+					if (isDownloading) {
+						showToast("正在下载中,稍后再试...");
+					} else {
+						loadData(Constants.DOWN);
+					}
 				}
 			}
-			refreshListView.onRefreshComplete();
-			isRefreshing = false;
-			super.onPostExecute(result);
-		}
-
-		@Override
-		protected void onProgressUpdate(Void... values) {
-			super.onProgressUpdate(values);
 		}
 	}
 
-	private class RecordsAdapter extends BaseAdapter {
-		ArrayList<User> records;
+	/**
+	 * 获取数据，查看更多
+	 */
+	private class GetDataTask extends AsyncTask<Integer, Void, List<User>> {
 
-		public RecordsAdapter(ArrayList<User> records) {
-			this.records = records;
+		@Override
+		protected List<User> doInBackground(Integer... params) {
+			isRefreshing = true;
+			final int action = params[0];
+			final boolean isNetworkConnected = hasInternetConnected();
+			final DBTools mDBTools = DBTools.getInstance(context);
+			List<User> mUsers = new ArrayList<User>();
+			final int size = users.size();
+			if (size > 0) {// 获取更多数据
+				long floorTime = users.get(0).getCreated_time();
+				long topTime = users.get(size - 1).getCreated_time();
+				switch (action) {
+				case Constants.DOWN:// 下拉
+					// mUsers = mDBTools.loadUsers(floorTime);
+					if (mUsers.size() == 0) {
+						if (isNetworkConnected) {
+							isDownloading = true;
+							LinkedList<NameValuePair> mParams = new LinkedList<NameValuePair>();
+							mParams.add(new BasicNameValuePair("start", "0"));
+							mParams.add(new BasicNameValuePair("floorTime",
+									String.valueOf(floorTime)));
+							// MyApplication.downloadUser(context, mParams);
+						}
+					}
+					break;
+				case Constants.UP:// 上拉
+					// mUsers = mDBTools.loadUsers(topTime, 5);// 本地数据
+					if (mUsers.size() == 0) {
+						if (isNetworkConnected) {
+							isDownloading = true;
+							LinkedList<NameValuePair> mParams = new LinkedList<NameValuePair>();
+							mParams.add(new BasicNameValuePair("start", "0"));
+							mParams.add(new BasicNameValuePair("topTime",
+									String.valueOf(topTime)));
+							// MyApplication.downloadUser(context, mParams);
+						}
+					}
+					break;
+				}
+			} else {// 首次加载数据
+			// mUsers = DBTools.getInstance(context).loadUsers(5);
+				if (mUsers.size() == 0) {
+					if (isNetworkConnected) {
+						isDownloading = true;
+						LinkedList<NameValuePair> mParams = new LinkedList<NameValuePair>();
+						mParams.add(new BasicNameValuePair("start", "0"));
+						// MyApplication.downloadUser(context, mParams);
+					}
+				}
+			}
+			return mUsers;
+		}
+
+		@Override
+		protected void onPostExecute(List<User> result) {
+			if (!hasInternetConnected()) {
+				showAlertDialog();
+			}
+			if (result.size() > 0) {
+				final User firstUser = result.get(0);
+				if (users.size() > 0
+						&& firstUser.getCreated_time() > users.get(0)
+								.getCreated_time()) {
+					users.addAll(0, result);
+				} else {
+					users.addAll(result);
+				}
+			} else {
+				if (!isDownloading)
+					showToast("没有加载到数据");
+			}
+			isRefreshing = false;
+			usersAdapter.notifyDataSetChanged();
+			refreshView.onRefreshComplete();
+		}
+	}
+
+	private class usersAdapter extends BaseAdapter {
+		ArrayList<User> users;
+
+		public usersAdapter(ArrayList<User> users) {
+			this.users = users;
 		}
 
 		@Override
 		public int getCount() {
-			return records.size();
+			return users.size();
 		}
 
 		@Override
 		public Object getItem(int position) {
-			return records.get(position);
+			return users.get(position);
 		}
 
 		@Override
@@ -172,15 +267,16 @@ public class NearByPeopleActivity extends ActivitySupport implements
 				convertView = LayoutInflater.from(context).inflate(
 						R.layout.nearby_list_item, null);
 			}
-			final User record = (User) getItem(position);
+			// final User record = (User) getItem(position);
+			final User record = MyApplication.getCurrentUser(context);
 			final ImageView avatar = (ImageView) convertView
 					.findViewById(R.id.list_item_icon);
-			if (record.getAvatar() != null) {
-				final String avatarPath = "assets://" + record.getAvatar();
+			if (record.getUser_avatar() != null) {
+				final String avatarPath = "assets://" + record.getUser_avatar();
 				loader.displayImage(avatarPath, avatar, options);
 			}
 			((TextView) convertView.findViewById(R.id.find_user))
-					.setText(record.getNickname());
+					.setText(record.getUser_nickname());
 			((TextView) convertView.findViewById(R.id.distance_textview))
 					.setText("100米以内");
 			((TextView) convertView.findViewById(R.id.list_item_description))
@@ -190,34 +286,26 @@ public class NearByPeopleActivity extends ActivitySupport implements
 	}
 
 	// 加载数据
-	public void refreshData(Long param) {
-		if (hasInternetConnected()) {
-			showProgressDialog();
-			new GetDataTask().execute(param);
+	public void loadData(int action) {
+		if (!isRefreshing && !isDownloading) {
+			new GetDataTask().execute(action);
 		} else {
-			showAlertDialog();
+			showToast("刷新中...");
+			refreshView.onRefreshComplete();
 		}
 	}
 
 	@Override
 	public void onRefresh(PullToRefreshBase<ListView> refreshView) {
-		String label = DateUtils.formatDateTime(getApplicationContext(),
-				System.currentTimeMillis(), DateUtils.FORMAT_SHOW_TIME
-						| DateUtils.FORMAT_SHOW_DATE
-						| DateUtils.FORMAT_ABBREV_ALL);
-		refreshView.getLoadingLayoutProxy().setLastUpdatedLabel(label);
-		if (!isRefreshing)
-			refreshData(0L);
-	}
-
-	@Override
-	public void onLastItemVisible() {
-		if (isAllDownload) {
-			// disMore.setVisibility(View.GONE);
-			final String text = "数据加载完毕...";
-			showToast(text, Toast.LENGTH_SHORT);
+		if (refreshView.isHeadherShow()) {
+			String label = DateUtils.formatDateTime(
+					this.getApplicationContext(), System.currentTimeMillis(),
+					DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_DATE
+							| DateUtils.FORMAT_ABBREV_ALL);
+			refreshView.getLoadingLayoutProxy().setLastUpdatedLabel(label);
+			loadData(Constants.DOWN);
 		} else {
-			// disMore.setVisibility(View.VISIBLE);
+			loadData(Constants.UP);
 		}
 	}
 
@@ -258,10 +346,25 @@ public class NearByPeopleActivity extends ActivitySupport implements
 		@Override
 		public boolean onMenuItemClick(MenuItem item) {
 			switch (item.getItemId()) {
-
+			case R.id.popup_menu_option_all:
+				break;
+			case R.id.popup_menu_option_clear:
+				finish();
+				break;
 			}
 			return true;
 		}
 	}
 
+	@Override
+	public void onDestroy() {
+		locationManager.destoryLocationManager();
+		unregisterReceiver(receiver);
+		super.onDestroy();
+	}
+	
+	@Override
+	public void updateLocation(Location location) {
+		showToast(location.getLatitude()+","+location.getLongitude());
+	}
 }

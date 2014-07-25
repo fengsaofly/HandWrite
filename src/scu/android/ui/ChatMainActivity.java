@@ -1,6 +1,10 @@
 package scu.android.ui;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.jivesoftware.smack.Chat;
@@ -10,8 +14,10 @@ import org.jivesoftware.smack.XMPPException;
 import scu.android.application.MyApplication;
 import scu.android.db.ChatRecord;
 import scu.android.db.DbManager2;
+import scu.android.util.AppUtils;
 import scu.android.util.ChatMsgEntity;
 import scu.android.util.ChatMsgViewAdapter;
+import scu.android.util.Constants;
 import scu.android.util.TimeRender;
 import scu.android.util.XmppTool;
 import android.app.Activity;
@@ -20,9 +26,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
+import android.graphics.drawable.AnimationDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.media.MediaPlayer;
+import android.media.MediaRecorder;
+import android.media.MediaPlayer.OnCompletionListener;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -35,20 +48,23 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.LinearLayout.LayoutParams;
 
 import com.demo.note.R;
 
 public class ChatMainActivity extends Activity implements OnClickListener {
 	/** Called when the activity is first created. */
 
-	private Button mBtnSend;
+	private TextView mBtnSend;
 	private TextView mBtnRcd, currentChat = null;
 	private Button mBtnBack;
 	ImageButton right_btn = null;
 	private EditText mEditTextContent;
-	private RelativeLayout mBottom;
+	private LinearLayout mBottom;
 	private ListView mListView;
 	private ChatMsgViewAdapter mAdapter;
 	private List<ChatMsgEntity> mDataArrays = new ArrayList<ChatMsgEntity>();
@@ -57,20 +73,56 @@ public class ChatMainActivity extends Activity implements OnClickListener {
 			voice_rcd_hint_tooshort;
 	private ImageView img1, sc_img1;
 	// private SoundMeter mSensor;
-	private View rcChat_popup;
+
 	private LinearLayout del_re;
 	private ImageView chatting_mode_btn, volume;
 	private boolean btn_vocie = false;
 	private int flag = 1;
-	private Handler mHandler = new Handler();
+
 	private String voiceName;
 	String chatContact = "";
 	Chat newchat;
-	private long startVoiceT, endVoiceT;
+
 	MediaPlayer mp;
 	private Cursor cursor;
 	private DbManager2 db;
 	MyBroadcastReciver myBroadcastReciver;
+
+	/**
+	 * 
+	 * 
+	 * 底部录音相关
+	 * 
+	 * 
+	 */
+
+	// TextView second = null;
+	TextView add_record = null;
+	TextView testInclude = null;
+	TextView add_extras = null;
+	MediaRecorder mr = null;
+	String path = null;
+	MediaPlayer voiceMp = null;
+	// PopupWindow pop;
+	View extrasView, view2;
+	AnimationDrawable animaition;
+	private long startVoiceT, endVoiceT;
+	// LinearLayout popup_recode_lay = null, popup_camera_lay = null,
+	// popup_imgpicker_lay = null, popup_handwrite_lay = null;
+	LinearLayout question_popup_layout = null;
+	LinearLayout rcChat_popup = null;
+
+	// LinearLayout yourVocie_lay = null;
+	// RelativeLayout record_pressbtn_lay = null, play_lay = null;
+	Button record_pressbtn = null;
+	private Handler mHandler;
+	boolean recordFlag = false;
+
+	private View addDoodle;
+	private View addHWrite;
+	private View addPhotos;
+	private View addCamera;
+	private String cameraName;
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -95,66 +147,14 @@ public class ChatMainActivity extends Activity implements OnClickListener {
 		newchat = cm.createChat(chatContact + "@"
 				+ ((MyApplication) getApplication()).hostName, null);
 
-		// cm.addChatListener(new ChatManagerListener() {
-		// @Override
-		// public void chatCreated(Chat chat, boolean able)
-		// {
-		// chat.addMessageListener(new MessageListener() {
-		// @Override
-		// public void processMessage(Chat chat2, Message message)
-		// {
-		// Log.v("--tags--", "--tags-form--"+message.getFrom());
-		// Log.v("--tags--", "--tags-message--"+message.getBody());
-		//
-		// if(message.getFrom().contains(chatContact+"@"+((MyApplication)getApplication()).hostName))
-		// {
-		//
-		// String[] args = new String[] { message.getFrom(), message.getBody(),
-		// TimeRender.getDate(), "IN" };
-		//
-		//
-		// android.os.Message msg = handler.obtainMessage();
-		// msg.what = 1;
-		// msg.obj = args;
-		// handler.sendMessage(msg);
-		// }
-		// else
-		// {
-		//
-		// String[] args = new String[] { message.getFrom(), message.getBody(),
-		// TimeRender.getDate(), "IN" };
-		//
-		//
-		// android.os.Message msg = handler.obtainMessage();
-		// msg.what = 1;
-		// msg.obj = args;
-		// handler.sendMessage(msg);
-		// }
-		//
-		// }
-		// });
-		// }
-		// });
 		initView();
 
 		initData();
+
+		intialRecord();
 	}
 
-	// public class Msg {
-	// String userid;
-	// String msg;
-	// String date;
-	// String from;
-	//
-	// public Msg(String userid, String msg, String date, String from) {
-	// this.userid = userid;
-	// this.msg = msg;
-	// this.date = date;
-	// this.from = from;
-	// }
-	// }
-
-	private class MyBroadcastReciver extends BroadcastReceiver {
+	public class MyBroadcastReciver extends BroadcastReceiver {
 		public void onReceive(Context context, Intent intent) {
 			String action = intent.getAction();
 			if (action.equals("cn.abel.action.broadcast")) {
@@ -183,19 +183,343 @@ public class ChatMainActivity extends Activity implements OnClickListener {
 		}
 	}
 
+	public class FileReciver extends BroadcastReceiver {
+		public void onReceive(Context context, Intent intent) {
+			String action = intent.getAction();
+			if (action.equals("cn.abel.action.filebroadcast")) {
+				String fileName = intent.getStringExtra("fileName");
+				// 在控制台显示接收到的广播内容
+				System.out.println("author==>" + fileName);
+				String p1 = fileName.toString().split("\\|")[0];
+				String p2 = fileName.toString().split("\\|")[1];
+				String p3 = fileName.toString().split("\\|")[2];
+				String p4 = fileName.toString().split("\\|")[3];
+				System.out.println("p1: " + p1 + "   p2:" + p2 + "  p3:" + p3
+						+ "  p4:" + p4);
+				String[] args = fileName.split("\\|");
+
+				android.os.Message msg = handler.obtainMessage();
+				msg.what = 2;
+				msg.obj = args;
+				handler.sendMessage(msg);
+
+			}
+		}
+	}
+
+	public void intialRecord() {
+
+		mHandler = new Handler() {
+			@Override
+			public void handleMessage(Message msg) {
+				System.out.println("进入handler");
+				switch (msg.what) {
+				case 0:
+				case 1:
+					testInclude.setText("1");
+					volume.setImageResource(R.drawable.amp1);
+					break;
+				case 2:
+				case 3:
+					testInclude.setText("2");
+					volume.setImageResource(R.drawable.amp2);
+
+					break;
+				case 4:
+				case 5:
+					testInclude.setText("3");
+					volume.setImageResource(R.drawable.amp3);
+					break;
+				case 6:
+				case 7:
+					testInclude.setText("4");
+					volume.setImageResource(R.drawable.amp4);
+					break;
+				case 8:
+				case 9:
+					testInclude.setText("5");
+					volume.setImageResource(R.drawable.amp5);
+					break;
+				case 10:
+				case 11:
+					testInclude.setText("6");
+					volume.setImageResource(R.drawable.amp6);
+					break;
+				default:
+					testInclude.setText("7");
+					volume.setImageResource(R.drawable.amp7);
+					break;
+				}
+				super.handleMessage(msg);
+			}
+
+		};
+
+		rcChat_popup = (LinearLayout) findViewById(R.id.rcChat_popup);
+
+		question_popup_layout = (LinearLayout) findViewById(R.id.question_popup_layout);
+		// record_pressbtn_lay = (RelativeLayout)
+		// findViewById(R.id.record_pressbtn_lay);
+		add_record = (TextView) findViewById(R.id.add_record);
+		record_pressbtn = (Button) findViewById(R.id.record_pressbtn);
+		// second = (TextView) findViewById(R.id.volume);
+		// play_lay = (RelativeLayout) findViewById(R.id.play_lay);
+		// yourVocie_lay = (LinearLayout) findViewById(R.id.yourVocie_lay);
+
+		// question_add_showrecord_imgview.setImageResource(R.anim.playvoice);
+		LayoutInflater inflater = LayoutInflater.from(this);
+		// LayoutInflater inflater2 = LayoutInflater.from(this);
+		// 引入窗口配置文件
+
+		extrasView = inflater.inflate(R.layout.question_popup_layout, null);
+		addDoodle = extrasView.findViewById(R.id.popup_doodle_lay);
+		addCamera = extrasView.findViewById(R.id.popup_camera_lay);
+		addPhotos = extrasView.findViewById(R.id.popup_imgpicker_lay);
+		addHWrite = extrasView.findViewById(R.id.popup_handwrite_lay);
+//
+//		addDoodle.setOnClickListener(this);
+//		addCamera.setOnClickListener(this);
+//		addPhotos.setOnClickListener(this);
+//		addHWrite.setOnClickListener(this);
+		// popup_recode_lay = (LinearLayout) view
+		// .findViewById(R.id.popup_record_lay);
+		// popup_camera_lay = (LinearLayout) view
+		// .findViewById(R.id.popup_camera_lay);
+		// popup_imgpicker_lay = (LinearLayout) view
+		// .findViewById(R.id.popup_imgpicker_lay);
+		// popup_handwrite_lay = (LinearLayout) view
+		// .findViewById(R.id.popup_handwrite_lay);
+		// view2 = inflater2.inflate(R.layout.voice_rcd_hint_window, null);
+		volume = (ImageView) findViewById(R.id.volume2);
+		testInclude = (TextView) findViewById(R.id.testInclude);
+		// 创建PopupWindow对象
+
+		// pop = new PopupWindow(view, LayoutParams.MATCH_PARENT,
+		// LayoutParams.WRAP_CONTENT, false);
+		//
+		// // // 需要设置一下此参数，点击外边可消失
+		// //
+		// pop.setBackgroundDrawable(new ColorDrawable());
+		//
+		// // 设置点击窗口外边窗口消失
+		//
+		// pop.setOutsideTouchable(true);
+		//
+		// // 设置此参数获得焦点，否则无法点击
+		//
+		// pop.setFocusable(true);
+
+		// play = (Button)findViewById(R.id.play);
+		add_record.setOnTouchListener(new OnTouchListener() {
+
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+
+				// TODO Auto-generated method stub
+				switch (event.getAction()) {
+
+				case MotionEvent.ACTION_DOWN:
+
+					System.out.println("按下录音。。。");
+					rcChat_popup.setVisibility(View.VISIBLE);
+					startVoiceT = System.currentTimeMillis();
+					// 按住事件发生后执行代码的区域
+					mr = new MediaRecorder();
+					File file2 = new File(MyApplication.getSDCardPath()
+							+ "/ConquerQustion" + "/"
+							+ ((MyApplication) getApplication()).userName + "/"
+							+ "Audio");
+
+					if (!file2.exists())
+						file2.mkdirs();
+					SimpleDateFormat df = new SimpleDateFormat(
+							"yyyyMMdd_HHmmss");
+					String time = df.format(new Date());
+
+					File file = new File(file2.getAbsolutePath() + "/" + time
+							+ ".amr");
+
+					//
+					Toast.makeText(getApplicationContext(),
+							"正在录音，录音文件在" + file.getAbsolutePath(),
+							Toast.LENGTH_LONG).show();
+
+					path = file.getAbsolutePath();
+					System.out.println("路径： " + path);
+					// start(path);
+
+					mr.setAudioSource(MediaRecorder.AudioSource.MIC);
+					mr.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+					mr.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+
+					// 设置输出文件
+					mr.setOutputFile(file.getAbsolutePath());
+
+					try {
+						// 创建文件
+						file.createNewFile();
+						// 准备录制
+						mr.prepare();
+
+						mr.start();
+						start();
+					} catch (IllegalStateException e) {
+						e.printStackTrace();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					// 开始录制
+
+					break;
+
+				case MotionEvent.ACTION_MOVE:
+					// 移动事件发生后执行代码的区域
+					break;
+
+				case MotionEvent.ACTION_UP:
+					System.out.println("s松开录音。。。");
+					endVoiceT = System.currentTimeMillis();
+					if (mr != null) {
+						mr.stop();
+						mr.release();
+						mr = null;
+					}
+					stop();
+					int seconds = (int) (endVoiceT - startVoiceT) / 1000;
+					if (seconds < 1) {
+						seconds = 1;
+					}
+					// yourVocie_lay.setVisibility(View.VISIBLE);
+					// second.setText("" + seconds);
+
+					rcChat_popup.setVisibility(View.GONE);
+					Toast.makeText(getApplicationContext(), "录音完毕",
+							Toast.LENGTH_LONG).show();
+					// play.setVisibility(View.VISIBLE);
+					recordFlag = true;
+					// add_record
+					// .setBackgroundDrawable(getResources().getDrawable(R.drawable.question_add_record_icon_default));
+
+					sendFile();
+
+					// 松开事件发生后执行代码的区域
+					break;
+
+				default:
+
+					break;
+				}
+				return true;
+			}
+		});
+
+		//
+		// play_lay.setOnClickListener(new OnClickListener() {
+		//
+		// @Override
+		// public void onClick(View arg0) {
+		// // TODO Auto-generated method stub
+		// try {
+		// // voiceMp = new MediaPlayer();
+		// if (voiceMp != null) {
+		// voiceMp.reset();
+		// voiceMp.release();
+		// voiceMp = null;
+		// }
+		// voiceMp = new MediaPlayer();
+		// voiceMp.setDataSource(path);
+		//
+		// voiceMp.prepare();
+		// voiceMp.setLooping(false);
+		// voiceMp.start();
+		// voiceMp.setOnCompletionListener(new OnCompletionListener() {
+		//
+		// @Override
+		// public void onCompletion(MediaPlayer arg0) {
+		// // TODO Auto-generated method stub
+		// voiceMp.release();
+		// voiceMp = null;
+		// animaition.stop();
+		// // question_add_showrecord_imgview
+		// // .setImageResource(R.drawable.question_add_record_icon_default);
+		// }
+		// });
+		// // question_add_showrecord_imgview
+		// // .setImageResource(R.anim.playvoice);
+		// // animaition = (AnimationDrawable) question_add_showrecord_imgview
+		// // .getDrawable();
+		// // 最后，就可以启动动画了，代码如下：
+		//
+		// // 是否仅仅启动一次？
+		//
+		// animaition.setOneShot(false);
+		//
+		// if (animaition.isRunning())// 是否正在运行？
+		//
+		// {
+		// animaition.stop();// 停止
+		//
+		// }
+		// animaition.start();// 启动
+		// } catch (IllegalStateException e1) {
+		// // TODO Auto-generated catch block
+		// e1.printStackTrace();
+		// } catch (IOException e1) {
+		// // TODO Auto-generated catch block
+		// e1.printStackTrace();
+		// }
+		// }
+		// });
+		//
+	}
+
+	private static final int POLL_INTERVAL = 300;
+
+	private Runnable mSleepTask = new Runnable() {
+		public void run() {
+			stop();
+		}
+	};
+
+	private Runnable mPollTask = new Runnable() {
+		public void run() {
+			double amp = mr.getMaxAmplitude() / 2700.0;
+			System.out.println("amp: " + amp);
+			// updateDisplay(amp);
+			Message msg = mHandler.obtainMessage();
+			msg.what = (int) amp;
+			mHandler.sendMessage(msg);
+
+			mHandler.postDelayed(mPollTask, POLL_INTERVAL);
+
+		}
+	};
+
+	private void start() {
+		// mr.start();
+		mHandler.postDelayed(mPollTask, POLL_INTERVAL);
+	}
+
+	private void stop() {
+		mHandler.removeCallbacks(mSleepTask);
+		mHandler.removeCallbacks(mPollTask);
+		// mr.stop();
+		volume.setImageResource(R.drawable.amp1);
+	}
+
 	public void initView() {
 
 		currentChat = (TextView) findViewById(R.id.currentChat);
 		currentChat.setText(chatContact);
 		right_btn = (ImageButton) findViewById(R.id.right_btn);
 		mListView = (ListView) findViewById(R.id.listview);
-		mBtnSend = (Button) findViewById(R.id.btn_send);
+		mBtnSend = (TextView) findViewById(R.id.chat_send);
 		mBtnRcd = (TextView) findViewById(R.id.btn_rcd);
 		mBtnSend.setOnClickListener(this);
 		mBtnBack = (Button) findViewById(R.id.btn_back);
-		mBottom = (RelativeLayout) findViewById(R.id.btn_bottom);
+		mBottom = (LinearLayout) findViewById(R.id.chat_input_field);
 		mBtnBack.setOnClickListener(this);
-		chatting_mode_btn = (ImageView) this.findViewById(R.id.ivPopUp);
+		// chatting_mode_btn = (ImageView) this.findViewById(R.id.ivPopUp);
 		// volume = (ImageView) this.findViewById(R.id.volume);
 		// rcChat_popup = this.findViewById(R.id.rcChat_popup);
 		// img1 = (ImageView) this.findViewById(R.id.img1);
@@ -208,29 +532,29 @@ public class ChatMainActivity extends Activity implements OnClickListener {
 		// voice_rcd_hint_tooshort = (LinearLayout) this
 		// .findViewById(R.id.voice_rcd_hint_tooshort);
 		// mSensor = new SoundMeter();
-		mEditTextContent = (EditText) findViewById(R.id.et_sendmessage);
+		mEditTextContent = (EditText) findViewById(R.id.input_field);
 
 		// 语音文字切换按钮
-		chatting_mode_btn.setOnClickListener(new OnClickListener() {
-
-			public void onClick(View v) {
-
-				// if (btn_vocie) {
-				// mBtnRcd.setVisibility(View.GONE);
-				// mBottom.setVisibility(View.VISIBLE);
-				// btn_vocie = false;
-				// chatting_mode_btn
-				// .setImageResource(R.drawable.chatting_setmode_msg_btn);
-				//
-				// } else {
-				// mBtnRcd.setVisibility(View.VISIBLE);
-				// mBottom.setVisibility(View.GONE);
-				// chatting_mode_btn
-				// .setImageResource(R.drawable.chatting_setmode_voice_btn);
-				// btn_vocie = true;
-				// }
-			}
-		});
+		// chatting_mode_btn.setOnClickListener(new OnClickListener() {
+		//
+		// public void onClick(View v) {
+		//
+		// // if (btn_vocie) {
+		// // mBtnRcd.setVisibility(View.GONE);
+		// // mBottom.setVisibility(View.VISIBLE);
+		// // btn_vocie = false;
+		// // chatting_mode_btn
+		// // .setImageResource(R.drawable.chatting_setmode_msg_btn);
+		// //
+		// // } else {
+		// // mBtnRcd.setVisibility(View.VISIBLE);
+		// // mBottom.setVisibility(View.GONE);
+		// // chatting_mode_btn
+		// // .setImageResource(R.drawable.chatting_setmode_voice_btn);
+		// // btn_vocie = true;
+		// // }
+		// }
+		// });
 		mBtnRcd.setOnTouchListener(new OnTouchListener() {
 
 			public boolean onTouch(View v, MotionEvent event) {
@@ -244,68 +568,188 @@ public class ChatMainActivity extends Activity implements OnClickListener {
 			@Override
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
-				// Intent intent = new Intent();
-				// intent.setClass(ChatMainActivity.this,
-				// ContactDetailActivity.class);
-				// intent.putExtra("contactName", chatContact);
-				// startActivity(intent);
+				Intent intent = new Intent();
+				intent.setClass(ChatMainActivity.this,
+						ContactDetailActivity.class);
+				intent.putExtra("contactName", chatContact);
+				startActivity(intent);
+			}
+		});
+
+		add_extras = (TextView) findViewById(R.id.add_extras);
+		add_extras.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+				// if (pop.isShowing()) {
+				// pop.dismiss();
+				// } else {
+				// int[] location = new int[2];
+				// view.getLocationOnScreen(location);
+				// // pop.showAsDropDown(hideView);
+				// pop.showAtLocation(view, Gravity.BOTTOM, location[0],
+				// location[1] - pop.getHeight());
+				// // pop.show
+				// }
+
+				if (question_popup_layout.getVisibility() == View.VISIBLE) {
+					question_popup_layout.setVisibility(View.GONE);
+				} else {
+					question_popup_layout.setVisibility(View.VISIBLE);
+				}
 			}
 		});
 
 	}
 
-	// private String[] msgArray = new String[] {
-	// "有人就有恩怨","有恩怨就有江湖","人就是江湖","你怎么退出？ ","生命中充满了巧合","两条平行线也会有相交的一天。"};
-	//
-	// private String[] dataArray = new String[] { "2012-10-31 18:00",
-	// "2012-10-31 18:10", "2012-10-31 18:11", "2012-10-31 18:20",
-	// "2012-10-31 18:30", "2012-10-31 18:35"};
-	// private final static int COUNT = 6;
-	//
 	public void initData() {
-		// for (int i = 0; i < COUNT; i++) {
-		// ChatMsgEntity entity = new ChatMsgEntity();
-		// entity.setDate(dataArray[i]);
-		// if (i % 2 == 0) {
-		// entity.setName("白富美");
-		// entity.setMsgType(true);
-		// } else {
-		// entity.setName("高富帅");
-		// entity.setMsgType(false);
-		// }
-		//
-		// entity.setText(msgArray[i]);
-		// mDataArrays.add(entity);
+
 		mDataArrays = new ArrayList<ChatMsgEntity>();
-		cursor = db.readRecord(chatContact, TimeRender.getDate().split(" ")[0]);
+		cursor = db.readRecord(chatContact, TimeRender.getDate().split(" ")[0],
+				"false");
 		cursor.moveToPosition(-1);
 		while (cursor.moveToNext()) {
 			System.out.println("1: " + cursor.getString(1) + "2: "
 					+ cursor.getString(2) + "3: " + cursor.getString(3));
-			if (cursor.getString(4).equals("in"))
-				mDataArrays.add(new ChatMsgEntity(cursor.getString(1), cursor
-						.getString(2), cursor.getString(3), true));
-			else
-				mDataArrays.add(new ChatMsgEntity(
-						((MyApplication) getApplication()).userName, cursor
-								.getString(2), cursor.getString(3), false));
+			String textType = "";
+
+			if(!cursor.getString(3).contains("subscribe")){
+				if (cursor.getString(4).equals("in"))
+					mDataArrays.add(new ChatMsgEntity(cursor.getString(1), cursor
+							.getString(2), cursor.getString(3), true, cursor
+							.getString(9)));
+				else
+					mDataArrays.add(new ChatMsgEntity(
+							((MyApplication) getApplication()).userName, cursor
+									.getString(2), cursor.getString(3), false,
+							cursor.getString(9)));
+			}
+			
 		}
 
-		mAdapter = new ChatMsgViewAdapter(this, mDataArrays, chatContact);
+		mAdapter = new ChatMsgViewAdapter(this, mDataArrays, chatContact, 0);
 		mListView.setAdapter(mAdapter);
 
+	}
+
+	public void myOnclick(View v) {
+		switch (v.getId()) {
+		case R.id.popup_doodle_lay:
+
+			AppUtils.doodleBoard(this);
+
+			break;
+		case R.id.popup_camera_lay:
+
+			cameraName = AppUtils.sysCamera(this);
+
+			break;
+		case R.id.popup_imgpicker_lay:
+
+			AppUtils.phonePictures(this, 1);
+
+			break;
+		case R.id.popup_handwrite_lay:
+
+			AppUtils.hwBoard(this);
+
+			break;
+		}
 	}
 
 	public void onClick(View v) {
 		// TODO Auto-generated method stub
 		switch (v.getId()) {
-		case R.id.btn_send:
+		case R.id.chat_send:
 			send();
 			break;
 		case R.id.btn_back:
 			finish();
 			break;
+
 		}
+	}
+
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		final String prefix = "file:///";
+		File file = null;
+		switch (requestCode) {
+		case Constants.SYS_CAMEAR:// 相机
+			if (resultCode == Activity.RESULT_OK) {
+				String imgPath = cameraName;
+				file = new File(imgPath);
+				path = imgPath;
+			}
+			break;
+		case Constants.PHONE_PICTURES:// 图库
+			if (resultCode == Activity.RESULT_OK) {
+				ArrayList<String> photos = data
+						.getStringArrayListExtra("photos");
+				file = new File(photos.get(0));
+				path = photos.get(0);
+			}
+			break;
+		case Constants.DOODLE_BOARD:// 涂鸦
+			if (resultCode == Activity.RESULT_OK) {
+				String imgPath = data.getStringExtra("doodlePath");
+				file = new File(imgPath);
+				path = imgPath;
+			}
+			break;
+		case Constants.HANDWRITE_BOARD:// 手写
+			if (resultCode == Activity.RESULT_OK) {
+				String imgPath = data.getStringExtra("handwritePath");
+				file = new File(imgPath);
+				path = imgPath;
+			}
+			break;
+		default:
+			break;
+		}
+		if (file != null) {
+
+			sendFile();
+		}
+		super.onActivityResult(requestCode, resultCode, data);
+	}
+
+	public void sendFile() {
+		ChatMsgEntity entity = new ChatMsgEntity();
+		entity.setDate(TimeRender.getDate());
+		entity.setName(((MyApplication) getApplication()).userName);
+		entity.setMsgType(false);
+		entity.setText(path);
+		entity.setTextType("unnomal");
+
+		mDataArrays.add(entity);// 增加一个信息
+		mAdapter.notifyDataSetChanged();// 更新视图
+
+		mEditTextContent.setText("");// 清空输入框
+
+		mListView.setSelection(mListView.getCount() - 1);// 设置当前listView的选中行为最后一行
+
+		new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				((MyApplication) getApplication()).sendFile(chatContact,
+						new File(path));
+			}
+		}).start();
+
+		ChatRecord chatRecord = new ChatRecord();
+		chatRecord.setAccount(chatContact);
+		chatRecord.setContent(path);
+		chatRecord.setFlag("out");
+		chatRecord.setTime(TimeRender.getDate().split(" ")[1]);
+		chatRecord.setDate(TimeRender.getDate().split(" ")[0]);
+		chatRecord.setType("0");
+		chatRecord.setIsGroupChat("false");
+		chatRecord.setJid("-1");
+		chatRecord.setContent_type("unnomal");
+		db.insertRecord(chatRecord);
 	}
 
 	private void send() {
@@ -316,6 +760,7 @@ public class ChatMainActivity extends Activity implements OnClickListener {
 			entity.setName(((MyApplication) getApplication()).userName);
 			entity.setMsgType(false);
 			entity.setText(contString);
+			entity.setTextType("nomal");
 
 			try {
 
@@ -339,6 +784,9 @@ public class ChatMainActivity extends Activity implements OnClickListener {
 			chatRecord.setTime(TimeRender.getDate().split(" ")[1]);
 			chatRecord.setDate(TimeRender.getDate().split(" ")[0]);
 			chatRecord.setType("0");
+			chatRecord.setIsGroupChat("false");
+			chatRecord.setJid("-1");
+			chatRecord.setContent_type("nomal");
 			db.insertRecord(chatRecord);
 			// }
 
@@ -350,45 +798,27 @@ public class ChatMainActivity extends Activity implements OnClickListener {
 
 			switch (msg.what) {
 			case 1:
-				// if(((MyApplication)getApplication()).currentActivity.equals("chat")){
-				// mp = MediaPlayer.create(ChatMainActivity.this,
-				// R.raw.messagewarn);
-				// mp.setLooping(false);
-				//
-				// mp.start();
-				// mp.setOnCompletionListener(new OnCompletionListener() {
-				//
-				// @Override
-				// public void onCompletion(MediaPlayer arg0) {
-				// // TODO Auto-generated method stub
-				//
-				// mp.release();
-				//
-				// }
-				// });
-				// }
+
 				System.out.println("收到消息，内容为：  " + msg.obj.toString());
 				String[] args = (String[]) msg.obj;
 				String s = args[0].toString().contains("@") ? args[0]
 						.toString().split("@")[0] : args[0].toString();
-				mDataArrays.add(new ChatMsgEntity(s, args[2], args[1], true));
+				mDataArrays.add(new ChatMsgEntity(s, args[2], args[1], true,
+						"nomal"));
 
 				mAdapter.notifyDataSetChanged();
 				mListView.setSelection(mListView.getCount() - 1);
 
-				// if(((MyApplication)getApplication()).currentActivity.equals("chat")){
-				// ChatRecord chatRecord = new ChatRecord();
-				//
-				// chatRecord.setAccount(args[0].replace(s,
-				// "").replace("/spark",""));
-				// chatRecord.setContent(args[1]);
-				// chatRecord.setFlag("in");
-				// chatRecord.setTime(TimeRender.getDate().split(" ")[1]);
-				// chatRecord.setDate(TimeRender.getDate().split(" ")[0]);
-				// db.insertRecord(chatRecord);
-				// }
 				break;
 			case 2:
+				String[] fileArgs = (String[]) msg.obj;
+				String fileFrom = fileArgs[0].toString().contains("@") ? fileArgs[0]
+						.toString().split("@")[0] : fileArgs[0].toString();
+				mDataArrays.add(new ChatMsgEntity(fileFrom, fileArgs[2],
+						fileArgs[1], true, "unnomal"));
+
+				mAdapter.notifyDataSetChanged();
+				mListView.setSelection(mListView.getCount() - 1);
 
 				break;
 			case 3:
@@ -405,198 +835,6 @@ public class ChatMainActivity extends Activity implements OnClickListener {
 			}
 		};
 	};
-
-	// //按下语音录制按钮时
-	// @Override
-	// public boolean onTouchEvent(MotionEvent event) {
-	//
-	// if (!Environment.getExternalStorageDirectory().exists()) {
-	// Toast.makeText(this, "No SDCard", Toast.LENGTH_LONG).show();
-	// return false;
-	// }
-	//
-	// if (btn_vocie) {
-	// System.out.println("1");
-	// int[] location = new int[2];
-	// mBtnRcd.getLocationInWindow(location); // 获取在当前窗口内的绝对坐标
-	// int btn_rc_Y = location[1];
-	// int btn_rc_X = location[0];
-	// int[] del_location = new int[2];
-	// del_re.getLocationInWindow(del_location);
-	// int del_Y = del_location[1];
-	// int del_x = del_location[0];
-	// if (event.getAction() == MotionEvent.ACTION_DOWN && flag == 1) {
-	// if (!Environment.getExternalStorageDirectory().exists()) {
-	// Toast.makeText(this, "No SDCard", Toast.LENGTH_LONG).show();
-	// return false;
-	// }
-	// System.out.println("2");
-	// if (event.getY() > btn_rc_Y && event.getX() > btn_rc_X)
-	// {//判断手势按下的位置是否是语音录制按钮的范围内
-	// System.out.println("3");
-	// mBtnRcd.setBackgroundResource(R.drawable.voice_rcd_btn_pressed);
-	// rcChat_popup.setVisibility(View.VISIBLE);
-	// voice_rcd_hint_loading.setVisibility(View.VISIBLE);
-	// voice_rcd_hint_rcding.setVisibility(View.GONE);
-	// voice_rcd_hint_tooshort.setVisibility(View.GONE);
-	// mHandler.postDelayed(new Runnable() {
-	// public void run() {
-	// if (!isShosrt) {
-	// voice_rcd_hint_loading.setVisibility(View.GONE);
-	// voice_rcd_hint_rcding
-	// .setVisibility(View.VISIBLE);
-	// }
-	// }
-	// }, 300);
-	// img1.setVisibility(View.VISIBLE);
-	// del_re.setVisibility(View.GONE);
-	// startVoiceT = SystemClock.currentThreadTimeMillis();
-	// voiceName = startVoiceT + ".amr";
-	// start(voiceName);
-	// flag = 2;
-	// }
-	// } else if (event.getAction() == MotionEvent.ACTION_UP && flag == 2)
-	// {//松开手势时执行录制完成
-	// System.out.println("4");
-	// mBtnRcd.setBackgroundResource(R.drawable.voice_rcd_btn_nor);
-	// if (event.getY() >= del_Y
-	// && event.getY() <= del_Y + del_re.getHeight()
-	// && event.getX() >= del_x
-	// && event.getX() <= del_x + del_re.getWidth()) {
-	// rcChat_popup.setVisibility(View.GONE);
-	// img1.setVisibility(View.VISIBLE);
-	// del_re.setVisibility(View.GONE);
-	// stop();
-	// flag = 1;
-	// File file = new
-	// File(android.os.Environment.getExternalStorageDirectory()+"/"
-	// + voiceName);
-	// if (file.exists()) {
-	// file.delete();
-	// }
-	// } else {
-	//
-	// voice_rcd_hint_rcding.setVisibility(View.GONE);
-	// stop();
-	// endVoiceT = SystemClock.currentThreadTimeMillis();
-	// flag = 1;
-	// int time = (int) ((endVoiceT - startVoiceT) / 1000);
-	// if (time < 1) {
-	// isShosrt = true;
-	// voice_rcd_hint_loading.setVisibility(View.GONE);
-	// voice_rcd_hint_rcding.setVisibility(View.GONE);
-	// voice_rcd_hint_tooshort.setVisibility(View.VISIBLE);
-	// mHandler.postDelayed(new Runnable() {
-	// public void run() {
-	// voice_rcd_hint_tooshort
-	// .setVisibility(View.GONE);
-	// rcChat_popup.setVisibility(View.GONE);
-	// isShosrt = false;
-	// }
-	// }, 500);
-	// return false;
-	// }
-	// ChatMsgEntity entity = new ChatMsgEntity();
-	// entity.setDate(TimeRender.getDate());
-	// entity.setName("高富帅");
-	// entity.setMsgType(false);
-	// entity.setTime(time+"\"");
-	// entity.setText(voiceName);
-	// mDataArrays.add(entity);
-	// mAdapter.notifyDataSetChanged();
-	// mListView.setSelection(mListView.getCount() - 1);
-	// rcChat_popup.setVisibility(View.GONE);
-	//
-	// }
-	// }
-	// if (event.getY() < btn_rc_Y) {//手势按下的位置不在语音录制按钮的范围内
-	// System.out.println("5");
-	// Animation mLitteAnimation = AnimationUtils.loadAnimation(this,
-	// R.anim.cancel_rc);
-	// Animation mBigAnimation = AnimationUtils.loadAnimation(this,
-	// R.anim.cancel_rc2);
-	// img1.setVisibility(View.GONE);
-	// del_re.setVisibility(View.VISIBLE);
-	// del_re.setBackgroundResource(R.drawable.voice_rcd_cancel_bg);
-	// if (event.getY() >= del_Y
-	// && event.getY() <= del_Y + del_re.getHeight()
-	// && event.getX() >= del_x
-	// && event.getX() <= del_x + del_re.getWidth()) {
-	// del_re.setBackgroundResource(R.drawable.voice_rcd_cancel_bg_focused);
-	// sc_img1.startAnimation(mLitteAnimation);
-	// sc_img1.startAnimation(mBigAnimation);
-	// }
-	// } else {
-	//
-	// img1.setVisibility(View.VISIBLE);
-	// del_re.setVisibility(View.GONE);
-	// del_re.setBackgroundResource(0);
-	// }
-	// }
-	// return super.onTouchEvent(event);
-	// }
-
-	// private static final int POLL_INTERVAL = 300;
-	//
-	// private Runnable mSleepTask = new Runnable() {
-	// public void run() {
-	// stop();
-	// }
-	// };
-	// private Runnable mPollTask = new Runnable() {
-	// public void run() {
-	// // double amp = mSensor.getAmplitude();
-	// // updateDisplay(amp);
-	// mHandler.postDelayed(mPollTask, POLL_INTERVAL);
-	//
-	// }
-	// };
-
-	// private void start(String name) {
-	// // mSensor.start(name);
-	// mHandler.postDelayed(mPollTask, POLL_INTERVAL);
-	// }
-	//
-	// private void stop() {
-	// mHandler.removeCallbacks(mSleepTask);
-	// mHandler.removeCallbacks(mPollTask);
-	// // mSensor.stop();
-	// volume.setImageResource(R.drawable.amp1);
-	// }
-	//
-	// private void updateDisplay(double signalEMA) {
-	//
-	// switch ((int) signalEMA) {
-	// case 0:
-	// case 1:
-	// volume.setImageResource(R.drawable.amp1);
-	// break;
-	// case 2:
-	// case 3:
-	// volume.setImageResource(R.drawable.amp2);
-	//
-	// break;
-	// case 4:
-	// case 5:
-	// volume.setImageResource(R.drawable.amp3);
-	// break;
-	// case 6:
-	// case 7:
-	// volume.setImageResource(R.drawable.amp4);
-	// break;
-	// case 8:
-	// case 9:
-	// volume.setImageResource(R.drawable.amp5);
-	// break;
-	// case 10:
-	// case 11:
-	// volume.setImageResource(R.drawable.amp6);
-	// break;
-	// default:
-	// volume.setImageResource(R.drawable.amp7);
-	// break;
-	// }
-	// }
 
 	@Override
 	protected void onDestroy() {

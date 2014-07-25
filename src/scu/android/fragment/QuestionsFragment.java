@@ -1,18 +1,20 @@
 package scu.android.fragment;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
-import scu.android.activity.ReplyQuestionActivity;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+import scu.android.activity.QuestionDetailsActivity;
 import scu.android.application.MyApplication;
-import scu.android.db.QuestionDao;
-import scu.android.db.ResourceDao;
-import scu.android.entity.Question;
-import scu.android.entity.Resource;
-import scu.android.entity.User;
-import scu.android.ui.MGridView;
-import scu.android.ui.PhotosAdapter;
+import scu.android.dao.Question;
+import scu.android.dao.Resource;
+import scu.android.dao.User;
+import scu.android.db.DBTools;
+import scu.android.ui.CircularImage;
+import scu.android.ui.MAudioView;
 import scu.android.util.AppUtils;
 import scu.android.util.Constants;
 import android.app.AlertDialog;
@@ -24,287 +26,244 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
-import android.graphics.drawable.ColorDrawable;
-import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.format.DateUtils;
-import android.view.Gravity;
+import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.BaseAdapter;
-import android.widget.BaseExpandableListAdapter;
-import android.widget.Button;
-import android.widget.ExpandableListView;
-import android.widget.ExpandableListView.OnChildClickListener;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.demo.note.R;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
-import com.handmark.pulltorefresh.library.PullToRefreshBase.OnLastItemVisibleListener;
+import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 
 /**
- * 破题主页面
+ * 破题主页面：显示题目列表
  * 
  * @author YouMingyang
  * @version 1.0
  */
-public class QuestionsFragment extends Fragment implements OnClickListener,
-		OnRefreshListener<ListView>, OnLastItemVisibleListener {
 
-	private ArrayList<Question> questions;
-	private HashMap<Question, User> maps;
-	private QuestionsAdapter questionsAdapter;
+public class QuestionsFragment extends Fragment implements OnClickListener, OnRefreshListener<ListView>, OnItemClickListener, OnItemLongClickListener {
+
+	private final String TAG = getClass().getName();
+
+	private ArrayList<Question> questions;// 当前问题列表
+	private HashMap<Question, User> maps;// 用户问题映射
+	private QuestionsAdapter questionsAdapter;// 问题列表适配器
 	private PullToRefreshListView refreshView;// 下拉刷新组件
-	private boolean isRefreshing;
-	private boolean isAllDownload;
+	private boolean isRefreshing;// 刷新中
+	private boolean isDownloading;// 下载中
 	private View view;
-	private View noNetworkConnect;
-	private ProgressDialog progressDialog;
-	private Button classify;
-	private TextView disMore;
-	private PopupWindow classifyWindow;
+	private View noNetworkConnect;// 无网络连接
 	private Context context;
-
-	private User loginUser;
+	private User loginUser;// 登录用户
+	private boolean isNetworkConnected;
 	private BroadcastReceiver receiver;
+	// 图片异步加载
 	private ImageLoader loader;
 	private DisplayImageOptions options;
 
 	public static android.support.v4.app.Fragment newInstance() {
-		QuestionsFragment questionFragment = new QuestionsFragment();
-		return questionFragment;
+		return new QuestionsFragment();
 	}
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		context = getActivity().getApplicationContext();
-		loginUser = MyApplication.getLoginUser(context);
+		loginUser = MyApplication.getCurrentUser(context);
 
-		view = inflater.inflate(com.demo.note.R.layout.fragment_questions,
-				container, false);
+		view = inflater.inflate(com.demo.note.R.layout.fragment_questions, container, false);
 		noNetworkConnect = view.findViewById(R.id.no_network_connect);
 		noNetworkConnect.setOnClickListener(this);
-		refreshView = (PullToRefreshListView) view
-				.findViewById(R.id.pull_refresh_list);
+		refreshView = (PullToRefreshListView) view.findViewById(R.id.pull_refresh_list);
+
 		ListView questionsView = refreshView.getRefreshableView();
 		questions = new ArrayList<Question>();
 		maps = new HashMap<Question, User>();
-		isAllDownload = false;
-		progressDialog = getProgressDialog("正在加载破题列表");
-
-		refreshData(0L);
-		questionsAdapter = new QuestionsAdapter(context, questions);
+		questionsAdapter = new QuestionsAdapter();
 		questionsView.setAdapter(questionsAdapter);
-		/*
-		 * 跳转到回复页面
-		 */
-		questionsView.setOnItemClickListener(new OnItemClickListener() {
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view,
-					int position, long id) {
-				final Question question = questions.get(position - 1);
-				if (question.getqState() != 2)
-					startReply(position - 1);
-				else
-					showToast("正在上传中...", Toast.LENGTH_SHORT);
-			}
-		});
-		/*
-		 * 长按问题条目的处理
-		 */
-		questionsView.setOnItemLongClickListener(new OnItemLongClickListener() {
-
-			@Override
-			public boolean onItemLongClick(AdapterView<?> parent, View view,
-					int position, long id) {
-				// final Question question = questions.get(position - 1);
-				// System.out.println("longlonsd" + question.getqState());
-				// if (question.getqState() != 2)
-				deleteQuestion(position - 1);
-				return true;
-			}
-		});
-		// refreshView.setMode(Mode.BOTH);
+		questionsView.setOnItemClickListener(this);
+		questionsView.setOnItemLongClickListener(this);
+		refreshView.setMode(Mode.BOTH);
+		refreshView.setEmptyView(view.findViewById(R.id.empty_view));
 		refreshView.setOnRefreshListener(this);
-		refreshView.setOnLastItemVisibleListener(this);
-		classify = (Button) view.findViewById(R.id.sel_classify);
-		classify.setOnClickListener(this);
-		disMore = (TextView) view.findViewById(R.id.dis_more);
-		disMore.setOnClickListener(this);
 
-		receiver = new BroadcastReceiver() {
-
-			@Override
-			public void onReceive(Context context, Intent intent) {
-				if (intent.getAction()
-						.equals(Constants.UPLOAD_QUESTION_SUCCESS)) {
-					final long qId = intent.getLongExtra("qId", 0l);
-					final long qResource = intent.getLongExtra("qResource", 0l);
-					final long oldId = MyApplication.oldId;
-					final long oldResourceId = MyApplication.oldResourceId;
-					QuestionDao.updateUploadQuestion(context, qId, qResource,
-							oldId);
-					ResourceDao.updateUploadResource(context, qResource,
-							oldResourceId);
-				}
-			}
-
-		};
-		context.registerReceiver(receiver, new IntentFilter(
-				Constants.UPLOAD_QUESTION_SUCCESS));
-		loader = ImageLoader.getInstance();
-		options = new DisplayImageOptions.Builder()
-				.displayer(new RoundedBitmapDisplayer(5))
-				.showImageOnLoading(R.drawable.default_avatar)
-				.showImageForEmptyUri(R.drawable.default_avatar)
-				.showImageOnFail(R.drawable.default_avatar).cacheInMemory(true)
-				.cacheOnDisk(true).considerExifParams(true)
-				.bitmapConfig(Bitmap.Config.RGB_565).build();
-		MyApplication.getLoginUser(context);
+		receiver = new QuestionsBroadcastRecevier();
+		context.registerReceiver(receiver, new IntentFilter(Constants.QUESTIONS));
+		initImageLoader();
 		return view;
 	}
 
-	/*
-	 * 下拉刷新获取数据
+	public void initImageLoader() {
+		loader = ImageLoader.getInstance();
+		options = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).build();
+	}
+
+	/**
+	 * 上传或下载之后更新题目列表
 	 */
-	private class GetDataTask extends
-			AsyncTask<Long, Void, ArrayList<Question>> {
-		int resultCode = -1;;// 错误类型
-
-		/**
-		 * params[0],数据来源:0,net;1,local
-		 * parems[1],目的:0,首次获取数据;1,(获取当前列表表首问题之后的数据);2:加载更多(获取当前列表表尾问题之前的数据);
-		 */
+	private class QuestionsBroadcastRecevier extends BroadcastReceiver {
 		@Override
-		protected ArrayList<Question> doInBackground(Long... params) {
-			isRefreshing = true;
-			long srcType = params[0];
-			long object = params[1];
-			ArrayList<Question> mLocalQuestions = null;
-			switch ((int) srcType) {
-			case Constants.SRC_NET:
-				long localQuesNum = QuestionDao.getQuesNum(context);
-				long localLens = 10L;
-				switch ((int) object) {
-				case Constants.DATA_INIT:
-					if (localQuesNum > 0) {
-						if (localQuesNum <= localLens) {
-							localLens = localQuesNum;
-							isAllDownload = true;
+		public void onReceive(Context context, Intent intent) {
+			if (intent.getAction().equals(Constants.QUESTIONS)) {
+				final String action = intent.getStringExtra("action");
+				if (action.equals("upload") && MyApplication.isUploading) {
+					final String result = intent.getStringExtra("result");
+					if (result.equals("success")) {
+						showToast("上传成功");
+						long q_id = intent.getLongExtra("q_id", 0);
+						long created_time = intent.getLongExtra("created_time", 0);
+						long q_resource = intent.getLongExtra("q_resource", 0);
+						updateQuestion(q_id, created_time, q_resource);
+					} else if (result.equals("failed")) {
+						showToast("上传失败");
+						updateQuestion(0, 0, 0);
+					}
+					MyApplication.isUploading = false;
+				} else if (action.equals("download") && isDownloading) {
+					@SuppressWarnings("unchecked")
+					ArrayList<Question> mQuestions = (ArrayList<Question>) intent.getSerializableExtra("questions");
+					if (mQuestions != null && mQuestions.size() > 0) {
+						final Question firstQuestion = mQuestions.get(0);
+						if (questions.size() > 0 && firstQuestion.getCreated_time() > questions.get(0).getCreated_time()) {
+							questions.addAll(0, mQuestions);
+						} else {
+							questions.addAll(mQuestions);
 						}
-						mLocalQuestions = QuestionDao.getQuestions(context,
-								(long) questions.size(), localLens);
+						showToast("下载完毕");
 					} else {
-						resultCode = -1;
+						showToast("已获取最新数据");
 					}
-					break;
-				case Constants.DATA_AFTER:
-					resultCode = 2;
-					break;
-
-				}
-				break;
-			case Constants.SRC_LOCAL:
-				localQuesNum = QuestionDao.getQuesNum(context);
-				localLens = 10L;
-				mLocalQuestions = null;
-				resultCode = -1;
-				switch ((int) object) {
-				case Constants.DATA_INIT:
-					if (localQuesNum > 0) {
-						if (localQuesNum <= localLens) {
-							localLens = localQuesNum;
-							isAllDownload = true;
-						}
-						mLocalQuestions = QuestionDao.getQuestions(context,
-								(long) questions.size(), localLens);
+					questionsAdapter.notifyDataSetChanged();
+					isDownloading = false;
+				} else if (action.equals("special")) {
+					if (isDownloading) {
+						showToast("正在下载中,稍后再试...");
 					} else {
-						resultCode = Constants.ERR_LOCAL_NO_DATA;
+						loadData(Constants.DOWN);
 					}
-					break;
-				case Constants.DATA_AFTER:
-					resultCode = Constants.ERR_LOCAL_NO_NEW_DATA;
-					break;
-				case Constants.DATA_BEFORE:
-					long lave = localQuesNum - (questions.size() + localLens);
-					if (lave <= 0) {
-						localLens = localQuesNum - questions.size();
-						isAllDownload = true;
-					}
-					mLocalQuestions = QuestionDao.getQuestions(context,
-							(long) questions.size(), localLens);
-					break;
-				}
-				break;
-			}
-			return mLocalQuestions;
-		}
-
-		@Override
-		protected void onPostExecute(ArrayList<Question> result) {
-			progressDialog.dismiss();
-			if (result != null) {
-				questions.addAll(result);
-				onLastItemVisible();
-			} else {
-				switch (resultCode) {
-				case -1:
-					showToast("暂无数据...", Toast.LENGTH_SHORT);
-					break;
-				case Constants.ERR_LOCAL_NO_DATA:
-					showToast("本地无数据,打开网络连接加载数据...", Toast.LENGTH_SHORT);
-					break;
-				case Constants.ERR_LOCAL_NO_NEW_DATA:
-					showToast("请打开网络连接,加载新数据...", Toast.LENGTH_SHORT);
-					break;
-				case 2:
-					questions.addAll(MyApplication.downloadAllQuestion(null));
-					break;
 				}
 			}
-			questionsAdapter.notifyDataSetChanged();
-			refreshView.onRefreshComplete();
-			isRefreshing = false;
-			super.onPostExecute(result);
-		}
-
-		@Override
-		protected void onProgressUpdate(Void... values) {
-			super.onProgressUpdate(values);
 		}
 	}
 
-	/*
+	/**
+	 * 获取数据，查看更多
+	 */
+	private class GetDataTask extends AsyncTask<Integer, Void, List<Question>> {
+
+		@Override
+		protected List<Question> doInBackground(Integer... params) {
+			isRefreshing = true;
+			final int action = params[0];
+			final DBTools mDBTools = DBTools.getInstance(context);
+			List<Question> mQuestions = new ArrayList<Question>();
+			final int size = questions.size();
+			if (size > 0) {// 获取更多数据
+				long floorTime = questions.get(0).getCreated_time();
+				long topTime = questions.get(size - 1).getCreated_time();
+				switch (action) {
+				case Constants.DOWN:// 下拉
+					mQuestions = mDBTools.loadQuestions(floorTime);
+					if (mQuestions.size() == 0) {
+						if (isNetworkConnected) {
+							isDownloading = true;
+							LinkedList<NameValuePair> mParams = new LinkedList<NameValuePair>();
+							mParams.add(new BasicNameValuePair("start", "0"));
+							mParams.add(new BasicNameValuePair("floorTime", String.valueOf(floorTime)));
+							MyApplication.downloadQuestion(context, mParams);
+						}
+					}
+					break;
+				case Constants.UP:// 上拉
+					mQuestions = mDBTools.loadQuestions(topTime, 5);// 本地数据
+					if (mQuestions.size() == 0) {
+						if (isNetworkConnected) {
+							isDownloading = true;
+							LinkedList<NameValuePair> mParams = new LinkedList<NameValuePair>();
+							mParams.add(new BasicNameValuePair("start", "0"));
+							mParams.add(new BasicNameValuePair("topTime", String.valueOf(topTime)));
+							MyApplication.downloadQuestion(context, mParams);
+						}
+					}
+					break;
+				}
+			} else {// 首次加载数据
+				mQuestions = DBTools.getInstance(context).loadQuestions(5);
+				if (mQuestions.size() == 0) {
+					if (isNetworkConnected) {
+						isDownloading = true;
+						LinkedList<NameValuePair> mParams = new LinkedList<NameValuePair>();
+						mParams.add(new BasicNameValuePair("start", "0"));
+						MyApplication.downloadQuestion(context, mParams);
+					}
+				}
+			}
+			return mQuestions;
+		}
+
+		@Override
+		protected void onPostExecute(List<Question> result) {
+			if (AppUtils.isNetworkConnect(getActivity())) {
+				noNetworkConnect.setVisibility(View.GONE);
+			} else {
+				noNetworkConnect.setVisibility(View.VISIBLE);
+			}
+			if (result.size() > 0) {
+				final Question firstQuestion = result.get(0);
+				if (questions.size() > 0 && firstQuestion.getCreated_time() > questions.get(0).getCreated_time()) {
+					questions.addAll(0, result);
+				} else {
+					questions.addAll(result);
+				}
+			} else {
+				if (!isDownloading)
+					showToast("没有加载到数据");
+			}
+			isRefreshing = false;
+			questionsAdapter.notifyDataSetChanged();
+			refreshView.onRefreshComplete();
+		}
+	}
+
+	private class QuestionViewHolder {
+		CircularImage avatar;
+		TextView distance;
+		TextView nickname;
+		TextView publishTime;
+		TextView postAlertInfo;
+		ImageView img;
+		TextView desc;
+		MAudioView audio;
+		TextView comment;
+
+		// TextView fakeTitle;
+	}
+
+	/**
 	 * 破题列表适配器
 	 */
 	private class QuestionsAdapter extends BaseAdapter {
+		private LayoutInflater inflater;
 
-		Context context;
-		List<Question> questions;
-
-		public QuestionsAdapter(Context context, List<Question> questions) {
-			this.context = context;
-			this.questions = questions;
+		public QuestionsAdapter() {
+			inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		}
 
 		@Override
@@ -324,203 +283,78 @@ public class QuestionsFragment extends Fragment implements OnClickListener,
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			if (convertView == null) {
-				convertView = LayoutInflater.from(context).inflate(
-						R.layout.question_item, null);
-			}
-			final Question question = (Question) getItem(position);
-			User user = loginUser;
-			// if (question.getqState() != 2) {
-			// user = UserDao.getUserById(context, question.getqUser());
+			QuestionViewHolder holder = null;
+			// if (convertView == null) {
+			convertView = inflater.inflate(R.layout.question_item, null);
+			holder = new QuestionViewHolder();
+			holder.avatar = (CircularImage) convertView.findViewById(R.id.avatar_val);
+			holder.distance = (TextView) convertView.findViewById(R.id.distance);
+			holder.nickname = (TextView) convertView.findViewById(R.id.nickname);
+			holder.publishTime = (TextView) convertView.findViewById(R.id.publish_time);
+			holder.postAlertInfo = (TextView) convertView.findViewById(R.id.post_alert_info);
+			holder.img = (ImageView) convertView.findViewById(R.id.img);
+			holder.desc = (TextView) convertView.findViewById(R.id.desc);
+			holder.audio = (MAudioView) convertView.findViewById(R.id.audio);
+			holder.comment = (TextView) convertView.findViewById(R.id.comment);
+			// holder.fakeTitle = (TextView)
+			// convertView.findViewById(R.id.fake_title);
+			convertView.setTag(holder);
 			// } else {
-			// user = loginUser;
+			// holder = (QuestionViewHolder) convertView.getTag();
 			// }
-			maps.put(question, user);
-			ImageView avatar = (ImageView) convertView
-					.findViewById(R.id.avatar);
-			final int width = AppUtils.getDefaultPhotoWidth(getActivity(), 9);
-			AppUtils.setViewSize(avatar, width, width);
-
-			loader.displayImage(user.getAvatar(), avatar, options);
-			((TextView) convertView.findViewById(R.id.nickname)).setText(user
-					.getNickname());
-			final TextView distance = (TextView) convertView
-					.findViewById(R.id.location);
-			if (user.getUserId() == loginUser.getUserId())
-				distance.setText("附近");
-			else
-				distance.setText("1.2千米");
-			final int qState = question.getqState();
-			if (qState != 2) {
-				((TextView) convertView.findViewById(R.id.status))
-						.setText(qState == 0 ? "未解决" : "已解决");
+			final Question mQuestion = (Question) getItem(position);
+			DBTools mDBTools = DBTools.getInstance(context);
+			User user = loginUser;
+			maps.put(mQuestion, user);
+			loader.displayImage(user.getUser_avatar(), holder.avatar, options);
+			holder.distance.setText("附近");
+			holder.nickname.setText(user.getUser_nickname());
+			holder.publishTime.setText(AppUtils.timeToNow(mQuestion.getCreated_time()));
+			holder.postAlertInfo.setText(DBTools.getState(mQuestion.getQ_state()));
+			holder.desc.setText(mQuestion.getQ_text_content());
+			List<Resource> mResources = mDBTools.loadResources(mQuestion.getQ_resource());
+			// List<String> thumbnails = DBTools.getSImages(mResources);
+			// List<String> images = DBTools.getLImages(mResources);
+			String thumbnail = DBTools.getSImage(mResources);
+			String img = DBTools.getLImage(mResources);
+			if (thumbnail != null) {
+				// photosView.setNumColumns(thumbnails.size() >= 3 ? 3
+				// : thumbnails.size());
+				// PhotosAdapter adapter = new
+				// PhotosAdapter(getActivity(),thumbnails, images);
+				// holder.photosView.setAdapter(adapter);
+				AppUtils.disImg(context, loader, options, holder.img, thumbnail, img);
 			} else {
-				((TextView) convertView.findViewById(R.id.status))
-						.setText("上传中...");
+				holder.img.setVisibility(View.GONE);
+				// holder.photosView.setVisibility(View.GONE);
+				// holder.fakeTitle.setText(mQuestion.getQ_title());
+				// holder.fakeTitle.setVisibility(View.VISIBLE);
 			}
-			((TextView) convertView.findViewById(R.id.publishTime))
-					.setText(AppUtils.timeToNow(question.getCreatedTime()));
-			TextView title = (TextView) convertView.findViewById(R.id.title);
-			MGridView photosView = (MGridView) convertView
-					.findViewById(R.id.photosView);
-			ArrayList<String> images = Resource.getImages(question
-					.getResouces());
-			if (images != null && images.size() != 0) {
-				final String imgSaveDir = "";
-				photosView.setAdapter(new PhotosAdapter(getActivity(), images,
-						imgSaveDir));
-				title.setText(question.getqTitle());
+			// final int index = position;
+			// holder.reply.setOnClickListener(new OnClickListener() {
+			//
+			// @Override
+			// public void onClick(View v) {
+			// startReply(index);
+			// }
+			// });
+			String url = DBTools.getAudio(mResources);
+			if (url != null && url.length() > 0) {
+				holder.audio.setAudioUrl(url);
+				holder.audio.setVisibility(View.VISIBLE);
 			} else {
-				title.setVisibility(View.GONE);
-				photosView.setVisibility(View.GONE);
-				TextView fakeTitle = (TextView) convertView
-						.findViewById(R.id.fake_title);
-				fakeTitle.setText(question.getqTitle());
-				fakeTitle.setVisibility(View.VISIBLE);
+				holder.audio.setVisibility(View.GONE);
 			}
-			ImageButton reply = (ImageButton) convertView
-					.findViewById(R.id.reply);
-			final int index = position;
-			reply.setOnClickListener(new OnClickListener() {
-
-				@Override
-				public void onClick(View v) {
-					startReply(index);
-				}
-			});
-			ImageButton audio = (ImageButton) convertView
-					.findViewById(R.id.audio);
-			final String sAudio = Resource.getAudio(question.getResouces());
-			if (sAudio != null && sAudio.length() > 0) {
-				audio.setVisibility(View.VISIBLE);
-				audio.setOnClickListener(new OnClickListener() {
-					@Override
-					public void onClick(View v) {
-						playAudio(sAudio);
-					}
-				});
-			}
-			return convertView;
-		}
-	}
-
-	/*
-	 * 分类列表
-	 */
-	private class ExpandableListAdapter extends BaseExpandableListAdapter {
-
-		private LayoutInflater inflater;
-		private ExpandableListView view;
-		private String[] groups;
-		private String[][] childs;
-
-		public ExpandableListAdapter(Context context, ExpandableListView view,
-				String[] groups, String[][] childs) {
-			this.inflater = (LayoutInflater) context
-					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			this.view = view;
-			this.groups = groups;
-			this.childs = childs;
-		}
-
-		@Override
-		public Object getChild(int groupPosition, int childPosition) {
-			return childs[groupPosition][childPosition];
-		}
-
-		@Override
-		public long getChildId(int groupPosition, int childPosition) {
-			return childPosition;
-		}
-
-		@Override
-		public View getChildView(int groupPosition, int childPosition,
-				boolean isLastChild, View convertView, ViewGroup parent) {
-			if (convertView == null) {
-				convertView = inflater.inflate(
-						R.layout.question_classify_child_item, null);
-			}
-			((TextView) convertView.findViewById(R.id.child)).setText(getChild(
-					groupPosition, childPosition).toString());
+			holder.comment.setText("0");
 			return convertView;
 		}
 
-		@Override
-		public int getChildrenCount(int groupPosition) {
-			return childs[groupPosition].length;
-		}
-
-		@Override
-		public Object getGroup(int groupPosition) {
-			return groups[groupPosition];
-		}
-
-		@Override
-		public int getGroupCount() {
-			return childs.length;
-		}
-
-		@Override
-		public long getGroupId(int groupPosition) {
-			return groupPosition;
-		}
-
-		@Override
-		public View getGroupView(int groupPosition, boolean isExpanded,
-				View convertView, ViewGroup parent) {
-			if (convertView == null) {
-				convertView = inflater.inflate(
-						R.layout.question_classify_group_item, null);
-			}
-			((TextView) convertView.findViewById(R.id.group)).setText(getGroup(
-					groupPosition).toString());
-			return convertView;
-		}
-
-		@Override
-		public boolean hasStableIds() {
-			return false;
-		}
-
-		@Override
-		public boolean isChildSelectable(int groupPosition, int childPosition) {
-			return true;
-		}
-
-		@Override
-		public void onGroupExpanded(int groupPosition) {
-			for (int position = 0; position < groups.length; position++) {
-				if (groupPosition != position) {
-					view.collapseGroup(position);
-				}
-			}
-			super.onGroupExpanded(groupPosition);
-		}
-
-	}
-
-	// 播放问题录音文件
-	public void playAudio(String audio) {
-		MediaPlayer voiceMp = new MediaPlayer();
-		try {
-			voiceMp.setDataSource(audio);
-			voiceMp.prepare();
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch (SecurityException e) {
-			e.printStackTrace();
-		} catch (IllegalStateException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		voiceMp.setLooping(false);
-		voiceMp.start();
 	}
 
 	// 回复问题
 	public void startReply(int position) {
-		Intent intent = new Intent(getActivity(), ReplyQuestionActivity.class);
+//		Intent intent = new Intent(getActivity(), ReplyQuestionActivity.class);
+		Intent intent = new Intent(getActivity(), QuestionDetailsActivity.class);
 		Bundle bundle = new Bundle();
 		final Question question = (Question) questions.get(position);
 		final User user = maps.get(question);
@@ -533,115 +367,47 @@ public class QuestionsFragment extends Fragment implements OnClickListener,
 	// 删除问题
 	public void deleteQuestion(final int index) {
 		final Question question = (Question) questions.get(index);
-		if (question.getqUser() == MyApplication.getLoginUser(context)
-				.getUserId()) {
-			Dialog alert = new AlertDialog.Builder(getActivity())
-					.setTitle("破题").setMessage("确定删除这个问题?")
-					.setPositiveButton("确定", new Dialog.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							if (!QuestionDao.deleteQuestion(context,
-									question.getqId())) {
-								Toast.makeText(
-										getActivity().getApplicationContext(),
-										"删除失败。。.", Toast.LENGTH_SHORT).show();
-							} else {
-								questions.remove(index);
-								questionsAdapter.notifyDataSetChanged();
-							}
-						}
-					}).setNegativeButton("取消", new Dialog.OnClickListener() {
-
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-						}
-					}).create();
-			alert.show();
-		}
-	}
-
-	// 显示分类
-	public void disQuestionClassify() {
-		final int height = refreshView.getMeasuredHeight();
-		View contentView = getActivity().getLayoutInflater().inflate(
-				R.layout.question_classify, null);
-		ExpandableListView classifyView = (ExpandableListView) contentView
-				.findViewById(R.id.classify_listview);
-		final String[][] childs = new String[4][];
-		final String[] classifies = getActivity().getResources()
-				.getStringArray(R.array.classifies);
-		childs[0] = getActivity().getResources().getStringArray(R.array.grades);
-		childs[1] = getActivity().getResources().getStringArray(
-				R.array.subjects);
-		childs[2] = getActivity().getResources().getStringArray(R.array.nearby);
-		childs[3] = getActivity().getResources().getStringArray(R.array.status);
-		classifyView.setAdapter(new ExpandableListAdapter(getActivity()
-				.getApplicationContext(), classifyView, classifies, childs));
-		classifyWindow = new PopupWindow(contentView,
-				AppUtils.getWindowMetrics(getActivity()).widthPixels / 3 * 2,
-				height, true);
-		classifyWindow.setBackgroundDrawable(new ColorDrawable());
-		classifyWindow.showAtLocation(classify, Gravity.RIGHT | Gravity.BOTTOM,
-				0, 0);
-		contentView.setOnTouchListener(new OnTouchListener() {
+		Dialog alert = new AlertDialog.Builder(getActivity()).setTitle("破题").setMessage("确定删除这个问题?").setPositiveButton("确定", new Dialog.OnClickListener() {
 			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				if (classifyWindow.isShowing()) {
-					classifyWindow.dismiss();
-				}
-				return false;
+			public void onClick(DialogInterface dialog, int which) {
+				DBTools.getInstance(context).deleteQuestion(question);
+				questions.remove(index);
+				questionsAdapter.notifyDataSetChanged();
 			}
-		});
-		classifyView.setOnChildClickListener(new OnChildClickListener() {
+		}).setNegativeButton("取消", new Dialog.OnClickListener() {
 
 			@Override
-			public boolean onChildClick(ExpandableListView parent, View view,
-					int groupPosition, int childPosition, long id) {
-				Toast.makeText(
-						getActivity(),
-						classifies[groupPosition] + ":"
-								+ childs[groupPosition][childPosition],
-						Toast.LENGTH_SHORT).show();
-				return false;
+			public void onClick(DialogInterface dialog, int which) {
 			}
-		});
+		}).create();
+		alert.show();
 	}
 
 	@Override
 	public void onClick(View view) {
 		switch (view.getId()) {
-		case R.id.sel_classify:
-			disQuestionClassify();
-			break;
-		case R.id.dis_more:
-			refreshData(2L);
-			break;
 		case R.id.no_network_connect:
 			AppUtils.networkSet(getActivity());
 			break;
 		}
 	}
 
-	public void refreshData(Long param) {
-		Long[] params = new Long[2];
-		params[1] = param;
-		progressDialog.show();
-
-		if (AppUtils.isNetworkConnect(getActivity())) {
-			noNetworkConnect.setVisibility(View.GONE);
-			params[0] = 0L;
-			new GetDataTask().execute(params);
+	public void loadData(int action) {
+		isNetworkConnected = AppUtils.isNetworkConnect(context);
+		if (!isRefreshing && !isDownloading) {
+			new GetDataTask().execute(action);
 		} else {
-			noNetworkConnect.setVisibility(View.VISIBLE);
-			params[0] = 1L;
-			if (questions.size() == 0)
-				params[1] = 0L;
-			new GetDataTask().execute(params);
+			showToast("刷新中...");
+			refreshView.onRefreshComplete();
 		}
 	}
 
 	public void showToast(String text, int delay) {
 		Toast.makeText(context, text, delay).show();
+	}
+
+	public void showToast(String msg) {
+		Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
 	}
 
 	public ProgressDialog getProgressDialog(String message) {
@@ -651,24 +417,88 @@ public class QuestionsFragment extends Fragment implements OnClickListener,
 	}
 
 	@Override
-	public void onRefresh(PullToRefreshBase<ListView> refreshView) {
-		String label = DateUtils.formatDateTime(getActivity()
-				.getApplicationContext(), System.currentTimeMillis(),
-				DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_DATE
-						| DateUtils.FORMAT_ABBREV_ALL);
-		refreshView.getLoadingLayoutProxy().setLastUpdatedLabel(label);
-		if (!isRefreshing) {
-			refreshData(1L);
-		}
+	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+		final Question question = questions.get(position - 1);
+		if (question.getQ_state() != 2)
+			startReply(position - 1);
+		else
+			showToast("正在上传中...", Toast.LENGTH_SHORT);
 	}
 
 	@Override
-	public void onLastItemVisible() {
-		if (isAllDownload) {
-			disMore.setVisibility(View.GONE);
-			Toast.makeText(context, "数据加载完毕...", Toast.LENGTH_SHORT).show();
+	public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+		deleteQuestion(position - 1);
+		return true;
+	}
+
+	@Override
+	public void onRefresh(PullToRefreshBase<ListView> refreshView) {
+		if (refreshView.isHeadherShow()) {
+			String label = DateUtils.formatDateTime(getActivity().getApplicationContext(), System.currentTimeMillis(), DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_DATE
+					| DateUtils.FORMAT_ABBREV_ALL);
+			refreshView.getLoadingLayoutProxy().setLastUpdatedLabel(label);
+			if (!MyApplication.isUploading) {
+				loadData(Constants.DOWN);
+			} else {
+				showToast("玩命上传中,稍后刷新...");
+				this.refreshView.onRefreshComplete();
+			}
 		} else {
-			disMore.setVisibility(View.VISIBLE);
+			loadData(Constants.UP);
 		}
 	}
+
+	public void updateQuestion(long q_id, long created_time, long q_resource) {
+		if (q_id != 0) {
+			for (Question mQuestion : questions) {
+				if (mQuestion.getQ_state() == 2) {
+					mQuestion.setQ_state((short) 0);
+					mQuestion.setQ_id(q_id);
+					mQuestion.setCreated_time(created_time);
+					mQuestion.setQ_resource(q_resource);
+					break;
+				}
+			}
+		} else {
+			for (Question mQuestion : questions) {
+				if (mQuestion.getQ_state() == 2) {
+					mQuestion.setQ_state((short) 3);
+					break;
+				}
+			}
+		}
+		questionsAdapter.notifyDataSetChanged();
+	}
+
+	// public void updateLog(){
+	// SharedPreferences
+	// questions=getActivity().getSharedPreferences("note",getActivity().MODE_PRIVATE);
+	// Editor editor=questions.edit();
+	// editor.putLong("time",System.currentTimeMillis());
+	// editor.commit();
+	// }
+	//
+	// public boolean canUpdate(){
+	// SharedPreferences
+	// questions=getActivity().getSharedPreferences("note",getActivity().MODE_PRIVATE);
+	// long now=System.currentTimeMillis();
+	// long lastTime=questions.getLong("time",now);
+	// if(now-lastTime>5000){
+	// return true;
+	// }
+	// return false;
+	// }
+
+	@Override
+	public void onResume() {
+		if ((questions == null || questions.size() == 0)) {
+			loadData(Constants.DOWN);
+		} else {
+			questionsAdapter.notifyDataSetChanged();
+			refreshView.invalidate();
+		}
+		Log.d(TAG, "OnResume");
+		super.onResume();
+	}
+
 }

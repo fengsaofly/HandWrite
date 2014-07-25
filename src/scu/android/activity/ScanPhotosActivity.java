@@ -1,7 +1,6 @@
 package scu.android.activity;
 
 import java.util.ArrayList;
-
 import scu.android.ui.PhotosViewPager;
 import uk.co.senab.photoview.PhotoView;
 import android.app.Activity;
@@ -14,7 +13,6 @@ import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
-import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -38,8 +36,9 @@ public class ScanPhotosActivity extends Activity {
 	private PhotosViewPager viewPager;
 	private ScanPageAdater adapter;
 	private ArrayList<String> photos;
+	// private ArrayList<String> thumbnails;
 	private String action;
-	private TextView pageIndex;
+	// private TextView pageIndex;
 	private ImageLoader imageLoader;
 	private DisplayImageOptions options;
 
@@ -52,22 +51,15 @@ public class ScanPhotosActivity extends Activity {
 
 	// 初始化
 	public void init() {
-		options = new DisplayImageOptions.Builder()
-				.showImageOnLoading(R.drawable.default_photo)
-				.showImageForEmptyUri(R.drawable.default_photo)
-				.showImageOnFail(R.drawable.default_photo).cacheInMemory(true)
-				.cacheOnDisk(true).considerExifParams(true)
-				.bitmapConfig(Bitmap.Config.RGB_565).build();
+		options = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).build();
 		imageLoader = ImageLoader.getInstance();
 		final Intent intent = getIntent();
 		final Bundle bundle = intent.getExtras();
 		photos = bundle.getStringArrayList("photos");
+		// thumbnails = bundle.getStringArrayList("thumbnails");
 		int index = bundle.getInt("index", 1);
 		action = bundle.getString("action");
 		toggleDel();
-
-		DisplayMetrics outMetrics = new DisplayMetrics();
-		getWindowManager().getDefaultDisplay().getMetrics(outMetrics);
 
 		viewPager = (PhotosViewPager) findViewById(R.id.viewPager);
 		adapter = new ScanPageAdater(photos);
@@ -76,8 +68,8 @@ public class ScanPhotosActivity extends Activity {
 		if (photos.size() > 3)
 			viewPager.setOffscreenPageLimit(photos.size() - 2);
 
-		pageIndex = (TextView) findViewById(R.id.pageIndex);
-		pageIndex.setText(index + "/" + photos.size());
+		// pageIndex = (TextView) findViewById(R.id.pageIndex);
+		// pageIndex.setText(index + "/" + photos.size());
 
 		viewPager.setCurrentItem(index - 1);
 	}
@@ -109,49 +101,45 @@ public class ScanPhotosActivity extends Activity {
 
 		@Override
 		public Object instantiateItem(View view, int position) {
-			final View photoLayout = inflater.inflate(R.layout.scan_photo_item,
-					null);
-			final PhotoView photo = (PhotoView) photoLayout
-					.findViewById(R.id.photo);
-			final ProgressBar loading = (ProgressBar) photoLayout
-					.findViewById(R.id.loading);
+			final View photoLayout = inflater.inflate(R.layout.scan_photo_item, null);
+			final PhotoView photo = (PhotoView) photoLayout.findViewById(R.id.photo);
+			final ProgressBar loading = (ProgressBar) photoLayout.findViewById(R.id.loading);
+			final TextView progress = (TextView) photoLayout.findViewById(R.id.progress);
 			/* "file:///" + photos.get(position) */
-			final String uri = photos.get(position);
-			final boolean isFromNetwork = (uri.startsWith("http://")) ? true
-					: false;
+			final String imgUri = photos.get(position);
+
+			final boolean isFromNetwork = (imgUri.startsWith("http://")) ? true : false;
+
 			if (isFromNetwork) {
-				imageLoader.displayImage(uri, photo, options,
-						new SimpleImageLoadingListener() {
-							@Override
-							public void onLoadingStarted(String imageUri,
-									View view) {
-								loading.setProgress(0);
-								loading.setVisibility(View.VISIBLE);
-							}
+				imageLoader.displayImage(imgUri, photo, options, new SimpleImageLoadingListener() {
+					@Override
+					public void onLoadingStarted(String imageimgUri, View view) {
+						loading.setProgress(0);
+						loading.setVisibility(View.VISIBLE);
+						progress.setVisibility(View.VISIBLE);
+						progress.setText("0%");
+					}
 
-							@Override
-							public void onLoadingFailed(String imageUri,
-									View view, FailReason failReason) {
-								loading.setVisibility(View.GONE);
-							}
+					@Override
+					public void onLoadingFailed(String imageimgUri, View view, FailReason failReason) {
+						loading.setVisibility(View.GONE);
+						progress.setVisibility(View.GONE);
+					}
 
-							@Override
-							public void onLoadingComplete(String imageUri,
-									View view, Bitmap loadedImage) {
-								loading.setVisibility(View.GONE);
-								// BitmapUtils.saveBitmap(activity, loadedImage,
-								// imgSaveDir);
-							}
-						}, new ImageLoadingProgressListener() {
-							@Override
-							public void onProgressUpdate(String imageUri,
-									View view, int current, int total) {
-								loading.setProgress(Math.round(100.0f * current
-										/ total));
-							}
-						});
+					@Override
+					public void onLoadingComplete(String imageimgUri, View view, Bitmap loadedImage) {
+						loading.setVisibility(View.GONE);
+						progress.setVisibility(View.GONE);
+					}
+				}, new ImageLoadingProgressListener() {
+					@Override
+					public void onProgressUpdate(String imageimgUri, View view, int current, int total) {
+						String status = Math.round(100.0f * current / total) + "%";
+						progress.setText(status);
+					}
+				});
 			} else {
-				imageLoader.displayImage(uri, photo, options);
+				imageLoader.displayImage(imgUri, photo, options);
 			}
 
 			((ViewPager) view).addView(photoLayout, 0);
@@ -178,7 +166,7 @@ public class ScanPhotosActivity extends Activity {
 
 		@Override
 		public void onPageSelected(int position) {
-			pageIndex.setText((position + 1) + "/" + photos.size());
+			// pageIndex.setText((position + 1) + "/" + photos.size());
 		}
 
 	}
@@ -186,6 +174,12 @@ public class ScanPhotosActivity extends Activity {
 	public void toggleDel() {
 		if (action != null) {
 			findViewById(R.id.delete_photo).setVisibility(View.VISIBLE);
+		}
+	}
+
+	public void toggleToReply() {
+		if (action != null) {
+
 		}
 	}
 
@@ -199,39 +193,35 @@ public class ScanPhotosActivity extends Activity {
 
 	public void deletePhoto() {
 		final int index = viewPager.getCurrentItem();
-		Dialog alert = new AlertDialog.Builder(this).setTitle("破题")
-				.setMessage("删除这张照片?")
-				.setPositiveButton("确定", new Dialog.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						photos.remove(index);
-						adapter.notifyDataSetChanged();
-						Intent del = new Intent();
-						del.setAction(action);
-						del.putExtra("photoIndex", index);
-						sendBroadcast(del);
-						if (photos.size() <= 0)
-							finish();
-						else {
-							if (index >= 1) {
-								if (index < photos.size())
-									pageIndex.setText((index + 1) + "/"
-											+ photos.size());
-								else
-									pageIndex.setText(index + "/"
-											+ photos.size());
-							} else {
-								pageIndex.setText(1 + "/" + photos.size());
-							}
-						}
-					}
-				}).setNegativeButton("取消", new Dialog.OnClickListener() {
+		Dialog alert = new AlertDialog.Builder(this).setTitle("破题").setMessage("删除这张照片?").setPositiveButton("确定", new Dialog.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				photos.remove(index);
+				adapter.notifyDataSetChanged();
+				Intent del = new Intent();
+				del.setAction(action);
+				del.putExtra("photoIndex", index);
+				sendBroadcast(del);
+				if (photos.size() <= 0)
+					finish();
+				else {
+					// if (index >= 1) {
+					// if (index < photos.size())
+					// pageIndex.setText((index + 1) + "/" + photos.size());
+					// else
+					// pageIndex.setText(index + "/" + photos.size());
+					// } else {
+					// pageIndex.setText(1 + "/" + photos.size());
+					// }
+				}
+			}
+		}).setNegativeButton("取消", new Dialog.OnClickListener() {
 
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
 
-					}
-				}).create();
+			}
+		}).create();
 		alert.show();
 	}
 
@@ -240,13 +230,4 @@ public class ScanPhotosActivity extends Activity {
 		imageLoader.stop();
 		super.onStop();
 	}
-
-	@Override
-	protected void onDestroy() {
-		imageLoader.clearMemoryCache();
-		imageLoader.clearDiskCache();
-		// viewPager.destroyDrawingCache();
-		super.onDestroy();
-	}
-
 }

@@ -28,6 +28,7 @@ public class DoodleBoardActivity extends Activity {
 
 	private DoodleCanvas doodleCanvas;
 	private View paintSet;
+	private ImageView paintSize;
 	private ImageView paintDemo;
 	private SeekBar range;
 	private Intent intent;
@@ -46,9 +47,11 @@ public class DoodleBoardActivity extends Activity {
 		actionBar.setDisplayHomeAsUpEnabled(true);
 		doodleCanvas = (DoodleCanvas) findViewById(R.id.doodle_canvas);
 		paintSet = findViewById(R.id.paint_set);
+		paintSize = (ImageView) paintSet.findViewById(R.id.paint_size);
 		paintDemo = (ImageView) paintSet.findViewById(R.id.paint_demo);
 		isSetColor = true;
 		range = (SeekBar) paintSet.findViewById(R.id.range);
+		final int colors[] = new int[] { R.color.black, R.color.red, R.color.blue, R.color.green, R.color.purbe, R.color.orange, R.color.black };
 		range.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 
 			@Override
@@ -62,64 +65,15 @@ public class DoodleBoardActivity extends Activity {
 			}
 
 			@Override
-			public void onProgressChanged(SeekBar seekBar, int progress,
-					boolean fromUser) {
+			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 				if (isSetColor) {
-					String color = null;
-					switch (progress / 16) {
-					case 0:
-						color = getResources().getString(R.color.black);
-						break;
-					case 1:
-						color = getResources().getString(R.color.red);
-						break;
-					case 2:
-						color = getResources().getString(R.color.blue);
-						break;
-					case 3:
-						color = getResources().getString(R.color.green);
-						break;
-					case 4:
-						color = getResources().getString(R.color.purbe);
-						break;
-					case 5:
-						color = getResources().getString(R.color.orange);
-						break;
-					default:
-						color = getResources().getString(R.color.black);
-						break;
-					}
-					AppUtils.setViewSize(paintDemo, LayoutParams.MATCH_PARENT,
-							LayoutParams.MATCH_PARENT);
+					String color = getResources().getString(colors[progress / 16]);
+					AppUtils.setViewSize(paintDemo, 80, 80);
 					paintDemo.setBackgroundColor(Color.parseColor(color));
 					doodleCanvas.setPaintColor(color);
 				} else {
-					int baseSize = AppUtils
-							.getWindowMetrics(DoodleBoardActivity.this).widthPixels / 200;
-					int paintSize = 0;
-					switch (progress / 16) {
-					case 0:
-						paintSize = baseSize;
-						break;
-					case 1:
-						paintSize = 2 * baseSize;
-						break;
-					case 2:
-						paintSize = 4 * baseSize;
-						break;
-					case 3:
-						paintSize = 6 * baseSize;
-						break;
-					case 4:
-						paintSize = 8 * baseSize;
-						break;
-					case 5:
-						paintSize = 10 * baseSize;
-						break;
-					default:
-						baseSize = doodleCanvas.getPaintSize();
-						break;
-					}
+					int baseSize = AppUtils.getWindowMetrics(DoodleBoardActivity.this).widthPixels / 200;
+					int paintSize = baseSize * (progress / 16 + 1);
 					AppUtils.setViewSize(paintDemo, paintSize, paintSize);
 					doodleCanvas.setPaintSize(paintSize);
 				}
@@ -151,6 +105,7 @@ public class DoodleBoardActivity extends Activity {
 		switch (view.getId()) {
 		case R.id.paint_size:
 			isSetColor = !isSetColor;
+			togglePaintBg();
 			break;
 		case R.id.withdraw:
 			doodleCanvas.withdraw(false);
@@ -161,6 +116,14 @@ public class DoodleBoardActivity extends Activity {
 		case R.id.del:
 			doodleCanvas.withdraw(true);
 			break;
+		}
+	}
+
+	public void togglePaintBg() {
+		if (isSetColor) {
+			paintSize.setImageResource(R.drawable.paint_color);
+		} else {
+			paintSize.setImageResource(R.drawable.paint_size);
 		}
 	}
 

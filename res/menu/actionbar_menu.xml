@@ -1,23 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="scu.android.note.ActionBarActivity" >
 
     <item
         android:id="@+id/home_search_btn"
         android:actionLayout="@layout/list_item"
         android:actionViewClass="android.widget.SearchView"
         android:icon="@drawable/actionbar_search"
-        android:showAsAction="ifRoom|collapseActionView"
+        android:showAsAction="always|collapseActionView"
         android:title="@string/app_name"/>
     <item
         android:id="@+id/home_add_btn"
         android:icon="@drawable/actionbar_add"
-        android:showAsAction="ifRoom"
+        android:actionProviderClass="scu.android.note.PlusActionProvider"
+        android:showAsAction="always"
         android:title="添加">
     </item>
     <item
+        android:id="@id/popup_menu_option_login"
+        android:icon="@drawable/settings_userinfo_icon"
+        android:title="登录"/>
+    <item
         android:id="@+id/home_settings_btn"
-        android:icon="@drawable/actionbar_settings"
-        android:showAsAction="ifRoom|withText"
+        android:icon="@drawable/actionbar_setting"
         android:title="设置">
     </item>
 

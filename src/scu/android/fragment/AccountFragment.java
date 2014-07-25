@@ -3,6 +3,8 @@ package scu.android.fragment;
 
 
 
+import org.jivesoftware.smackx.packet.VCard;
+
 import scu.android.application.MyApplication;
 import scu.android.ui.AccountSettingActivity;
 import scu.android.ui.LoginActivity;
@@ -10,6 +12,8 @@ import scu.android.ui.RegisterActivity;
 import scu.android.util.XmppTool;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -48,7 +52,7 @@ public class AccountFragment extends Fragment{
 	     
 	     
 		
-	     
+	  
 	 
 	}
 	@Override
@@ -62,14 +66,21 @@ public class AccountFragment extends Fragment{
 		accountSetting = (RelativeLayout)view.findViewById(R.id.accountSetting);
 		laySet = (RelativeLayout)view.findViewById(R.id.laySet);
 		photo = (ImageView)view.findViewById(R.id.photo);
+		
+//		Bitmap bm = BitmapFactory.decodeStream(((MyApplication)getActivity().getApplication()).getUserImage(XmppTool.getConnection(), ((MyApplication)getActivity().getApplication()).userName));
+//		photo.setImageBitmap(bm);
+		
 		regist_btn = (Button)view.findViewById(R.id.regist_btn);
 		login_btn = (Button)view.findViewById(R.id.login_btn);
 		uid = (TextView)view.findViewById(R.id.uid);
 		member = (TextView)view.findViewById(R.id.member);
 		
-		sp = getActivity().getSharedPreferences("bnj", getActivity().MODE_PRIVATE);
-		String sign = sp.getString("sign", "");
-		member.setText("个性签名: "+sign);
+//		sp = getActivity().getSharedPreferences("bnj", getActivity().MODE_PRIVATE);
+//		String sign = sp.getString("sign", "");
+		
+//		VCard vcard = ((MyApplication)getActivity().getApplication()).getUserVcard(XmppTool.getConnection(),((MyApplication)getActivity().getApplication()).userName);
+//		 
+//		member.setText("个性签名: "+vcard.getLastName());
 		
 		if(((MyApplication)getActivity().getApplication()).loginFlag==false){
 			accountSetting.setVisibility(View.GONE);
@@ -79,16 +90,16 @@ public class AccountFragment extends Fragment{
 			myAcccountLoginAndRegistLayout.setVisibility(View.INVISIBLE);
 			uid.setText("UID: "+((MyApplication)getActivity().getApplication()).userName);
 			
-				 try{
-				 int indentify = getActivity().getResources().getIdentifier(getActivity().getPackageName()+":drawable/"+((MyApplication)getActivity().getApplicationContext()).iconMap.get(((MyApplication)getActivity().getApplication()).userName), null, null);
-        			if(indentify>0){ 
-        				photo.setImageDrawable((getActivity().getResources().getDrawable(indentify)));
-        				
-        			}
-        			
-				 }catch(NullPointerException e){
-//					 map.put("find_icon", getActivity().getResources().getDrawable(R.drawable.dota_1));
-				 }
+//				 try{
+//				 int indentify = getActivity().getResources().getIdentifier(getActivity().getPackageName()+":drawable/"+((MyApplication)getActivity().getApplicationContext()).iconMap.get(((MyApplication)getActivity().getApplication()).userName), null, null);
+//        			if(indentify>0){ 
+//        				photo.setImageDrawable((getActivity().getResources().getDrawable(indentify)));
+//        				
+//        			}
+//        			
+//				 }catch(NullPointerException e){
+////					 map.put("find_icon", getActivity().getResources().getDrawable(R.drawable.dota_1));
+//				 }
 			
 			
 			
@@ -123,7 +134,7 @@ public class AccountFragment extends Fragment{
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				startActivity(new Intent(getActivity(),RegisterActivity.class));
-				getActivity().finish();
+//				getActivity().finish();
 			}
 		});
 		login_btn.setOnClickListener(new OnClickListener() {
@@ -132,7 +143,7 @@ public class AccountFragment extends Fragment{
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 			startActivity(new Intent(getActivity(),LoginActivity.class));
-				getActivity().finish();
+//				getActivity().finish();
 			}
 		});
 	      return view;

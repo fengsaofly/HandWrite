@@ -52,7 +52,7 @@
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"
         android:gravity="left"
-         android:text="123"
+         android:text=""
          android:textSize="25sp"
          android:layout_marginLeft="20dp"
         />

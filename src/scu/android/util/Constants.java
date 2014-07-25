@@ -13,16 +13,20 @@ public class Constants {
 	public final static int SYS_CROP = 5;
 	public final static int ISSUE_QUESTION = 11;
 	public final static int ISSUE_QUESTION_REPLY = 12;
-	public final static int MAX_PHOTOS_NUM = 6;
+	public final static int MAX_PHOTOS_NUM = 1;
 
-	public final static int SRC_NET = 0;
-	public final static int SRC_LOCAL = 1;
-	public final static int DATA_INIT = 0;
-	public final static int DATA_AFTER = 1;
-	public final static int DATA_BEFORE = 2;
+	public static final int UP=0;
+	public static final int DOWN=1;
+	public static final int UPDATE=2;
 
-	public final static int ERR_LOCAL_NO_DATA = 0;
-	public final static int ERR_LOCAL_NO_NEW_DATA = 1;
-
-	public static final String UPLOAD_QUESTION_SUCCESS = "scu.android.util.uploadQuestionSuccess";
+	public static final int QUESTION=1;
+	public static final int REPLY=2;
+	
+	
+	public static final String QUESTIONS="scu.android.util.questions";
+	public static final String REPLYS="scu.android.util.replys";
+	public static final String RESOURCES="scu.android.util.resources";
+	public static final String PEOPLE_NEARBY="scu.android.activiy.nearbypeople";
+	public static final String STORYS="scu.android.activiy.schoolstorys";
+	public static final String SELECT_PHOTO="scu.android.util.selectphotoadapter";
 }
