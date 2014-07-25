@@ -111,7 +111,8 @@
     
     <!-- 登录 -->
     <item name="login_popup_view" type="id"/>
-
+	<item name="login_popup_view_pwd_feedback" type="id"/>
+	
     <!-- @YouMingyang 新添加 -->
     <item name="nearby_people" type="id"/>
     <item name="nearby_list" type="id"/>
@@ -153,13 +154,8 @@
     <item name="find_title" type="id"/>
     <item name="find_desc" type="id"/>
     <item name="find_img" type="id"/>
-    <!-- 发现 -->
+
     <item name="layout" type="id"/>
-    <item name="find_handUp" type="id"/>
-    <item name="comment" type="id"/>
-    <item name="find_title" type="id"/>
-    <item name="desc" type="id"/>
-    <item name="img" type="id"/>
     <item name="post_alert_info" type="id"/>
     <item name="find_post_alert_info" type="id"/>
     <item name="find_item_top_lay" type="id"/>

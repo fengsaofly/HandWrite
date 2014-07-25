@@ -43,12 +43,13 @@
         <activity android:name="scu.android.ui.SearchFriendActivity" />
         <activity android:name="scu.android.ui.ActivityMultiRoom" />
         <activity android:name="scu.android.ui.ChatMainActivity" />
-        <activity android:name="scu.android.ui.LoginActivity" />
+        <activity android:name="scu.android.ui.LoginActivity"  />
         <activity android:name="scu.android.ui.GroupDetailActivity" />
         <activity android:name="scu.android.ui.NewFriendsActivity" />
         <activity android:name="scu.android.ui.RegisterActivity" />
         <activity android:name="scu.android.ui.AccountSettingActivity" />
-        <activity android:name="scu.android.ui.SelectPicPopupWindow" />
+        <activity android:name="scu.android.ui.PwdFeedBackActivity" />
+        <activity android:name="scu.android.ui.SelectPicPopupWindow" android:theme="@style/MyDialogStyleBottom" />
         <activity android:name="scu.android.activity.ReplyQuestionActivity" />
         <activity android:name="scu.android.activity.ImageCropperActivity" />
         <activity android:name="scu.android.activity.IssueQuestionActivity" />

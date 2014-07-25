@@ -292,10 +292,10 @@ public class QuestionsFragment extends Fragment implements OnClickListener, OnRe
 			holder.nickname = (TextView) convertView.findViewById(R.id.nickname);
 			holder.publishTime = (TextView) convertView.findViewById(R.id.publish_time);
 			holder.postAlertInfo = (TextView) convertView.findViewById(R.id.post_alert_info);
-			holder.img = (ImageView) convertView.findViewById(R.id.img);
-			holder.desc = (TextView) convertView.findViewById(R.id.desc);
+			holder.img = (ImageView) convertView.findViewById(R.id.find_img);
+			holder.desc = (TextView) convertView.findViewById(R.id.find_desc);
 			holder.audio = (MAudioView) convertView.findViewById(R.id.audio);
-			holder.comment = (TextView) convertView.findViewById(R.id.comment);
+			holder.comment = (TextView) convertView.findViewById(R.id.find_comment);
 			// holder.fakeTitle = (TextView)
 			// convertView.findViewById(R.id.fake_title);
 			convertView.setTag(holder);

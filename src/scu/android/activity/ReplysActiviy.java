@@ -293,8 +293,8 @@ public class ReplysActiviy extends ActivitySupport implements OnRefreshListener<
 			holder.reply = (ImageView) convertView.findViewById(R.id.reply);
 			holder.publishTime = (TextView) convertView.findViewById(R.id.publish_time);
 			holder.postAlterInfo = (TextView) convertView.findViewById(R.id.post_alert_info);
-			holder.desc = (TextView) convertView.findViewById(R.id.desc);
-			holder.img = (ImageView) convertView.findViewById(R.id.img);
+			holder.desc = (TextView) convertView.findViewById(R.id.find_desc);
+			holder.img = (ImageView) convertView.findViewById(R.id.find_img);
 			holder.audio = (MAudioView) convertView.findViewById(R.id.audio);
 			holder.replys = (MListView) convertView.findViewById(R.id.replys);
 			convertView.setTag(holder);
