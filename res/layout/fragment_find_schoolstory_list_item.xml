@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp"
+    android:background="@color/gray_bright" >
+
+    <ImageView
+        android:id="@id/list_item_icon"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_gravity="center"
+        android:scaleType="fitXY"
+        android:src="@drawable/friend_icon_sample" />
+
+    <TextView
+        android:id="@+id/find_user"
+        style="@style/text_style_medium_gray"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/list_item_icon"
+        android:text="肖逸飞" />
+
+    <TextView
+        android:id="@id/distance_textview"
+        style="@style/list_item_time"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:layout_alignBottom="@id/list_item_icon"
+        android:layout_below="@id/find_user"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="10dp"
+        android:layout_toRightOf="@id/list_item_icon"
+        android:gravity="left"
+        android:text="100米以内" />
+
+    <TextView
+        android:id="@id/list_item_description"
+        style="@style/listview_sign_text_style"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/find_upload_img"
+        android:layout_centerInParent="true"
+        android:layout_margin="5dp"
+        android:text="不用看了，这就是我的个性签名..." />
+
+</RelativeLayout>

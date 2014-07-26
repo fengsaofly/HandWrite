@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animation-list xmlns:android="http://schemas.android.com/apk/res/android"
+    android:oneshot="true" >
+
+    <item
+        android:drawable="@drawable/btn_posts_record_left_zero"
+        android:duration="200"/>
+    <item
+        android:drawable="@drawable/btn_posts_record_left_one"
+        android:duration="200"/>
+    <item
+        android:drawable="@drawable/btn_posts_record_left_two"
+        android:duration="200"/>
+    <item
+        android:drawable="@drawable/btn_posts_record_left_three"
+        android:duration="200"/>
+    <item
+        android:drawable="@drawable/btn_posts_record_left_four"
+        android:duration="200"/>
+    <item
+        android:drawable="@drawable/btn_posts_record_left_five"
+        android:duration="200"/>
+    <item
+        android:drawable="@drawable/btn_posts_record_left_six"
+        android:duration="200"/>
+
+</animation-list>

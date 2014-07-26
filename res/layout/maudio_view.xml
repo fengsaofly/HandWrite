@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/audio_view_bg"
+    android:focusable="true"
+    android:gravity="center"
+    android:padding="5dp" >
+
+    <ImageView
+        android:id="@id/play"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:contentDescription="@string/app_name"
+        android:src="@drawable/play"
+        android:enabled="false" />
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="50dp" >
+
+        <ImageView
+            android:id="@id/status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            android:background="@anim/audioplay"
+            android:contentDescription="@string/app_name" />
+
+        <ProgressBar
+            android:id="@id/loading"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:visibility="gone" />
+    </FrameLayout>
+
+</LinearLayout>

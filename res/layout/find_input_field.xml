@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:id="@id/record_pressbtn_lay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/chat_input_lay_bg"
+        android:baselineAligned="false"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:orientation="horizontal"
+        android:visibility="visible"
+        android:weightSum="1" >
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="0.12"
+            android:gravity="bottom|center_horizontal"
+            android:paddingLeft="5dp" >
+
+            <TextView
+                android:id="@+id/add_record"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="9dp"
+                android:background="@drawable/chat_input_voice_btn_style"
+                android:clickable="true" />
+
+            <TextView
+                android:id="@+id/has_record"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:layout_below="@+id/add_record"
+                android:background="@drawable/icon_news_head_prompt_one"
+                android:visibility="gone" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="0.12"
+            android:gravity="bottom|center_horizontal"
+            android:paddingLeft="5dp" >
+
+            <TextView
+                android:id="@+id/add_extras"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="9dp"
+                android:background="@drawable/chat_input_add_btn_style"
+                android:clickable="true" />
+
+            <TextView
+                android:id="@+id/has_img"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:layout_below="@+id/add_extras"
+                android:background="@drawable/icon_news_head_prompt_one"
+                android:visibility="gone" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="0.60"
+          
+            android:gravity="center_vertical"
+            android:padding="2dp" >
+
+            <EditText
+                android:id="@+id/input_field"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="5dp"
+                android:background="@drawable/chat_textview_bg"
+                android:cursorVisible="true"
+                android:inputType="textMultiLine|text"
+                android:maxLines="5"
+                android:paddingLeft="2dp"
+                android:textColor="#000000"
+                android:textCursorDrawable="@drawable/edit_cursor" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="0.16"
+            android:gravity="bottom|center_horizontal" >
+
+            <TextView
+                android:id="@+id/chat_send"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="11dp"
+                android:background="@drawable/button_small_white_style"
+                android:clickable="true"
+                android:gravity="center"
+                android:padding="6dp"
+                android:text="发送"
+                android:textColor="@color/TextColorWhite" />
+        </RelativeLayout>
+        <!--
+                 <TextView
+	            android:id="@id/record_pressbtn"
+	            style="@style/DefaultTextStyle"
+	            android:layout_width="fill_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_margin="10dp"
+	            android:background="@drawable/chat_textview_bg"
+	            android:text="按住说话" />
+        -->
+    </LinearLayout>
+    <!-- YouMingyang添加 -->
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/extras"
+        android:layout_width="match_parent"
+        android:layout_height="160dp"
+        android:visibility="gone" />
+
+    <include
+        android:id="@+id/thumbnail_popup_layout"
+        android:layout_width="match_parent"
+        android:layout_height="160dp"
+        layout="@layout/thubnail_popup_layout"
+        android:visibility="gone" />
+
+    <!--
+    <include
+        android:id="@+id/question_popup_layout"
+        layout="@layout/question_popup_layout_withoutrecord"
+        android:visibility="gone" />
+
+    <include
+        android:id="@+id/voice_popup_layout"
+        layout="@layout/voice_popup_layout"
+        android:visibility="gone" />
+    -->
+
+</LinearLayout>

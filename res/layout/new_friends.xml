@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" 
+    android:background="@color/BackgroundGrayColor">
+    
+    
+  
+
+        
+  
+   <ListView android:id="@+id/newFriendListView" android:visibility="visible" android:fadingEdge="none" android:descendantFocusability="blocksDescendants" android:layout_width="fill_parent" android:layout_height="fill_parent" android:cacheColorHint="#00000000" android:divider="#ffb4b4b4" android:dividerHeight="1.0px"  />
+
+ 
+   
+   
+</RelativeLayout>

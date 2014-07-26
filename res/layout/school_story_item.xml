@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="7dp"
+    android:layout_marginRight="7dp"
+    android:background="#ffffff"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#dddddd"
+        android:singleLine="false"
+        android:textColor="#000000"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@id/content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:singleLine="false"
+        android:textColor="#000000"
+        android:textSize="18sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#eeeeee"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@id/nickname"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:singleLine="false"
+            android:textColor="#aaaaaa"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@id/distance"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:singleLine="false"
+            android:textColor="#aaaaaa"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@id/publish_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:singleLine="false"
+            android:textColor="#aaaaaa"
+            android:textSize="15sp" />
+    </LinearLayout>
+
+</LinearLayout>

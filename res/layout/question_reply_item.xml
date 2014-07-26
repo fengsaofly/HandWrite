@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#f5f5f5"
+
+    android:descendantFocusability="blocksDescendants"
+	
+    >
+ 
+	
+  
+        
+            <!-- 头像 -->
+		<LinearLayout android:layout_marginTop="5dp" android:padding="10dp" android:id="@id/find_item_left_lay" android:layout_width="wrap_content" android:layout_height="wrap_content" android:gravity="left" android:orientation="vertical">
+            <scu.android.ui.CircularImage android:id="@id/avatar_val" android:layout_width="36dp" android:layout_height="36dp"  android:scaleType="fitCenter" android:contentDescription="@string/app_name" android:src="@drawable/avatar_example"/>
+
+			<TextView android:gravity="center_vertical" android:layout_marginTop="5dp" android:layout_gravity="center_horizontal" android:layout_width="wrap_content" android:layout_height="wrap_content" android:drawablePadding="3dp" android:drawableLeft="@drawable/find_location"  android:text="附近" style="@style/find_distance" android:textColor="@color/find_location_text" android:id="@id/distance"/>
+
+		</LinearLayout>
+		
+            <LinearLayout android:layout_marginBottom="10dp"   android:paddingRight="10dp" android:paddingTop="5dp"  android:id="@id/find_item_right_lay" android:layout_toRightOf="@id/find_item_left_lay"  android:layout_centerVertical="true" android:orientation="vertical"  android:layout_width="fill_parent" android:layout_height="wrap_content" >
+
+                <!-- 昵称 -->
+				<RelativeLayout android:paddingRight="5dp" android:layout_marginBottom="2dp"  android:layout_width="fill_parent" android:layout_height="wrap_content">
+				   <TextView  android:textSize="14sp" android:layout_centerVertical="true"  android:id="@id/nickname" android:layout_width="wrap_content" android:layout_height="wrap_content"     android:text="Flyln" style="@style/find_list_item_username"/>
+
+             	   <ImageView android:layout_centerVertical="true"  android:layout_alignParentRight="true" android:layout_width="wrap_content"  android:layout_height="wrap_content" android:src="@drawable/find_more" android:id="@+id/reply"/>
+
+				</RelativeLayout>
+                <ImageView android:background="@anim/shape_line_gray" android:layout_width="fill_parent" android:layout_height="2dp"/>
+                <LinearLayout  android:layout_width="fill_parent" android:layout_height="wrap_content" android:orientation="horizontal" >
+                    <TextView android:layout_marginTop="2dp" android:textSize="10sp" android:id="@id/publish_time"  android:layout_below="@id/nickname"  android:layout_width="wrap_content"  android:layout_height="wrap_content" android:text="20秒前" style="@style/find_publish_time" />
+                    <TextView android:visibility="gone" android:id="@id/post_alert_info" android:layout_marginLeft="@dimen/control_margin_left" android:layout_marginTop="5dp"  android:layout_width="wrap_content"  android:layout_height="wrap_content" android:text="上传失败" style="@style/find_publish_time"/>
+                </LinearLayout>
+                
+                <!-- 发布位置 -->
+
+          <!--       <TextView
+                    android:id="@+id/location"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:textColor="#aaa"
+                    android:textSize="12sp" 
+                   	/> -->
+          
+
+
+        
+		       <!-- 问题标题 -->
+
+     <!--    <TextView android:id="@id/find_title" android:layout_width="fill_parent" android:layout_height="wrap_content" android:gravity="left" android:ellipsize="none" android:maxLength="30" android:singleLine="false" style="@style/text_style_large_normal_black" android:layout_marginTop="15dp" android:text="各位有没有想过这个题怎么解？"/>
+       -->  
+       <TextView android:layout_marginBottom="5dp" android:ellipsize="end" android:textSize="12sp" android:textColor="#5c5c5c" android:id="@id/find_desc" android:layout_width="fill_parent"  android:layout_height="wrap_content"	android:gravity="left"   android:maxLength="30" android:singleLine="false" style="@style/find_list_item_desc" android:layout_marginTop="5dp" android:text="在一个三角形中，有一个角为90°，那么另外两个角为多少度呢？"/>
+ 		<ImageView android:scaleType="centerCrop" android:layout_marginBottom="5dp"  android:id="@id/find_img" android:visibility="visible" android:layout_width="wrap_content" android:layout_height="wrap_content" android:adjustViewBounds="true" android:maxWidth="320dp" android:maxHeight="240dp" android:src="@drawable/avatar_shade_big"/>
+		
+		
+		
+          
+		
+		<RelativeLayout android:layout_marginBottom="10dp"  android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="right">    
+		   <scu.android.ui.MAudioView android:layout_alignParentLeft="true" android:id="@id/audio" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="left"  android:visibility="gone" />
+		</RelativeLayout>
+		<LinearLayout android:visibility="visible" android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="wrap_content" android:id="@id/layout">
+		    <TextView android:text="回复" style="@style/find_list_item_username" android:layout_marginBottom="5dp" android:textSize="12sp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+			<LinearLayout  android:background="#f5f5f5" android:layout_width="fill_parent" android:layout_height="wrap_content" android:orientation="vertical">  
+				<scu.android.ui.MListView android:layout_width="fill_parent" android:layout_height="wrap_content" android:id="@id/replys">
+				    
+				</scu.android.ui.MListView>
+			</LinearLayout>  
+		</LinearLayout>
+	    
+		
+		  </LinearLayout>
+		  
+    	<ImageView android:layout_below="@id/find_item_right_lay" android:background="@anim/shape_line_gray_solid" android:layout_width="fill_parent" android:layout_height="3dp"/>
+<!--     <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        问题标题
+
+        <TextView
+            android:id="@+id/fake_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:singleLine="false"
+            android:textColor="#000000"
+            android:textSize="18sp"
+            android:visibility="gone" />-->
+        <!-- 问题图片 -->
+
+      <!--   <scu.android.ui.MGridView
+            android:id="@+id/photosView"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:horizontalSpacing="2dp"
+            android:numColumns="3"
+            android:stretchMode="columnWidth"
+            android:verticalSpacing="2dp" >
+        </scu.android.ui.MGridView> -->
+
+        <!-- 录音 -->
+    
+  <!--   </FrameLayout>  -->
+    
+</RelativeLayout>
