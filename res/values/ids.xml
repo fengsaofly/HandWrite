@@ -95,6 +95,7 @@
     <item name="activity_title" type="id"/>
     <item name="activity_top" type="id"/>
     <item name="activity_top_right_action" type="id"/>
+    <item name="activity_top_right_action_img" type="id"/>
     <item name="activity_actionbar_tab_val" type="id"/>
     <item name="username_val" type="id"/>
     <item name="password_val" type="id"/>

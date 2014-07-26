@@ -94,14 +94,14 @@ import com.nostra13.universalimageloader.utils.StorageUtils;
 public class MyApplication extends Application {
 	private static final String TAG = "MyApplication";
 
-	public static String hostIp = "218.244.144.212";
-	public static String hostName = "handwriteserver";
+//	public static String hostIp = "218.244.144.212";
+//	public static String hostName = "handwriteserver";
 
 //	 public static String hostIp = "192.168.1.116";
 //	 public static String hostName = "dolphin0520-pc";
 	 
-//	 public static String hostIp = "192.168.1.149";
-//	 public static String hostName = "handwriteserver";
+	 public static String hostIp = "192.168.1.149";
+	 public static String hostName = "handwriteserver";
 	 
 //	 public static String hostIp = "192.168.1.210";
 //	 public static String hostName = "handwriteserver";

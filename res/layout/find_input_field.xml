@@ -28,7 +28,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="9dp"
-                android:background="@drawable/chat_input_voice_btn_style"
+                android:background="@drawable/find_input_voice_btn_style"
                 android:clickable="true" />
 
             <TextView
@@ -54,7 +54,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="9dp"
-                android:background="@drawable/chat_input_add_btn_style"
+                android:background="@drawable/find_input_add_btn_style"
                 android:clickable="true" />
 
             <TextView

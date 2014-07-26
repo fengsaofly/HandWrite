@@ -17,11 +17,11 @@
             android:visibility="gone" />
     </LinearLayout>
     <!-- 标题栏 -->
-    <RelativeLayout
+    <!-- <RelativeLayout
         android:id="@+id/rl_layout"
         android:layout_width="fill_parent"
         android:layout_height="45dp"
-        android:background="@drawable/actionbar_bg"
+        android:background="@color/actionbar_bg"
         android:gravity="center_vertical" >
 
         <Button
@@ -53,8 +53,8 @@
             android:layout_marginRight="5dp"
             android:background="@drawable/title_btn_right"
             android:src="@drawable/mm_title_btn_contact_normal" />
-    </RelativeLayout>
-
+    </RelativeLayout> -->
+    <include layout="@layout/activity_top_withri"  android:id="@id/activity_top"/>
     <!-- 底部按钮以及 编辑框 -->
         <include
         android:id="@id/chat_input_field"
@@ -83,7 +83,7 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_above="@id/chat_input_field"
-        android:layout_below="@id/rl_layout"
+        android:layout_below="@id/activity_top"
         android:cacheColorHint="#0000"
         android:divider="@null"
         android:dividerHeight="5dp"
